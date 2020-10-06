@@ -5,7 +5,7 @@ on: [push]
 
 env:
   PROJECT_NAME: "parallel-preprocessor"
-  PROJECT_VERSION: "0.3"
+  PROJECT_VERSION: "0.3-dev"
   SOURCE_FOLDER: "./PPP/ ./Geom/"
 
 jobs:
@@ -19,17 +19,17 @@ jobs:
                 config: [{
                             compiler: gcc,
                             compilerpp: g++,
-                            package_suffix: -${{PROJECT_VERSION}}_ubuntu-20.04.deb
+                            package_suffix: '-${{env.PROJECT_VERSION}}_ubuntu-20.04.deb'
                         },
                         {
                             compiler: gcc,
                             compilerpp: g++,
-                            package_suffix: -${{PROJECT_VERSION}}_ubuntu-18.04.deb
+                            package_suffix: '-${{env.PROJECT_VERSION}}_ubuntu-18.04.deb'
                         },
                         {
                             compiler: clang,
                             compilerpp: clang++,
-                            package_suffix: -${{PROJECT_VERSION}}_macos-latest.img
+                            package_suffix: '-${{env.PROJECT_VERSION}}_macos-latest.img'
                         }
                         ]
 
@@ -76,6 +76,7 @@ jobs:
         cd build
         cmake .. -DCODE_COVERAGE=ON -DCLANG_TIDY=ON
         make 2>&1 | tee clang_tidy_build_results.log
+        # https://github.com/ukaea/parallel-preprocessor/archive/dev.zip
       if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-20.04'  || matrix.os == 'ubuntu-18.04'
     
     - name: package and installation on Ubuntu
@@ -96,13 +97,15 @@ jobs:
        if [ ! -f "run_all_tests.sh" ]; then cp ../scripts/run_all_tests.sh ./ ; fi
        sh run_all_tests.sh
 
+       #https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-dev_ubuntu-18.04.deb
+
     - name: Upload daily-built packages to Github Release
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        upload_url: https://github.com/ukaea/parallel-preprocessor/releases/download/dev/${{ env.PROJECT_NAME }}${{ matrix.config.package_suffix }}
         # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. 
         # See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./${{ env.PROJECT_NAME }}${{ matrix.config.package_suffix }}

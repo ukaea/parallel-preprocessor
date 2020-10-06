@@ -1,4 +1,3 @@
-
 // usually include the user cpp file directly, not the header
 //#include "Geom/OccShapeUtils.cpp"
 #include "Geom/CollisionDetector.h"
