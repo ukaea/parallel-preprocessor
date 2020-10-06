@@ -19,17 +19,17 @@ jobs:
                 config: [{
                             compiler: gcc,
                             compilerpp: g++,
-                            package_suffix: '-${{env.PROJECT_VERSION}}_ubuntu-20.04.deb'
+                            package_suffix: '-0.3-dev_ubuntu-20.04.deb'
                         },
                         {
                             compiler: gcc,
                             compilerpp: g++,
-                            package_suffix: '-${{env.PROJECT_VERSION}}_ubuntu-18.04.deb'
+                            package_suffix: '-0.3-dev_ubuntu-18.04.deb'
                         },
                         {
                             compiler: clang,
                             compilerpp: clang++,
-                            package_suffix: '-${{env.PROJECT_VERSION}}_macos-latest.img'
+                            package_suffix: '-0.3-dev_macos-latest.dmg'
                         }
                         ]
 
