@@ -6,7 +6,7 @@ on: [push]
 env:
   PROJECT_NAME: "parallel-preprocessor"
   PROJECT_VERSION: "0.3-dev"
-  SOURCE_FOLDER: "./PPP/ ./Geom/"
+  MODULE_FOLDERS: "./PPP/ ./Geom/"
 
 jobs:
   build:
@@ -33,7 +33,7 @@ jobs:
       run: |
            sudo apt-get update
            sudo apt-get upgrade
-           sudo apt-get install -y occt-dev libtbb*-dev libocct-*-dev occt-* python3-dev python3-pybind11
+           sudo apt-get install -y libtbb*-dev libocct-*-dev occt-misc python3-dev python3-pybind11
            sudo apt-get install libx11-dev libxmu-dev libxi-dev
            sudo apt-get install -y  g++ cmake clang cppcheck similarity-tester clang-format
            sudo apt-get install -y htmldoc poppler-utils clang-tidy graphviz doxygen flawfinder
@@ -45,7 +45,7 @@ jobs:
            sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
            sudo apt-get update
            sudo apt-get upgrade
-           sudo apt-get install -y occt-dev libtbb*-dev libocct-*-dev occt-* python3-dev
+           sudo apt-get install -y libtbb*-dev libocct-*-dev occt-misc python3-dev
            sudo apt-get install -y  g++ cmake clang lcov cppcheck similarity-tester clang-format
            sudo apt-get install libx11-dev libxmu-dev libxi-dev
       if: matrix.os == 'ubuntu-18.04'
@@ -60,7 +60,7 @@ jobs:
       # assuming git cmake are available
       # it is not clear xwindows dev files are needed on macos
 
-    - name: Compile
+    - name: Compile on Linux
       # env:
       #         CC: ${{ matrix.config.compiler }}
       #         CXX: ${{ matrix.config.compilerpp }}
@@ -70,9 +70,22 @@ jobs:
         cd build
         cmake .. -DCODE_COVERAGE=ON -DCLANG_TIDY=ON
         make 2>&1 | tee clang_tidy_build_results.log
-        # https://github.com/ukaea/parallel-preprocessor/archive/dev.zip
-      if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-20.04'  || matrix.os == 'ubuntu-18.04'
+        # packup source code into zip and show in release : https://github.com/ukaea/parallel-preprocessor/archive/dev.zip
+      if:  matrix.os == 'ubuntu-20.04'  || matrix.os == 'ubuntu-18.04'
     
+    - name: Compile on MacOS
+      # env:
+      #         CC: ${{ matrix.config.compiler }}
+      #         CXX: ${{ matrix.config.compilerpp }}
+      run: |
+        git submodule update --init --recursive
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_NAME=Release ..
+        make 2>&1 | tee clang_tidy_build_results.log
+        # packup source code into zip and show in release : https://github.com/ukaea/parallel-preprocessor/archive/dev.zip
+      if: matrix.os == 'macos-latest'
+
     - name: package and installation on Ubuntu
       run: |
         make package
@@ -109,8 +122,8 @@ jobs:
       working-directory: ${{ github.workspace }}
       run: |
         echo "start code analysis in the folder:$(pwd)"
-        cppcheck --language=c++ --std=c++17 --enable=all -DROOT_DIR=$PWD -v --xml --xml-version=2 ${{ env.SOURCE_FOLDER }} 2>&1 | tee build/cpp-check.xml
-        flawfinder ${{ env.SOURCE_FOLDER }} | tee build/flawfinder.log
+        cppcheck --language=c++ --std=c++17 --enable=all -DROOT_DIR=$PWD -v --xml --xml-version=2 ${{ env.MODULE_FOLDERS }} 2>&1 | tee build/cpp-check.xml
+        flawfinder ${{ env.MODULE_FOLDERS }} | tee build/flawfinder.log
         sim_c++ -aR -o "build/sim_cpp.log" PPP/*
       if:  matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
 

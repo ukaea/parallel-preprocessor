@@ -5,7 +5,7 @@
 Github workflow CI should generate new binary packages on each git push, that is dev build with version  `0.3-dev`
 
 `git tag  v0.3.0` or branch if necessary in the stable release stage.
-`cd build && cmake -DPPP_VERSION_NAME="0.3.0"  -DCMAKE_BUID_NAME=Release .. && make -j4 && make package`
+`cd build && cmake -DPPP_VERSION_NAME="0.3.0"  -DCMAKE_BUILD_TYPE=Release .. && make -j4 && make package`
 run the unit test, then manually upload the packages to github Release.
 
 Docker will be used to generate binary package for more platforms
