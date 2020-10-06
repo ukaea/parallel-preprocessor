@@ -10,28 +10,21 @@ env:
 
 jobs:
   build:
-    name: ${{ matrix.os }} (${{ matrix.config.compilerpp }})
+    name: "${{ matrix.os }} workflow"
     runs-on: ${{ matrix.os }}
     strategy:
         fail-fast: false
         matrix:
                 os: ['ubuntu-20.04', 'ubuntu-18.04',  'macos-latest']
-                config: [{
-                            compiler: gcc,
-                            compilerpp: g++,
-                            package_suffix: '-0.3-dev_ubuntu-20.04.deb'
-                        },
-                        {
-                            compiler: gcc,
-                            compilerpp: g++,
-                            package_suffix: '-0.3-dev_ubuntu-18.04.deb'
-                        },
-                        {
-                            compiler: clang,
-                            compilerpp: clang++,
-                            package_suffix: '-0.3-dev_macos-latest.dmg'
-                        }
-                        ]
+                # config: [{
+                #             compiler: gcc,
+                #             compilerpp: g++,
+                #         },
+                #         {
+                #             compiler: clang,
+                #             compilerpp: clang++,
+                #         }
+                #         ]
 
     steps:
     - uses: actions/checkout@v2
@@ -68,9 +61,9 @@ jobs:
       # it is not clear xwindows dev files are needed on macos
 
     - name: Compile
-      env:
-              CC: ${{ matrix.config.compiler }}
-              CXX: ${{ matrix.config.compilerpp }}
+      # env:
+      #         CC: ${{ matrix.config.compiler }}
+      #         CXX: ${{ matrix.config.compilerpp }}
       run: |
         git submodule update --init --recursive
         mkdir build
@@ -104,11 +97,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: https://github.com/ukaea/parallel-preprocessor/releases/download/dev/${{ env.PROJECT_NAME }}${{ matrix.config.package_suffix }}
+        upload_url: https://github.com/ukaea/parallel-preprocessor/releases/download/dev/${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}-${{ matrix.os }}.deb
         # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. 
         # See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./${{ env.PROJECT_NAME }}${{ matrix.config.package_suffix }}
-        asset_name: ${{ env.PROJECT_NAME }}${{ matrix.config.package_suffix }}
+        asset_path: ./${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}-${{ matrix.os }}.deb
+        asset_name: ${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}-${{ matrix.os }}.deb
         asset_content_type: application/zip
       if: matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-18.04'
   
@@ -119,7 +112,7 @@ jobs:
         cppcheck --language=c++ --std=c++17 --enable=all -DROOT_DIR=$PWD -v --xml --xml-version=2 ${{ env.SOURCE_FOLDER }} 2>&1 | tee build/cpp-check.xml
         flawfinder ${{ env.SOURCE_FOLDER }} | tee build/flawfinder.log
         sim_c++ -aR -o "build/sim_cpp.log" PPP/*
-      if: matrix.config.compiler == 'gcc' && matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+      if:  matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
 
     - name: Build Doxygen Documentation ( Ubuntu GCC Dev/Master )
       working-directory: ${{ github.workspace }}
@@ -127,7 +120,7 @@ jobs:
             cd build
             make doc
             mv public ../doxygen
-      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+      if: matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
 
     - name: Commit Doxygen files ( Ubuntu GCC Dev/Master )
       run: |
@@ -135,20 +128,20 @@ jobs:
            git config --local user.name "GitHub Action"
            git add -f doxygen/*
            git commit -m "Updated Doxygen Documentation `date`"
-      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+      if: matrix.os == 'ubuntu-20.04'  && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
 
     - name: Run GCov and LCov Code Coverage ( Ubuntu GCC Dev/Master )
       working-directory: ${{ github.workspace }}
       run : |
             cd build
             make coverage
-      if: matrix.config.compiler == 'gcc' && matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+      if:  matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
     - name: Commit LCOV files ( Ubuntu GCC Dev/Master )
       working-directory: ${{ github.workspace }}
       run: |
            git add -f build/${{ env.PROJECT_NAME }}.coverage*
            git commit -m "Updated LCOV report `date`"
-      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+      if: matrix.os == 'ubuntu-20.04'  && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
 
     - name: Convert CPPCheck to HTML and push ( Ubuntu GCC Dev/Master )
       working-directory: ${{ github.workspace }}
@@ -157,18 +150,18 @@ jobs:
           cppcheck-htmlreport --title="${{ env.PROJECT_NAME }}" --file=build/cpp-check.xml --report-dir=site/cppcheck --source-dir=.
           git add -f site/cppcheck/*
           git commit -m "Added CPPCheck Output `date`"
-      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+      if: matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
     - name: Build Website Files ( Ubuntu GCC Dev/Master )
       run: |
           python scripts/site_generation.py build/clang_tidy_build_results.log build/flawfinder.log build/sim_cpp.log
           git add -f site/*.html
           git add -f index.html
           git commit -m "Updated Website Output `date`"
-      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+      if: matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
     - name: Push site changes to gh-pages ( Ubuntu GCC Dev/Master )
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: gh-pages
         force: true
-      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+      if: matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
