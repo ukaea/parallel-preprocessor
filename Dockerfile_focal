@@ -1,0 +1,29 @@
+# command to build: docker build  --rm -f Dockerfile_focal  -t ubuntu_focal .
+# topup build:        docker build  -f Dockerfile_focal  -t ubuntu_focal .
+# docker push qingfengxia/ubuntu_focal:latest
+
+FROM        ubuntu:20.04
+
+LABEL name="ubuntu_focal" \
+    maintainer="qingfeng.xia @ UKAEA" \
+    version="0.20" \
+    description="a basic C++ develop env for ubuntu"
+
+USER root
+
+#ENV DEBIAN_FRONTEND=noninteractive
+
+# update and install dependencies
+RUN         apt-get update \
+                && apt-get install -y \
+                    software-properties-common \
+                    apt-utils \
+                    wget \
+                && apt-get update \
+                && apt-get install -y \
+                    gcc g++ make cmake libboost-dev  git  build-essential \
+                && apt-get install -y libocct*-dev occt* python3-dev pybind11-dev libtbb-dev
+
+ENV DISPLAY :0
+
+RUN apt-get install libx11-dev libxmu-dev libxi-dev

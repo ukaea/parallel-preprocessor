@@ -1,0 +1,9 @@
+[submodule "third-party/Catch2"]
+	path = third-party/Catch2
+	url = https://github.com/catchorg/Catch2.git
+[submodule "third-party/loguru"]
+	path = third-party/loguru
+	url = https://github.com/emilk/loguru.git
+[submodule "third-party/SGeom"]
+	path = third-party/SGeom
+	url = https://github.com/ukaea/SGeom

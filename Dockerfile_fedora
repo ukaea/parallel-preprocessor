@@ -1,0 +1,79 @@
+# rm the outdated image: docker rmi qingfengxia/ppp-fedora
+# Remove all untagged images: docker rmi $(docker images | grep "^<none>" | awk "{print $3}")
+# command to build: docker build  --rm -f Dockerfile_fedora  -t qingfengxia/ppp-fedora .
+#
+# to test this image:
+#         git clone this project, optionaly, rename it to `ppp`
+#         change directory to the `ppp` repo toplevel, if build folder exists, `sudo rm -rf build && mkdir build`
+#         docker run -ti  -w /project/build/  -v $(pwd):/project/  qingfengxia/ppp-fedora bash
+# before build inside docker container: git submodule update --init --recursive
+#
+# build package and test after install
+# 
+# release this image
+# to rename/tag the image by `docker tags` if not yet done
+# docker login && docker push qingfengxia/ppp-fedora:latest
+
+# fedora30 has default python as python3, and opencascade 7.4 and freecad rpm
+
+# Base OS layer: should works for federa 30+
+FROM fedora:30
+
+LABEL name="ppp-fedora" \
+    maintainer="qingfeng.xia @ UKAEA" \
+    version="0.3" \
+    description="fedoera with FreeCAD python3 and opencascade 7.4 for parallel preprocessor development CI"
+
+USER root
+
+# avoid interactive timezone selection, ENV setting will affect child image
+# ENV TZ=Europe/London
+# RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# using yum command -y
+#ENV DEBIAN_FRONTEND=noninteractive
+
+# you must update before any yum install or add a repo
+# `dnf-cli` is needed to to add copr repo
+RUN yum install copr-cli -y && yum update -y 
+
+# g++ 9.2 for f30 high enough, there is no need to install boost-devel
+RUN yum install g++ cmake make git doxygen nano openmpi-devel eigen3-devel boost-devel rpm-build -y
+
+# export path for openmpi: export PATH=/usr/lib/openmpi/bin/ && mpicc ??
+
+# for OpenCASCADE,  need openGL, xwindows, 
+# python3 and qt5 devel for parallel preproessor
+# package name distinguish captical letter, while debian name is just  libxmu
+RUN yum install tk tcl tk-devel tcl-devel tbb tbb-devel freetype freetype-devel freeimage freeimage-devel  \
+       glew-devel SDL2-devel SDL2_image-devel glm-devel libXmu-devel libXi-devel \
+       python3 python3-devel qt5-devel qt5-qtwebsockets-devel qt5-qtwebsockets -y
+
+# jan 2020, opencascade 7.4 package  for fedroa 30+ is available, freecad 0.18.4 stable(python3 occt 7.4 are available)
+RUN dnf install opencascade-foundation  opencascade-modeling opencascade-ocaf \
+    opencascade-visualization opencascade-devel opencascade-draw -y
+# install FreeCAD 0.18 stable, or older version dep on fedora version
+# RUN yum install freecad -y
+# or install the daily build of freecad
+# RUN yum install dnf-plugins-core -y && dnf copr enable @freecad/nightly  -y && yum install freecad -y
+
+# outdated: compile occt from source
+#copy from host to image and compile and install occt 7.x
+#WORKDIR /build/
+#COPY opencascade-7.4.0   /build/opencascade
+#COPY build_opencascade.sh  /build/
+#RUN cd opencascade && if [ -d "build" ]; then rm -rf build; fi && mkdir build && cd build \
+#    && cmake .. && make -j4 && make install \
+#    && cd ../.. && rm -rf opencascade
+# by default, installed to /usr/local/
+
+## using non-root user:  commented out
+# once user name has been created, it will cause error during update the image building
+#RUN id -u user >/dev/null 2>&1 || useradd -ms /bin/bash user
+# switch users, but it is not clear which user is pre-built, it should be disabled, otherwise, user can not install extra packages
+#USER user
+
+ENV DISPLAY :0
+
+
+

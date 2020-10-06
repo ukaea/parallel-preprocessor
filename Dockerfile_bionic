@@ -1,0 +1,52 @@
+# command to build: docker build  --rm -f Dockerfile  -t qingfengxia/freecad-daily-python3 .
+# docker push qingfengxia/freecad-daily-python3:latest
+
+# Base OS layer: Latest Ubuntu LTS.
+FROM ubuntu:18.04
+
+# Use multi-stage builds: https://docs.docker.com/develop/develop-images/multistage-build/
+# rebuild on top of local image (instead of base OS layer) for quick modification, run without `--rm`
+# docker build  -f Dockerfile  -t qingfengxia/freecad-daily-python3 .
+#FROM qingfengxia/freecad-daily-python3:latest
+
+LABEL name="freecad-daily-python3" \
+    maintainer="qingfeng.xia @ UKAEA" \
+    version="0.19" \
+    description="FreeCAD 0.19 python3 daily installed from PPA, version as this image building date: \
+    with OpenCASCADE (libocct*-dev) python3 \
+    also with Fenics 2019.1 (installed from PPA) bundled with libscotch, libhypre, OpenMPI, \
+    pybind11-dev, python3-dev, numpy, scipy, matplotlib"
+
+USER root
+
+# avoid interactive timezone selection, ENV setting will affect child image
+# ENV TZ=Europe/London
+# RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# you must update before any apt-get install, 
+# `software-properties-common` is needed to to add PPA repo
+RUN apt-get update  && apt-get install -y   sudo  git  gcc  g++ build-essential  cmake  doxygen wget  apt-utils software-properties-common
+
+# install freecad from PPA, and also opencascade dev files
+RUN add-apt-repository ppa:freecad-maintainers/freecad-daily  && \
+    apt-get update  && \
+    apt-get install -y freecad-daily-python3 libocct*-dev && apt-get upgrade -y
+
+# install Fenics from PPA, it should also install python3-pybind11 and OpenMPI
+RUN add-apt-repository ppa:fenics-packages/fenics && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y fenics python3-dev
+
+# libvtk7-dev  not yet merged into this image, introducing large volume of packages
+RUN apt-get update  && apt-get install -y libeigen3-dev graphviz  libtbb2 libtbb-dev
+
+# once user name has been created, it will cause error during update the image building
+RUN id -u user >/dev/null 2>&1 || useradd -ms /bin/bash user
+
+ENV DISPLAY :0
+
+# switch users, but it is not clear which user is pre-built, it should be disabled, otherwise, user can not install extra packages
+#USER user
+

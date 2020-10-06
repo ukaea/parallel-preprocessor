@@ -1,0 +1,55 @@
+#this file should not go publically
+
+.vscode/*
+build/*
+vcbuild/*
+condabuild/*
+
+third-party/*
+bin/*
+lib/*
+
+site/*
+backup/*
+stage/*
+misc/*
+result/*
+incomplete_code/*
+
+*/__pycache__/*
+*.so
+
+
+Web/*
+# documentation, `wiki` is tracked
+notes/*
+doc/*
+
+
+#result files
+#*.brep
+#*.json
+#*.log
+#*.mm
+#*.stl
+#*.stp
+
+python/pybind11/*
+# package building output files
+python/build/*
+python/dist/*
+python/*egg-info/*
+python/ppp/*
+
+# test processed data folder
+python/*/*.json
+python/*/*.log
+python/*/*.stp
+python/*/*.mm
+python/*/*.brep
+
+# cache files
+python/__pycache__/*
+python/.cache/*
+
+python/config_in.json

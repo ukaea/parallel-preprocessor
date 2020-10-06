@@ -1,0 +1,38 @@
+[
+    {
+        "type": "Part::Sphere",
+        "id": "2050",
+        "groups": [
+            "Part"
+        ],
+        "partTranslation": "",
+        "name": "Sphere001",
+        "translation": "",
+        "filename": "PartShape.brp",
+        "visible": true,
+        "color": [
+            0.8,
+            0.8,
+            0.8,
+            0.0
+        ]
+    },
+    {
+        "type": "Part::Cylinder",
+        "id": "2059",
+        "groups": [
+            "Part001"
+        ],
+        "partTranslation": "",
+        "name": "Cylinder001",
+        "translation": "",
+        "filename": "PartShape1.brp",
+        "visible": true,
+        "color": [
+            0.8,
+            0.8,
+            0.8,
+            0.0
+        ]
+    }
+]

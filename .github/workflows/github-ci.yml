@@ -1,0 +1,172 @@
+name: parallel-preprocessor
+# adapted from: https://github.com/ScottishCovidResponse/Covid19_EERAModel/blob/dev/.github/workflows/eera.yml
+
+on: [push]
+
+env:
+  PROJECT_NAME: "parallel-preprocessor"
+  PROJECT_VERSION: "0.3"
+  SOURCE_FOLDER: "./PPP/ ./Geom/"
+
+jobs:
+  build:
+    name: ${{ matrix.os }} (${{ matrix.config.compilerpp }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+        fail-fast: false
+        matrix:
+                os: ['ubuntu-20.04', 'ubuntu-18.04',  'macos-latest']
+                config: [{
+                            compiler: gcc,
+                            compilerpp: g++,
+                            package_suffix: -${{PROJECT_VERSION}}_ubuntu-20.04.deb
+                        },
+                        {
+                            compiler: gcc,
+                            compilerpp: g++,
+                            package_suffix: -${{PROJECT_VERSION}}_ubuntu-18.04.deb
+                        },
+                        {
+                            compiler: clang,
+                            compilerpp: clang++,
+                            package_suffix: -${{PROJECT_VERSION}}_macos-latest.img
+                        }
+                        ]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Dependencies ( Ubuntu 20.04)
+      run: |
+           sudo apt-get update
+           sudo apt-get upgrade
+           sudo apt-get install -y occt-dev libtbb*-dev libocct-*-dev occt-* python3-dev python3-pybind11
+           sudo apt-get install libx11-dev libxmu-dev libxi-dev
+           sudo apt-get install -y  g++ cmake clang cppcheck similarity-tester clang-format
+           sudo apt-get install -y htmldoc poppler-utils clang-tidy graphviz doxygen flawfinder
+      if: matrix.os == 'ubuntu-20.04'
+      # ubuntu-20.04 has opencascade in official repo, PPA not needed, python3-pybind11 is also latest enough
+
+    - name: Install Dependencies ( Ubuntu 18.04)
+      run: |
+           sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
+           sudo apt-get update
+           sudo apt-get upgrade
+           sudo apt-get install -y occt-dev libtbb*-dev libocct-*-dev occt-* python3-dev
+           sudo apt-get install -y  g++ cmake clang lcov cppcheck similarity-tester clang-format
+           sudo apt-get install libx11-dev libxmu-dev libxi-dev
+      if: matrix.os == 'ubuntu-18.04'
+
+    - name: Install Brew and Dependencies ( Mac OS X )
+      run : /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+      run : brew update && brew install  cppcheck lcov poppler htmldoc graphviz doxygen
+      run : brew install  boost tbb opencascade
+      if: matrix.os == 'macos-latest'
+      # occt 7.4, tbb ,   it will also install header file, will install dependencies automatically?
+      # assuming git cmake are available
+      # it is not clear xwindows dev files are needed on macos
+
+    - name: Compile
+      env:
+              CC: ${{ matrix.config.compiler }}
+              CXX: ${{ matrix.config.compilerpp }}
+      run: |
+        git submodule update --init --recursive
+        mkdir build
+        cd build
+        cmake .. -DCODE_COVERAGE=ON -DCLANG_TIDY=ON
+        make 2>&1 | tee clang_tidy_build_results.log
+      if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-20.04'  || matrix.os == 'ubuntu-18.04'
+    
+    - name: package and installation on Ubuntu
+      run: |
+        make package
+        sudo dpkg -i ${{ env.PROJECT_NAME }}*
+      if: matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-18.04'
+
+    - name: package and installation on MacOS
+      run: |
+        echo "make package is yet completed for macos"
+        sudo make install
+      if: matrix.os == 'macos-latest'
+
+    - name: Run unit tests
+      run: |
+       echo "start unit test in the folder:$(pwd)"
+       if [ ! -f "run_all_tests.sh" ]; then cp ../scripts/run_all_tests.sh ./ ; fi
+       sh run_all_tests.sh
+
+    - name: Upload daily-built packages to Github Release
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. 
+        # See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./${{ env.PROJECT_NAME }}${{ matrix.config.package_suffix }}
+        asset_name: ${{ env.PROJECT_NAME }}${{ matrix.config.package_suffix }}
+        asset_content_type: application/zip
+      if: matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-18.04'
+  
+    - name: Run Cpp Check Flawfinder  Sim C++ ( Ubuntu GCC Dev/Master )
+      working-directory: ${{ github.workspace }}
+      run: |
+        echo "start code analysis in the folder:$(pwd)"
+        cppcheck --language=c++ --std=c++17 --enable=all -DROOT_DIR=$PWD -v --xml --xml-version=2 ${{ env.SOURCE_FOLDER }} 2>&1 | tee build/cpp-check.xml
+        flawfinder ${{ env.SOURCE_FOLDER }} | tee build/flawfinder.log
+        sim_c++ -aR -o "build/sim_cpp.log" PPP/*
+      if: matrix.config.compiler == 'gcc' && matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+
+    - name: Build Doxygen Documentation ( Ubuntu GCC Dev/Master )
+      working-directory: ${{ github.workspace }}
+      run : |
+            cd build
+            make doc
+            mv public ../doxygen
+      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+
+    - name: Commit Doxygen files ( Ubuntu GCC Dev/Master )
+      run: |
+           git config --local user.email "action@github.com"
+           git config --local user.name "GitHub Action"
+           git add -f doxygen/*
+           git commit -m "Updated Doxygen Documentation `date`"
+      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+
+    - name: Run GCov and LCov Code Coverage ( Ubuntu GCC Dev/Master )
+      working-directory: ${{ github.workspace }}
+      run : |
+            cd build
+            make coverage
+      if: matrix.config.compiler == 'gcc' && matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+    - name: Commit LCOV files ( Ubuntu GCC Dev/Master )
+      working-directory: ${{ github.workspace }}
+      run: |
+           git add -f build/${{ env.PROJECT_NAME }}.coverage*
+           git commit -m "Updated LCOV report `date`"
+      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+
+    - name: Convert CPPCheck to HTML and push ( Ubuntu GCC Dev/Master )
+      working-directory: ${{ github.workspace }}
+      run: |
+          mkdir -p site/cppcheck
+          cppcheck-htmlreport --title="${{ env.PROJECT_NAME }}" --file=build/cpp-check.xml --report-dir=site/cppcheck --source-dir=.
+          git add -f site/cppcheck/*
+          git commit -m "Added CPPCheck Output `date`"
+      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+    - name: Build Website Files ( Ubuntu GCC Dev/Master )
+      run: |
+          python scripts/site_generation.py build/clang_tidy_build_results.log build/flawfinder.log build/sim_cpp.log
+          git add -f site/*.html
+          git add -f index.html
+          git commit -m "Updated Website Output `date`"
+      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )
+    - name: Push site changes to gh-pages ( Ubuntu GCC Dev/Master )
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        force: true
+      if: matrix.os == 'ubuntu-20.04' && matrix.config.compiler == 'gcc' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' )

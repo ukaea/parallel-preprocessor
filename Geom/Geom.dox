@@ -1,0 +1,4 @@
+/** \defgroup Geom
+ *  \brief The module provides pre-processors for CAD geometry check, fix, etc.
+ * \include{Readme.md}
+*/ 
