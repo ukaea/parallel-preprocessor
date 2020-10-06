@@ -7,13 +7,15 @@ Research Software Engineering Group of UKAEA
 License: LGPL v2.1  
 Copyright UKAEA, 2019~2020  
 
+![.github/workflows/github-ci.yml](https://github.com/ukaea/parallel-preprocessor/workflows/.github/workflows/github-ci.yml/badge.svg)
+
 Dr Andrew Davis of UKAEA, has contributed his technical insight,  test geometries and other support to this software project. Also thank to my colleagues Dr John Nonweiler, Dr Jonathon Shimwell, etc.  for testing and reviewing this software.
 
 ## License
 License consideration: LGPL v2.1 instead of LGPL v3, because all relevant projects, OCCT, salome, FreeCAD, are using LGPL v2.1. LGPL v3 and LGPL v2.1 is not fully compatible to mixed up in source code level.
 
-**doxygen generated documentation**
-http://scalable-multiphysics-framework.gitpages.ccfe.ac.uk/parallel-preprocessor/
+**doxygen generated API documentation**
+To be added later
 
 ## Overview
 
@@ -25,13 +27,18 @@ Note: This is not a production quality software, but a prototype to demonstrate 
 
 This project has been designed to be cross-platform, but only Linux is supported as the baseline platform.
 
-+ Ubuntu as the primary/baseline development platform, with deb binary package generated.
++ Ubuntu as the primary/baseline development platform, with deb binary package generated 
+ [Download parallel-preprocessor-0.3-dev_ubuntu-18.04.deb](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3_ubuntu-18.04.deb)
+ [Download parallel-preprocessor-0.3-dev_ubuntu-20.04.deb](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-20.04.deb)
 + Fedora, Centos can compile ppp from source, with OpenCascade 7.x source code or copr package.
+
 + Centos8 should work without much effort; Centos7 software stack is outdated, using docker/singularity instead.
+
 + Windows 10 users are encouraged to use WSL with one of the supported Linux distributions, while guide to compile on Windows has been added.
+
 + MacOS should be possible through homebrew, but compiling instruction is not provided.
 
-Conda package and Linux native package for Ubuntu LTS may be availalbe, see details in the document <Packaging.md>
+Conda package and Linux native package for Ubuntu LTS may be availalbe in the future, see details in the document <Packaging.md>
 
 ## Installaton guide
 

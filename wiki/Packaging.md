@@ -1,5 +1,20 @@
 # Packaging by CMake
 
+### Procedure to make a tagged release
+
+Github workflow CI should generate new binary packages on each git push, that is dev build with version  `0.3-dev`
+
+`git tag  v0.3.0` or branch if necessary in the stable release stage.
+`cd build && cmake -DPPP_VERSION_NAME="0.3.0"  -DCMAKE_BUID_NAME=Release .. && make -j4 && make package`
+run the unit test, then manually upload the packages to github Release.
+
+Docker will be used to generate binary package for more platforms
+
+if version increases, edit 
++ `PROJECT_VERSION: "0.3-dev"`  in github workflow CI yml files 
++ PACKAGE_VERSION in project CMakeLists.txt
++ download link in Readme.md
+
 ## Introduction to CPack 
 
 `cpack` configuration in CMakeLists.txt can generate ubuntu and fedora binary packages. 
