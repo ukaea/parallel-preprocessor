@@ -86,11 +86,40 @@ option(CLANG_TIDY "Enable Clang Tidy in Build" OFF)
 option(CODE_COVERAGE "Enable code coverage with LCov" OFF)
 
 
+##############################################################
+# Platform specific cmake option override
+##############################################################
+if(WIN32)
+    # disable doc on Windows platform
+    set(PPP_USE_DOC OFF)
+    set(PPP_USE_TYPE ON)
+endif()
+
+##############################################################
+# PPP_DEV_MODE=ON is an env var defiend in $HOME/.profile, not .bashrc
+# the developer can turn on more options on local PC
+##############################################################
+set(PPP_DEV_MODE $ENV{PPP_DEV_MODE})
+if(PPP_DEV_MODE)
+    message(STATUS "$ENV{PPP_DEV_MODE}, ${PPP_DEV_MODE}")
+    message(STATUS "the developer mode can turn on more options than CI")
+    set(PPP_USE_GUI OFF)
+    set(PPP_USE_WEB OFF)
+    #set(CMAKE_BUILD_TYPE Debug)  ## almost no difference in performance
+    message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}, CMAKE_CXX_FLAGS_DEBUG = ${CMAKE_CXX_FLAGS_DEBUG}")
+endif()
+
+
 message("----- parallel-preprocessor Build Options -----")
 message(STATUS "Clang Tidy: ${CLANG_TIDY}")
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Code Coverage: ${CODE_COVERAGE}")
 message("------------------------------------")
+
+
+##############################################################
+# coverage setup
+##############################################################
 if(UNIX)
     if(CLANG_TIDY)
         if(APPLE)
@@ -110,19 +139,6 @@ if(UNIX)
     endif()
 endif()
 
-##############################################################
-# PPP_DEV_MODE=ON is an env var defiend in $HOME/.profile, not .bashrc
-# the developer can turn on more options on local PC
-##############################################################
-set(PPP_DEV_MODE $ENV{PPP_DEV_MODE})
-if(PPP_DEV_MODE)
-    message(STATUS "$ENV{PPP_DEV_MODE}, ${PPP_DEV_MODE}")
-    message(STATUS "the developer mode can turn on more options than CI")
-    set(PPP_USE_GUI OFF)
-    set(PPP_USE_WEB OFF)
-    #set(CMAKE_BUILD_TYPE Debug)  ## almost no difference in performance
-    message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}, CMAKE_CXX_FLAGS_DEBUG = ${CMAKE_CXX_FLAGS_DEBUG}")
-endif()
 
 ####################################################
 
@@ -130,32 +146,6 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cMake")
 
 
-if(WIN32)
-    # disable doc on Windows platform
-    set(PPP_USE_DOC OFF)
-    set(PPP_USE_TYPE ON)
-
-    if(PPP_USE_CONDA)
-        # do nothing, cmake can detect occt and tbb installed by conda on windows
-    else(PPP_USE_CONDA)
-        if(DEFINED $ENV{CASROOT})
-            message(STATUS "env var CASROOT defined as $ENV{CASROOT}, it is required on windows")
-        endif()
-        set(OCC_DIR "D:/Software/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0")
-
-        # must prepend, otherwise, this repo's FindOpenCasCade.cmake take the priority over FindOPENCASCADE.cmake
-        list(PREPEND CMAKE_MODULE_PATH  "${OCC_DIR}/cmake")
-        set(OCC_INCLUDE_DIR "${OCC_DIR}/inc")  # the hint to detect all components
-        message(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH} on windows")
-
-        # TBB_ROOT is a environment var, or cmake var hint
-        # Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.
-        set(TBB_ROOT_DIR "${OCC_ROOT}/../tbb_2017.0.100")
-    endif()
-endif()
-
-# it can be used by subdirectory cmakelist.txt
-include_directories("./") 
 
 ## put all targets in bin and lib
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
@@ -175,6 +165,16 @@ if(PPP_USE_PCH)
     # MSVC need more setup, see end of file  `FreeCAD/src/Mod/Part/PPP/CMakeList.txt`
 endif()
 
+include_directories("${PROJECT_SOURCE_DIR}")  # for json, must be run before include src/ subfolder
+if(PPP_USE_TEST)
+    add_subdirectory(third-party/Catch2)
+endif()
+
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/third-party/loguru")
+    message(FATAL_ERROR "have you forgot to download all other submodule before run cmake\n"
+            "in the repo root folder, run `git submodule update --init --recursive`")
+endif()
+
 if(PPP_USE_GUI)
     # the other choice is target_compile_definitions() in each module
     add_definitions(-DPPP_BUILD_GUI=1)
@@ -182,130 +182,12 @@ endif()
 
 if(PPP_USE_TYPE)
     add_definitions(-DPPP_BUILD_TYPE=1)
-    add_subdirectory("third-party/Base")    
+    add_subdirectory("third-party/Base")    # build libpppBase shared library as target `MyBase`
 endif()
 
-if(PPP_USE_TBB)
-    if(WIN32)
-        find_package(TBB REQUIRED)  # in the future it may be replaced by an in-house implementation
-    else()
-        find_package(TBB REQUIRED) 
-    endif()
-    if(TBB_FOUND)
-        message("found TBB version: ${TBB_VERSION_MAJOR}.${TBB_VERSION_MINOR}")
-        ## For propertyContainer.hpp, but concurrent container does NOT support operator []
-        #add_definitions("-DUSE_CONCURRENT_HASH_CONTAINER")
-        include_directories(${TBB_INCLUDE_DIRS})
-        #link_directories(${TBB_LIBRARY_DIRS})  # no such var,  libraries has already the full path
-        link_libraries(${TBB_LIBRARIES})
-    endif()
-endif()
-
-############################################################
-
-
-include_directories("${PROJECT_SOURCE_DIR}/third-party")  # for json, must be run before include App subfolder
-add_subdirectory("PPP")
-
-# deal with data and script subdirectory
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/third-party/loguru")
-message(FATAL_ERROR "have you forgot to download all other submodule before run cmake\n"
-        "in the repo root folder, run `git submodule update --init --recursive`")
-endif()
-
-##############################################################
-
-if(PPP_USE_GEOM)
-    # it is safe to add include and library directories at top level CMakeLists.txt
-    # to be used by subdirectory like test and python interface
-    # but do NOT use link_libraries(),  use target_link_libraries() instead
-
-    if(UNIX)
-        list(APPEND CMAKE_MODULE_PATH "/usr/lib/cmake/opencascade/")
-    endif()
-
-    if(OFF)  # use OCCT official cmake
-        # need to install "occt-misc" debian package,  fedora name ???
-        #  otherwise, missing package configuration OpenCASCADEConfig.cmake  
-
-        #find_package(OpenCASCADE REQUIRED)
-        #find_package(OpenCASCADE CONFIG QUIET)
-        # still not working on windows
-
-        find_package(OpenCASCADE COMPONENTS FoundationClasses REQUIRED)
-        find_package(OpenCASCADE COMPONENTS ModelingData REQUIRED)
-        find_package(OpenCASCADE COMPONENTS ModelingAlgorithms REQUIRED)
-        find_package(OpenCASCADE COMPONENTS DataExchange REQUIRED)
-        find_package(OpenCASCADE COMPONENTS ApplicationFramework REQUIRED)
-        if(PPP_USE_GUI)
-            find_package(OpenCASCADE COMPONENTS Visualization REQUIRED)
-            set(OCC_VIZ_LIBS
-                ${OpenCASCADE_Visualization_LIBRARIES}
-            )
-        endif()
-        include_directories(${OpenCASCADE_INCLUDE_DIR})
-        link_directories(${OpenCASCADE_LIBRARY_DIR})
-
-        # adapted to be compatible with FreeCAD occ.cmake
-        set(OCC_LIBS
-            # variables defined in OpenCASCADEConfig.cmake  
-            ${OpenCASCADE_FoundationClasses_LIBRARIES}
-            ${OpenCASCADE_ModelingData_LIBRARIES}
-            ${OpenCASCADE_ModelingAlgorithms_LIBRARIES}
-            ${OpenCASCADE_DataExchange_LIBRARIES}
-            ${OpenCASCADE_ApplicationFramework_LIBRARIES}
-        )
-        if(OpenCASCADE_FOUND)
-            message(" found OpenCASCADSE installation")
-        endif()
-    else()
-        find_package(OpenCasCade REQUIRED)   # use this project provided FindOpenCasCade.cmake
-        if(OCC_FOUND)
-            include_directories(${OCC_INCLUDE_DIR})
-            link_directories(${OCC_LIBRARY_DIR})  
-            set(OCC_LIBS
-                ${OCC_LIBRARIES}
-                ${OCC_OCAF_LIBRARIES}
-            )
-        else()
-            message("===============================================================\n"
-            "OpenCasCade not found, make sure oce or occt has been installed\n"
-            "===============================================================\n")
-        endif()
-    endif()
-endif()
-
-
-if(PPP_USE_GEOM)
-    add_subdirectory("Geom")
-    add_subdirectory("third-party/SGeom")
-    # only needed by Geom module
-    include_directories("${PROJECT_SOURCE_DIR}/third-party/SGeom/src/GEOMAlgo")
-endif()
-
-######### auto foramt check by cmake or git hook, or IDE ################
-#find_package(ClangFormat)
-#if(NOT CLANG_FORMAT_FOUND)
-#    set(CLANG_FORMAT_BIN_NAME clang-format)
-#    set(CLANG_FORMAT_EXCLUDE_PATTERNS  "build/" ${CMAKE_BINARY_DIR})
-#endif()
-
-############################################################
-# python wrap currently only Geom module
-############################################################
-if(PPP_USE_PYTHON)
-    add_subdirectory("python")
-endif(PPP_USE_PYTHON)
-
-
-############################################################
-# unit test module
-############################################################
-if(PPP_USE_TEST)
-    add_subdirectory(test)
-    add_subdirectory(third-party/Catch2)
-    add_subdirectory (PropertyContainer)  # Catch2 must be add() before this subdirectionary
-endif()
+# must be put after third-party
+include_directories("src")
+add_subdirectory("src")
 
 
 ######################## data for test ###########################
@@ -331,18 +213,21 @@ else()
     )
 
 endif()
+
+######################## pyhton files and shell scripts for test ######################
 # will override each time?
 file(COPY ${PROJECT_SOURCE_DIR}/scripts/run_all_tests.sh 
     DESTINATION ${PROJECT_BINARY_DIR}
     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
                     GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
-# copy do not make symbolic to add temp file
-file(COPY  ${PROJECT_SOURCE_DIR}/python 
+# copy python/ into build folder, to enable test in build folder without installation
+file(COPY  ${PROJECT_SOURCE_DIR}/src/python 
     DESTINATION ${PROJECT_BINARY_DIR}/ppptest
     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
                     GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
+
 
 ###########################################
 # Check 32/64 bit platform #
@@ -397,6 +282,7 @@ if(WIN32)
 endif()
 
 # Set a Package Maintainer. This is required
+# https://github.com/ukaea/parallel-preprocessor
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Qingfeng Xia @ UKAEA")
 #set(CPACK_PACKAGE_DESCRIPTION, ${PROJECT_BRIEF})
 set(CPACK_PACKAGE_DESCRIPTION, "${CMAKE_CURRENT_SOURCE_DIR}/Readme.md")
@@ -404,6 +290,7 @@ set(CPACK_PACKAGE_DESCRIPTION, "${CMAKE_CURRENT_SOURCE_DIR}/Readme.md")
 set(CPACK_PACKAGE_VERSION ${PACKAGE_VERSION_NAME})
 #set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+
 
 ################################################################
 
@@ -417,7 +304,6 @@ set(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
 # COMPONENT and GROUP are different concepts
 # https://gitlab.kitware.com/cmake/community/-/wikis/doc/cpack/Component-Install-With-CPack
 #################################################################
-
 
 # https://dominoc925.blogspot.com/2016/09/create-windows-installer-using-cmake.html
 set(PPP_SINGLE_PACKAGE ON)
@@ -476,7 +362,7 @@ if( CPACK_GENERATOR MATCHES ".*DEB.*" )
     # on Ubuntu, version number is part of package name, no package alias?
     #   libocct-foundation, libocct-data-exchange, libocct-modeling-data,
     #   libocct-modeling-algorithms, libocct-ocaf,
-	set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.3), python3, libtbb2,
+	set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.3), python3, libtbb2, libocct-foundation,
         libgcc1 (>= 1:4.1.1), libgomp1 (>= 4.2.1), libstdc++6 (>= 4.4.0)"
         )
 	set(CPACK_DEBIAN_PACKAGE_SUGGESTS "freecad")
@@ -501,7 +387,7 @@ if( CPACK_GENERATOR MATCHES ".*RPM.*" )
     # libfreetype6 >= 2.2.1, libgl1-mesa-glx, libglu1-mesa,  libx11-6, libxext6, libxt6 tcl >= 8.5.0, tk >= 8.5.0
     # tk, tcl, tk-devel, tcl-devel, freetype, freetype-devel, freeimage, freeimage-devel, 
     # glew-devel, SDL2-devel, SDL2_image-devel, glm-devel, libXmu-devel, libXi-devel,
-    set( CPACK_RPM_PACKAGE_REQUIRES "tbb, tbb-devel, python3")
+    set( CPACK_RPM_PACKAGE_REQUIRES "tbb, tbb-devel, python3") # occt is not listed, since usr may compile from source
 	set( CPACK_RPM_PACKAGE_PROVIDES ${PACKAGE_NAME})
 	set( CPACK_PACKAGE_RELOCATABLE "FALSE" )
 	if( BIT_LENGTH EQUAL 64 )

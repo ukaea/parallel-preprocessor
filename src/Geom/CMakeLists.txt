@@ -1,8 +1,9 @@
 # Geom module for PPP
-if(PPP_USE_TYPE)
-    add_definitions(-DPPP_BUILD_TYPE=1)  # c++ type reflection support
-    link_libraries(MyBase)
-endif()
+
+# this is a git submodule
+add_subdirectory("third-party/SGeom")
+# only needed by Geom module
+include_directories("third-party/SGeom/src/GEOMAlgo")
 
 # lots of source file are made as header-only for rapid prototyping
 set(MyGeom_SOURCES 
@@ -87,6 +88,11 @@ if(OFF)
         )
        message(STATUS ${OCC_LIBRARY_DIR}/lib{X}.so)
     endforeach()
+endif()
+
+
+if (PPP_USE_TEST)
+  add_subdirectory(GeomTests)
 endif()
 
 #########################################################

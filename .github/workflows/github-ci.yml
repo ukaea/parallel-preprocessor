@@ -6,7 +6,7 @@ on: [push]
 env:
   PROJECT_NAME: "parallel-preprocessor"
   PROJECT_VERSION: "0.3-dev"
-  MODULE_FOLDERS: "./PPP/ ./Geom/"
+  MODULE_FOLDERS: "./src/"
 
 jobs:
   build:
@@ -70,7 +70,7 @@ jobs:
         git submodule update --init --recursive
         mkdir build
         cd build
-        cmake .. -DCODE_COVERAGE=ON
+        cmake  -DCODE_COVERAGE=ON -DPython_EXECUTABLE=$(which python3) ..
         make 2>&1 | tee clang_tidy_build_results.log
         # packup source code into zip and show in release : https://github.com/ukaea/parallel-preprocessor/archive/dev.zip
       if:  matrix.os == 'ubuntu-20.04'  || matrix.os == 'ubuntu-18.04'
@@ -85,24 +85,29 @@ jobs:
       if: matrix.os == 'macos-latest'
 
     - name: package and installation on Ubuntu
+      working-directory: ${{ github.workspace }}/build
       run: |
+        echo "start packaging in the folder $(pwd)"
         make package
         sudo dpkg -i ${{ env.PROJECT_NAME }}*
       if: matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-18.04'
 
     - name: package and installation on MacOS
+      working-directory: ${{ github.workspace }}/build
       run: |
-        echo "make package"
+        echo "make package  in the folder $(pwd)"
         make package
       if: matrix.os == 'macos-latest'
 
     - name: Run unit tests
+      working-directory: ${{ github.workspace }}/build
       run: |
        echo "start unit test in the folder:$(pwd)"
        if [ ! -f "run_all_tests.sh" ]; then cp ../scripts/run_all_tests.sh ./ ; fi
        sh run_all_tests.sh
 
     - name: Upload daily-built packages to Github Release
+      working-directory: ${{ github.workspace }}/build
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
       env:
@@ -122,7 +127,7 @@ jobs:
         echo "start code analysis in the folder:$(pwd)"
         cppcheck --language=c++ --std=c++17 --enable=all -DROOT_DIR=$PWD -v --xml --xml-version=2 ${{ env.MODULE_FOLDERS }} 2>&1 | tee build/cpp-check.xml
         flawfinder ${{ env.MODULE_FOLDERS }} | tee build/flawfinder.log
-        sim_c++ -aR -o "build/sim_cpp.log" PPP/*
+        sim_c++ -aR -o "build/sim_cpp.log" src/*
       if:  matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
 
     - name: Build Doxygen Documentation ( Ubuntu GCC Dev/Master )
