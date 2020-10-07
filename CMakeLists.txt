@@ -25,7 +25,6 @@ endif()
 project("parallel-preprocessor")
 set(PROJECT_BRIEF "MPI distributive and multithreading massively parallel geometry processor \
     for large scale CAE and machine learning, by Qingfeng Xia, UKAEA, 2019")
-set(PROJECT_VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR})
 
 ##############################################################
 
@@ -118,7 +117,7 @@ message("------------------------------------")
 
 
 ##############################################################
-# coverage setup
+# coverage setup and clang_tidy setup
 ##############################################################
 if(UNIX)
     if(CLANG_TIDY)
@@ -131,11 +130,12 @@ if(UNIX)
         endif(APPLE)
     endif()
     if(CODE_COVERAGE)
-        message(STATUS "Including Code Coverage")
-        set(COVERAGE_COMPILER_FLAGS "-g -fprofile-arcs -ftest-coverage")
+        message(STATUS "Including Code Coverage, so must be debug build type")
+        set(COVERAGE_COMPILER_FLAGS "-fprofile-arcs -ftest-coverage")
+        set(CMAKE_BUILD_TYPE Debug)
         set(LCOV_EXCLUDES "build/*" "*/third-party/*" "/usr*")
         set (CMAKE_CXX_FLAGS "${COVERAGE_COMPILER_FLAGS} ${CMAKE_CXX_FLAGS}")
-        include("cMake/ppp_coverage_target.cmake")
+        include("cMake/ppp_coverage_target.cmake")  # this cmake is project depedent, running scripts/run_all_test.sh in the build folder
     endif()
 endif()
 
@@ -253,7 +253,6 @@ endmacro( option_with_default OPTION_NAME OPTION_STRING OPTION_DEFAULT )
 ############################################################
 # Create DEB, RPM, activated by the command `make package` or `cpack`
 # simultaneously building multiple package types -DCPACK_GENERATOR="DEB;RPM")
-# conda, pip 
 ############################################################
 
 if (UNIX)
@@ -293,10 +292,11 @@ set(CPACK_PACKAGE_VERSION ${PACKAGE_VERSION_NAME})
 #set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 
+message(STATUS "CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}")
 
 ################################################################
 
-set(CPACK_IGNORE_FILES "\\.psd$;/\\.git/;/backup/;\\.#;/#;\\.tar.gz$;/stage/;/build/;/condabuild/;\\.diff$;\\.DS_Store'")
+#set(CPACK_IGNORE_FILES "\.psd$;/\.git/;/backup/;\.#;/#;\.tar.gz$;/stage/;/build/;/condabuild/;\.diff$;\.DS_Store")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}")
 set(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
@@ -362,9 +362,10 @@ if( CPACK_GENERATOR MATCHES ".*DEB.*" )
     #           libfreetype6 (>= 2.2.1), libfreeimage, 
     #           libocct-visualization-dev, tcl8.5 (>= 8.5.0), tk8.5 (>= 8.5.0), 
     # on Ubuntu, version number is part of package name, no package alias?
-    #   libocct-foundation, libocct-data-exchange, libocct-modeling-data,
+    # so there is no easy to make it compatible for ubuntu 18.04, 20.04, just skip
+    #   libocct-foundation-7.3, libocct-data-exchange-7.3, libocct-modeling-data,
     #   libocct-modeling-algorithms, libocct-ocaf,
-	set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.3), python3, libtbb2, libocct-foundation,
+	set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.3), python3, libtbb2,
         libgcc1 (>= 1:4.1.1), libgomp1 (>= 4.2.1), libstdc++6 (>= 4.4.0)"
         )
 	set(CPACK_DEBIAN_PACKAGE_SUGGESTS "freecad")

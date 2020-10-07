@@ -2,13 +2,33 @@
 
 # Roadmap
 
-## Platform supports
+## Platform supports and code quality
 ### windows build and package
 
-done, needs more test
+Compiling on Windows has been done using Conda installed OpenCASCADE or official OpenCASCADE installation.
+Conda
 
-### currently only support utf8
-Unicode support is another problem to be solved.
+### MacOS build and package
+
+build on github workflow CI is undergoing
+Homebrew formula
+
+### Static code analysis
+
++ cppcheck
++ coverage report:  currently unit test coverage is about 60%, needs improvement
++ memory lint
++ threading 
+
+### Other issues
+#### Where should unit test data be installed to
+
+Currently package does not include test data in the `data/` folder, because it is not decided where data should go. 
+
+#### currently only support utf8
+Unicode support is another problem to be solved, especially on Windows
+
+### add guidance for contribution
 
 ## New modules or feature
 
@@ -34,7 +54,7 @@ Unicode support is another problem to be solved.
    + binary module/plugin system
    + windows platform support
 
-### planned features in the long term
+### Planned features in the long term
 
    - API refactoring: should model after VTK pipeline
    - architecture design refer to tensorflow
@@ -43,7 +63,7 @@ Unicode support is another problem to be solved.
    - part recognition (connection to machine learning)
    - geometrical defeaturing
 
-### future integration with VTK or FreeCAD
+### Future integration with VTK and FreeCAD
 
 VTK: paraview post processing
 FreeCAD:   exchange TopoDS_Shape in python or just by files

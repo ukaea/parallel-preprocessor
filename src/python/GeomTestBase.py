@@ -41,16 +41,19 @@ default_geometry_filename = (
 def generate_config(inf, outf, action="imprint", default_config_file_name="config.json"):
     # generate a configuration without running it
 
-    this_folder = os.path.dirname(os.path.abspath(__file__))
-    print(this_folder + os.path.sep + "geomPipeline.py {} {} --config".format(action, inf))
-    os.system(this_folder + os.path.sep + "geomPipeline.py {} {} --config".format(action, inf))
+    this_geomPipeline = os.path.dirname(os.path.abspath(__file__)) os.path.sep + "geomPipeline.py"
+    #print("geomPipeline.py {} {} --config".format(action, inf))
+    if not os.path.exists(this_geomPipeline):
+        this_geomPipeline = "geomPipeline.py"
+    os.system("{} {} {} --config".format(this_geomPipeline, action, inf))
+
     jf = open(default_config_file_name, "r", encoding="utf-8")
     config_file_content = json.load(jf)
     config_file_content["readers"][0]["dataFileName"] = inf
     config_file_content["writers"][0]["dataFileName"] = outf
     config_file_content["dataStorage"]["workingDir"] = gettempdir()
     config_file_content["logger"]["verbosity"] = "WARNING"
-    # config_file_name = default_config_file_name.replace(".json", "_in.json")
+
     jf.close()
     config_file_name = default_config_file_name
     with open(config_file_name, "w", encoding="utf-8") as jf:
