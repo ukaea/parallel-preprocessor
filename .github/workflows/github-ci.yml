@@ -1,7 +1,9 @@
 name: parallel-preprocessor
 # adapted from: https://github.com/ScottishCovidResponse/Covid19_EERAModel/blob/dev/.github/workflows/eera.yml
+# Supported runners and hardware resources
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/specifications-for-github-hosted-runners#supported-runners-and-hardware-resources
 
-on: [push]
+on: [push, pull_request]
 
 env:
   PROJECT_NAME: "parallel-preprocessor"
@@ -54,13 +56,15 @@ jobs:
       run : |
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
             brew update
-            brew install  gcc
             #brew install  cppcheck lcov poppler htmldoc graphviz doxygen
             brew install  boost tbb opencascade
       if: matrix.os == 'macos-latest'
-      # occt 7.4, tbb ,   it will also install header file, will install dependencies automatically?
-      # assuming git cmake are available
-      # it is not clear xwindows dev files are needed on macos
+      # occt 7.4, tbb ,   it will also install header file, will install dependencies automatically? yes
+      # it seems xwindows dev files are NOT needed on macos
+      # git cmake are available, gcc has been installed, see all installed software
+      # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md
+      # then how to select the default Xcode version?
+
 
     - name: Compile on Linux
       # env:
@@ -76,11 +80,13 @@ jobs:
       if:  matrix.os == 'ubuntu-20.04'  || matrix.os == 'ubuntu-18.04'
     
     - name: Compile on MacOS
+      # env:
+      #   DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
       run: |
         git submodule update --init --recursive
         mkdir build
         cd build
-        CC=gcc CXX=g++ cmake -DCMAKE_BUILD_NAME=Release ..
+        CC=gcc-9 CXX=g++-9 cmake -DCMAKE_BUILD_NAME=Release ..
         make 2>&1 | tee clang_tidy_build_results.log
       if: matrix.os == 'macos-latest'
 
@@ -105,20 +111,34 @@ jobs:
        echo "start unit test in the folder:$(pwd)"
        if [ ! -f "run_all_tests.sh" ]; then cp ../scripts/run_all_tests.sh ./ ; fi
        sh run_all_tests.sh
+      if: always()  # tmp skip this step if failed
+
+    - name: Create Release on push
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+      if: matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-18.04'
 
     - name: Upload daily-built packages to Github Release
       working-directory: ${{ github.workspace }}/build
-      id: upload-release-asset 
+      id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: https://github.com/ukaea/parallel-preprocessor/releases/download/dev/${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}-${{ matrix.os }}.deb
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        #upload_url: https://github.com/ukaea/parallel-preprocessor/releases/download/dev/${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}-${{ matrix.os }}.deb
         # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. 
         # See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}-${{ matrix.os }}.deb
         asset_name: ${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}-${{ matrix.os }}.deb
-        asset_content_type: application/zip
+        asset_content_type: application/x-deb
       if: matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-18.04'
   
     - name: Run Cpp Check Flawfinder  Sim C++ ( Ubuntu GCC Dev/Master )
@@ -167,6 +187,7 @@ jobs:
           git add -f site/cppcheck/*
           git commit -m "Added CPPCheck Output `date`"
       if: matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
+
     - name: Build Website Files ( Ubuntu GCC Dev/Master )
       run: |
           python scripts/site_generation.py build/clang_tidy_build_results.log build/flawfinder.log build/sim_cpp.log

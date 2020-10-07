@@ -166,6 +166,7 @@ if(PPP_USE_PCH)
 endif()
 
 include_directories("${PROJECT_SOURCE_DIR}")  # for json, must be run before include src/ subfolder
+include_directories("${PROJECT_SOURCE_DIR}/third-party")  # for Base module, not needed if Base is converted into git submodule
 if(PPP_USE_TEST)
     add_subdirectory(third-party/Catch2)
 endif()
@@ -192,6 +193,11 @@ add_subdirectory("src")
 
 ######################## data for test ###########################
 #configure_file(<input> <output> COPYONLY)
+message("============= test preparation =================== \n"
+" copy `python` source dir into `ppptest` in the building folder\n"
+" symbolic link `data` folder into build folder for testing \n"
+" run `./run_all_tests.sh` in the build folder after building \n "
+"============= end of preparation =================== \n")
 
 if(WIN32)
     message(" symbolic link may not be supported on windows 10 before 2016 without admin previledge, xcopy instead \n")
@@ -202,11 +208,7 @@ if(WIN32)
         OUTPUT_VARIABLE outVar
     )
 else()
-    message("============= test preparation =================== \n"
-            " copy `python` source dir into `ppptest` in the building folder\n"
-            " symbolic link `data` folder into build folder for testing \n"
-            " run `./run_all_tests.sh` in the build folder after building \n "
-            "============= end of preparation =================== \n")
+
     execute_process (
         COMMAND bash -c "if [ ! -s ${PROJECT_BINARY_DIR}/data ] ; then ln -s ${PROJECT_SOURCE_DIR}/data ${PROJECT_BINARY_DIR}/data ; fi"
         OUTPUT_VARIABLE outVar

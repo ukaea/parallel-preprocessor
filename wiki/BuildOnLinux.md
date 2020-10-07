@@ -138,27 +138,27 @@ yum install qt5-devel qt5-qtwebsockets-devel qt5-qtwebsockets -y
 
 2. Install OpenCASCADE 7.x
 
-2.1 opencascade 7.4 from package repository
+2.1 option 1: Install opencascade 7.4 from package repository
 For fedora 30+ since Jan 2020, there are freecad (python3) and opencascade 7.4 in repository to install
 
 ```bash
 # opencascade 7.4 package  for fedora 30+ is available  
 yum install opencascade-draw, opencascade-foundation,  opencascade-modeling,  opencascade-ocaf \
-    opencascade-visualization opencascade-devel opencascade-draw freecad -y
+    opencascade-visualization opencascade-devel freecad -y
 ```
 
-2.2 Download the opencascade source code and compile from source, if not in package repository
+2.2 Option 2: Download the opencascade source code and compile from source, if not in package repository
 
 ```bash
 ###### dependencies needed to build OpenCASCADE from source ##########
 # for OpenCASCADE, openGL is needed
 yum install tbb tbb-devel freetype freetype-devel freeimage freeimage-devel -y \
-        && yum install glew-devel SDL2-devel SDL2_image-devel glm-devel -y
+        && yum install libXmu-devel libXi-devel glew-devel SDL2-devel SDL2_image-devel glm-devel -y
 # install those below if draw module is enabled for building OpenCASCADE
 yum install tk tcl tk-devel tcl-devel -y
 
 # package name distinguish capital letter, while debian name is just  libxmu
-yum install libXmu-devel libXi-devel openmpi-devel boost-devel -y
+yum install  openmpi-devel boost-devel -y
 ```
 
 To get the latest source code from [OCCT official website](https://www.opencascade.com/), you need register (free of charge)
@@ -181,8 +181,7 @@ make install
 CMake build system is employed to simplify cross-platform development
 
 ```bash
-#git clone https://github.com/UKAEA/parallel-preprocessor.git
-git clone git@git.ccfe.ac.uk:scalable-multiphysics-framework/parallel-preprocessor.git
+git clone https://github.com/UKAEA/parallel-preprocessor.git
 git submodule update --init --recursive
 
 #git clone (outside docker is easier for this non-public repo, to avoid trouble in authentication)
@@ -221,7 +220,7 @@ docker run  -ti  -u root -w /home/user/parallel-preprocessor -v $(pwd)/parallel-
 ```
 
 Inside the docker VM, or if you have managed all dep locally, change dir into the repo folder
-`mkdir build && cd build && cmake .. && make -j4`
+`mkdir build && cd build && cmake -DPython_EXECUTABLE=$(which python3) .. && make -j4`
 
 It is a CMake project. `rm -rf build` if you want to rebuild after some change in CMakeLists.txt
 
@@ -230,7 +229,7 @@ It is a CMake project. `rm -rf build` if you want to rebuild after some change i
 
 Without installation, this software can be evaluated by running [geomPipeline.py path_to_geometry_file](./python/geomPipeline.py), after building from source.
 
-After out of source build in the `parallel-preprocessor/build` folder by `cmake .. && make -j6`, change directory to `cd parallel-preprocessor/build/ppptest`, run `python3 geomPipeline.py  path-to-your-geometry.stp`. User can user absolute or relative path for the input geometry file.
+After out of source build in the `parallel-preprocessor/build` folder by `cmake -DPython_EXECUTABLE=$(which python3) .. && make -j6`, change directory to `cd parallel-preprocessor/build/ppptest`, run `python3 geomPipeline.py  path-to-your-geometry.stp`. User can user absolute or relative path for the input geometry file.
 
 Note: change directory to the folder containing geomPipeline.py is not necessary, if user has put full path of `parallel-preprocessor/build/bin/` folder into user path. For example, by editing PATH varialbe in `~/.bashrc` on Ubuntu, it will just work as installed program.
 

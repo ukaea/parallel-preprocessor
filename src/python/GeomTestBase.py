@@ -12,7 +12,9 @@ import json
 import unittest
 
 ######################################################
-from geomPipeline import ppp_start_pipeline
+#from geomPipeline import ppp_start_pipeline
+
+from pppStartPipeline import ppp_start_pipeline
 from detectFreeCAD import append_freecad_mod_path
 
 append_freecad_mod_path()
@@ -36,9 +38,12 @@ default_geometry_filename = (
 ######################### utilities ############################
 
 
-def generate_config(inf, outf, action="", default_config_file_name="config.json"):
+def generate_config(inf, outf, action="imprint", default_config_file_name="config.json"):
     # generate a configuration without running it
-    os.system("geomPipeline.py {} {} --config".format(action, inf))
+
+    this_folder = os.path.dirname(os.path.abspath(__file__))
+    print(this_folder + os.path.sep + "geomPipeline.py {} {} --config".format(action, inf))
+    os.system(this_folder + os.path.sep + "geomPipeline.py {} {} --config".format(action, inf))
     jf = open(default_config_file_name, "r", encoding="utf-8")
     config_file_content = json.load(jf)
     config_file_content["readers"][0]["dataFileName"] = inf

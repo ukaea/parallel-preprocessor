@@ -18,13 +18,14 @@ fi
 # # this may have been done in cmake, but fine to redo it
 if [ -d ppptest ]; then rm -rf ppptest; fi
 mkdir ppptest && cd ppptest
-cp ../../python/*.py ./
+cp ../../src/python/*.py ./
 
 echo "start unit test in the folder:$(pwd)"
 ../bin/pppBaseTests
-../bin/pppAppTests
+../bin/pppParallelTests
+#../bin/pppAppTests  # PPP::CommandLineProcessor  is not merged 
 ../bin/pppGeomTests
-#../bin/pppParallelTests
+
 
 echo "start python tests in the folder:$(pwd)"
 # this for loop is support by bash only, not sh
