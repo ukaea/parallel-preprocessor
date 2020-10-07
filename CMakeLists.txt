@@ -91,7 +91,6 @@ message(STATUS "Clang Tidy: ${CLANG_TIDY}")
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Code Coverage: ${CODE_COVERAGE}")
 message("------------------------------------")
-
 if(UNIX)
     if(CLANG_TIDY)
         if(APPLE)
@@ -121,7 +120,7 @@ if(PPP_DEV_MODE)
     message(STATUS "the developer mode can turn on more options than CI")
     set(PPP_USE_GUI OFF)
     set(PPP_USE_WEB OFF)
-    set(CMAKE_BUILD_TYPE Debug)  ## almost no difference in performance
+    #set(CMAKE_BUILD_TYPE Debug)  ## almost no difference in performance
     message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}, CMAKE_CXX_FLAGS_DEBUG = ${CMAKE_CXX_FLAGS_DEBUG}")
 endif()
 

@@ -1,5 +1,6 @@
 
 ![.github/workflows/github-ci.yml](https://github.com/ukaea/parallel-preprocessor/workflows/.github/workflows/github-ci.yml/badge.svg)
+
 **Parallel-preprocessor: a prototype of parallel CAE geometry preprocessing framework**
 
 by Qingfeng Xia  
@@ -17,7 +18,13 @@ Dr Andrew Davis of UKAEA, has contributed his technical insight,  test geometrie
 
 Although this software aims to be a framework for more CAE/CAE preprocessing operatons, currently, this software provides only multi-threading geometry imprint and collision check, via command line user interface. This software has demonstrated faster and more controllable geometry imprinting on large geometry assemblies (10k+ parts) that is not possible on most existing CAD tools.
 
-Note: This is not a production quality software, but a prototype to demonstrate the potential of accelereating CAE preprocessing by massive-parallel on HPC. We would like to apply more good practice in research software engineering, once resource is available.
+Technical backgroud will be added later
+
+## Disclaimer
+
+This is **NOT** a production quality software, but a prototype to demonstrate the potential of accelereating CAE preprocessing by massive-parallel on HPC. We would like to apply more good practice in research software engineering, once resource is available.
+
+According to the open source [license](./LICENSE),  **there is no warranty for this free library**
 
 ## Platforms supported
 
@@ -31,13 +38,13 @@ This project has been designed to be cross-platform, but only Linux is supported
 
 + Windows 10 users are encouraged to use WSL with one of the supported Linux distributions, while guide to compile on Windows has been added.
 
-+ MacOS should be possible through homebrew, but compiling instruction is not provided.
++ MacOS should be possible through homebrew, and compiling instruction has been provided.
 
 Conda package and Linux native package for Ubuntu LTS may be available in the future, see [packaging.md](wiki/Packaging.md)
 
 ## Installation guide
 
-### Binary package download
+### Download binary package
 Ubuntu deb package and fedora 30+ rpm package, conda packages for windows, it should be available to download on **github Release** for this public github. 
 **Be careful of python version it targets:  system-wide python or conda python**
 
@@ -47,7 +54,9 @@ Ubuntu deb package and fedora 30+ rpm package, conda packages for windows, it sh
 ### Compile from source
 [wiki/BuildOnLinux.md](wiki/BuildOnLinux.md): Guide to install dependencies and compile on Linux (Centos, Fedora, Ubuntu), build instructions.
 
-[wiki/BuildOnWindows.md](wiki/BuildOnWindows.md): Guide to install dependencies via conda, and compile from source on windows
+[wiki/BuildOnWindows.md](wiki/BuildOnWindows.md): Guide to install dependencies via conda, and compile from source on Windows.
+
+[wiki/BuildOnMacOS.md](wiki/BuildOnMacOS.md): Guide to install dependencies via Homebrew, and compile from source on MacOS.
 
 [wiki/CondaBuildGuide.md](wiki/CondaBuildGuide.md): Guide and notes to build binary conda packages for windows and Linux.
 
@@ -97,6 +106,8 @@ License consideration: LGPL v2.1 instead of LGPL v3, because all relevant projec
 ## Contribution
 
 Please submit issue and fix pull request from this repository.
+
+Note:  the main branch of this repo is `main` not `master`. 
 
 ## Acknowledgement
 
