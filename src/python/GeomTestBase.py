@@ -41,7 +41,7 @@ default_geometry_filename = (
 def generate_config(inf, outf, action="imprint", default_config_file_name="config.json"):
     # generate a configuration without running it
 
-    this_geomPipeline = os.path.dirname(os.path.abspath(__file__)) os.path.sep + "geomPipeline.py"
+    this_geomPipeline = os.path.dirname(os.path.abspath(__file__)) + os.path.sep + "geomPipeline.py"
     #print("geomPipeline.py {} {} --config".format(action, inf))
     if not os.path.exists(this_geomPipeline):
         this_geomPipeline = "geomPipeline.py"

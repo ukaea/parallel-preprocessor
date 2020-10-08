@@ -1,0 +1,92 @@
+name: parallel-preprocessor-docker
+
+on: [push, pull_request]
+
+env:
+  PROJECT_NAME: "parallel-preprocessor"
+  PROJECT_VERSION: "0.3-dev"
+  MODULE_FOLDERS: "./src/"
+
+jobs:
+  ppp-fedora-docker-ci:
+    name: 'build ${{ matrix.os }} package in docker'
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        include:
+          - os: 'fedora-32'
+            compiler: gcc
+            compilerpp: g++
+            package_suffix: 'rpm'
+            docker-image: "fedora:32"
+          - os: 'fedora-31'
+            compiler: gcc
+            compilerpp: g++
+            package_suffix: 'rpm'
+            docker-image: "fedora:31"
+          # - os: 'centos-8'
+          #   compiler: gcc
+          #   compilerpp: g++
+          #   package_suffix: 'rpm'
+    container:
+      image: fedora:32
+    steps:
+    - name: 'install git'
+      id: 'install-git'
+      run: |
+        yum install g++ gcc cmake make rpm-build git wget copr-cli -y && yum update -y
+    
+    - uses: actions/checkout@v2
+    # GitHub's actions/checkout requires git version 2.18 or later, if run inside docker
+    #- name: Checkout submodules
+    #  uses: textbook/git-checkout-submodule-action@master
+
+    - name: 'install dependencies'
+      id: 'install-dep'
+      run: |
+        yum install tbb tbb-devel freetype freetype-devel freeimage freeimage-devel  \
+                    glew-devel SDL2-devel SDL2_image-devel glm-devel libXmu-devel libXi-devel \
+                    python3 python3-devel boost-devel -y
+        yum install opencascade-foundation  opencascade-modeling opencascade-ocaf \
+            opencascade-visualization opencascade-devel -y
+
+
+    - name: 'build package'
+      id: 'build-package'
+      working-directory: ${{ github.workspace }}
+      env:
+          CC: ${{ matrix.compiler }}
+          CXX: ${{ matrix.compilerpp }}
+      run: |
+        echo "git version: $(git --version), $PWD, $(ls -al .)"
+        git submodule update --init --recursive  # use an action instead
+        mkdir build
+        cd build
+        cmake  -DCMAKE_BUILD_TYPE=Release -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..
+        make 2>&1 | tee clang_tidy_build_results.log
+        make package
+        ls *.${{ matrix.package_suffix }}
+        # copy the package to $GITHUB_WORKSPACE, pointer to host path, is not possible, while upload from ${{ github.workspace }} is fine
+        mv *.${{ matrix.package_suffix }} ${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}_${{ matrix.os }}.${{ matrix.package_suffix }}
+
+    ###################  testing ##########################
+    - name: Run unit tests
+      working-directory: ${{ github.workspace }}/build
+      run: |
+       echo "start unit test in the folder:$(pwd)"
+       if [ ! -f "run_all_tests.sh" ]; then cp ../scripts/run_all_tests.sh ./ ; fi
+       sh run_all_tests.sh
+      if: always()  # tmp skip this step if failed
+  
+    # those release asset filename (is created manually before running this action)
+    - name: Upload binary package to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ github.workspace }}/build/${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}_${{ matrix.os }}.${{ matrix.package_suffix }}
+        asset_name: ${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}_${{ matrix.os }}.${{ matrix.package_suffix }}
+        tag: dev
+        overwrite: true
+        prerelease: true
+      if: always()
+  
