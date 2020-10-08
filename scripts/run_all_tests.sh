@@ -18,18 +18,22 @@ fi
 # # this may have been done in cmake, but fine to redo it
 if [ -d ppptest ]; then rm -rf ppptest; fi
 mkdir ppptest && cd ppptest
-cp ../../python/*.py ./
+cp ../../src/python/*.py ./
 
 echo "start unit test in the folder:$(pwd)"
 ../bin/pppBaseTests
-../bin/pppAppTests
+../bin/pppParallelTests
+../bin/pppAppTests  
 ../bin/pppGeomTests
-#../bin/pppParallelTests
+
 
 echo "start python tests in the folder:$(pwd)"
 # this for loop is support by bash only, not sh
-for ((i=1;i<=10;i++)) ; do echo "sample_file$i.txt";  done > sampleManifest.txt
-python3 pppPipelineController.py sampleManifest.txt
+#for ((i=1;i<=10;i++)) ; do echo "sample_file$i.txt";  done > sampleManifest.txt
+# this works for sh
+for i in `seq 1 10` ; do echo "sample_file$i.txt";  done > sampleManifest.txt
+# PPP::CommandLineProcessor  is not merged 
+#python3 pppPipelineController.py sampleManifest.txt
 
 python3 geomPipeline.py search ../data/test_geometry/test_geometry.stp --verbosity WARNING
 if [ ! $? -eq 0 ]

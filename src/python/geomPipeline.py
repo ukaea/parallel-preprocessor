@@ -19,8 +19,8 @@ geomPipeline.py merge  geometry_file --thread-count 6
 """
 
 USAGE = """
-geomPipeline.py input_filename action[imprint|check|detect|decompose|...]
-see more detailed by `geomPipeline.py -h`
+geomPipeline.py  action[imprint|check|detect|decompose|...] input_filename
+see more details and optional arguments by `geomPipeline.py -h`
 """
 
 import sys

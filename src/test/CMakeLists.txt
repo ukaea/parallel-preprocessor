@@ -35,10 +35,6 @@ install(TARGETS UniqueIdValidator
 RUNTIME DESTINATION bin
 COMPONENT applications)
 
-######################################################
-if (PPP_USE_GEOM)
-  add_subdirectory(GeomTests)
-endif()
 
 ######################### test registration #####################
 #  using contrib/Catch.cmake, ParseAndAddCatchTests.cmake

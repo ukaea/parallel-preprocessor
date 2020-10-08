@@ -46,10 +46,10 @@ Conda package and Linux native package for Ubuntu LTS may be available in the fu
 
 ### Download binary package
 Ubuntu deb package and fedora 30+ rpm package, conda packages for windows, it should be available to download on **github Release** for this public github. 
-**Be careful of python version it targets:  system-wide python or conda python**
+**Be careful of python version it targets is system-wide python3**
 
- [Download parallel-preprocessor-0.3-dev_ubuntu-18.04.deb](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3_ubuntu-18.04.deb)
- [Download parallel-preprocessor-0.3-dev_ubuntu-20.04.deb](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-20.04.deb)
+ [Download parallel-preprocessor for ubuntu version 18.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3_ubuntu-18.04.deb)
+ [Download parallel-preprocessor for ubuntu version 20.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-20.04.deb)
 
 ### Compile from source
 [wiki/BuildOnLinux.md](wiki/BuildOnLinux.md): Guide to install dependencies and compile on Linux (Centos, Fedora, Ubuntu), build instructions.
