@@ -1,4 +1,4 @@
-# Linux Compiling Guide
+# Build on Linux
 
 ## Install Dependencies
 

@@ -1,4 +1,4 @@
-## Build Parallel Preprocessor on Windows 
+## Build on Windows 
 
 Note: Windows support is quite limited (only 64bit windows10), tested 
 

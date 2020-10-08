@@ -1,4 +1,4 @@
-## Port source code to Windows platform
+## Port to Windows
 
 This document records some notes on porting parallel-preprocessor to Windows 10
 

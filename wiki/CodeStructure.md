@@ -1,5 +1,5 @@
 
-## Module Structure (source code organization)
+## Source Code Structure
 
 This software has modular design to simplify dependency and avoid code duplication. For example, PPP module depends on C++ standard library and TBB/MPI only, all domain specific module depends on PPP and domain related third-party library. Module (C++ namespace) has the same name as the subfolder.
 

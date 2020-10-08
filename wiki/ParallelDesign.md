@@ -1,14 +1,12 @@
-# Parallel design
+# Parallel Design
 
-### Workflow Topology
+## Workflow Topology
 
-Currenlty only linear pipeline (single-way linear) is supported. 
-
-Apache NIFI,  Tensorflow support more complicated graph dataflow. 
+Currenlty only linear pipeline (single-way linear) is supported, more complicated graph dataflow as in Apache NIFI,  Tensorflow, has not been implemented. 
 
 https://nifi.apache.org/docs/nifi-docs/html/user-guide.html#User_Interface
 
-`Cpp-Taskflow` library is by far a faster, more expressive, and easier for drop-in integration for the single-way linear task programming 
+`Cpp-Taskflow` library is by far a faster, more expressive, and easier for drop-in integration for the single-way linear task programming.
 
 ## Executor
 Currently, only CPU device is supported, althoug GPU acceleraton will be considered in the future.  It is expected the Processor should has a characteristics of  ` enum DevicePreference {CPU, GPU}`
