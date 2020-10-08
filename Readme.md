@@ -12,7 +12,7 @@ Copyright UKAEA, 2019~2020
 Dr Andrew Davis of UKAEA, has contributed his technical insight,  test geometries and other support to this software project. Also thank to my colleagues Dr John Nonweiler, Dr Jonathon Shimwell, etc.  for testing and reviewing this software.
 
 
-**doxygen generated API documentation** To be added later
+[**doxygen generated API documentation with wiki pages**](https://ukaea.github.io/parallel-preprocessor/site/doxygen-docs.html)
 
 ## Overview
 
@@ -45,8 +45,12 @@ Conda package and Linux native package for Ubuntu LTS may be available in the fu
 ## Installation guide
 
 ### Download binary package
-Ubuntu deb package and fedora 30+ rpm package, conda packages for windows, it should be available to download on **github Release** for this public github. 
-**Be careful of python version it targets is system-wide python3**
+Ubuntu deb package and fedora 30+ rpm package, conda packages for windows, it should be available to download on **github Release** for this public github. The unstable package build from the latest code on the main branch can be downloaded here <https://github.com/ukaea/parallel-preprocessor/releases/tag/dev>
+
+**Note: choose the correct operation system, and the package is targeting at system-wide python3**
+
+The package file has the name pattern: `parallel-preprocessor-<this_software_version>-dev_<OS name>-<OS version>.<package_suffix>`
+If your OS is not supported, you need to compile it by yourself,  there is documentation for installation dependency and build for all major platforms.
 
  [Download parallel-preprocessor for ubuntu version 18.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3_ubuntu-18.04.deb)
  [Download parallel-preprocessor for ubuntu version 20.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-20.04.deb)

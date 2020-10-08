@@ -1,4 +1,4 @@
-## Build Parallel Preprocessor by Anaconda 
+## Build for Anaconda 
 
 conda package has both c++ binary and python wrapper installed, just like compiling from source by cmake.
 

@@ -1,4 +1,4 @@
-## Build Parallel-Preprocessor on MacOS
+## Build on MacOS
 
 MacOS is a Unix-like system with POSIX interface, which makes software porting from Linux straight fowards. 
 

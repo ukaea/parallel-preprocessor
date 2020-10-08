@@ -1,4 +1,4 @@
-## Get started
+## Get Started
 
 ### Quick start
 The command line `geomPipeline.py your_geometry_file_path` is the starting point for users, just replace *your_geometry_file_path* by your geometry. 
