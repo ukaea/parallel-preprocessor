@@ -1,5 +1,5 @@
 
-![.github/workflows/github-ci.yml](https://github.com/ukaea/parallel-preprocessor/workflows/.github/workflows/github-ci.yml/badge.svg)
+![.github/workflows/github-ci.yml](https://github.com/ukaea/parallel-preprocessor/workflows/parallel-preprocessor/badge.svg)
 
 **Parallel-preprocessor: a prototype of parallel CAE geometry preprocessing framework**
 
