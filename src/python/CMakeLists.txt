@@ -82,10 +82,11 @@ if(pybind11_FOUND)
         "FreeCADParser.py"
         "detectFreeCAD.py"
         "geomPipeline.py"
+        "pppStartPipeline.py"
         "pppPipelineController.py"
+        "pppMonitorProgress.py"
         "analyzeProcessedResult.py"
         "analyzeDumpFiles.py"
-        "pppMonitorProgress.py"
         # python test_*.py are not included
     )
 

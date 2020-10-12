@@ -295,7 +295,9 @@ namespace PPP
 
 #if PPP_USE_THREADING
         size_t nCores = myConfig["parallelism"]["threadsOnNode"];
-        auto threadPool = std::make_shared<ThreadPoolType>();
+        /// NOTE: tbb::task_group does not support std::make_shared<>() on clang
+        auto threadPool = std::shared_ptr<ThreadPoolType>(new ThreadPoolType());
+
         if (data->itemCount() < nCores)
         {
             VLOG_F(LOGLEVEL_DEBUG, "item count is smaller than thread count!, is this a test data?");

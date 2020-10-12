@@ -1,6 +1,7 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # copyright  Qingfeng Xia
-# UKAEA internal usage only
+
 
 from __future__ import print_function, division
 import sys

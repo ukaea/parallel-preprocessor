@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
 this script parse FreeCAD. FCstd file format without using FreeCAD lib
 it does not use any third-party library, so any python3 will work

@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # copyright note: this is a personal contribution from Qingfeng Xia
@@ -17,6 +17,9 @@ import json
 import copy
 from collections import OrderedDict
 from multiprocessing import cpu_count
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import argparse
 import shutil
 

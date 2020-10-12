@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
 this enable test for the cases: test after package installed or test in the build folder
 using ppp module is importable, otherwise use the executable: geomPipeline

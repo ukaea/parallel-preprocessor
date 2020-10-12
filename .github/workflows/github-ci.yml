@@ -26,6 +26,10 @@ jobs:
               comiler: gcc
               comilerpp: g++
               package_suffix: 'deb'
+            - os: 'macos-latest'
+              comiler: gcc
+              comilerpp: g++
+              package_suffix: 'dmg'
     steps:
     - uses: actions/checkout@v2
 
@@ -104,15 +108,16 @@ jobs:
         git submodule update --init --recursive
         mkdir build
         cd build
-        CC=gcc-9 CXX=g++-9 cmake -DCMAKE_BUILD_NAME=Release ..
+        cmake -DCMAKE_BUILD_NAME=Release ..
         make 2>&1 | tee clang_tidy_build_results.log
       if: matrix.os == 'macos-latest'
 
-    - name: package and installation on MacOS
+    - name: package on MacOS
       working-directory: ${{ github.workspace }}/build
       run: |
         echo "make package  in the folder $(pwd)"
         make package
+        mv *.${{ matrix.package_suffix }} ${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}_${{ matrix.os }}.${{ matrix.package_suffix }}
       if: matrix.os == 'macos-latest'
 
     ###################  testing ##########################
@@ -124,7 +129,8 @@ jobs:
        sh run_all_tests.sh
       if: always()  # tmp skip this step if failed
 
-    # those release asset filename (is created mannually before running this action)
+    ###################  upload package ##########################
+    # those release asset filename endpoint (not necessarily created before this upload)
     - name: Upload binary package to release
       uses: svenstaro/upload-release-action@v2
       with:
@@ -134,7 +140,7 @@ jobs:
         tag: dev
         overwrite: true
         prerelease: true
-      if: always()
+      if: github.ref == 'refs/heads/main'  # only upload package on main branch, not PR, forks, which has no write access
   
     ########################################## only for Ubuntu debug release ############################################
     - name: Run Cpp Check Flawfinder  Sim C++ ( Ubuntu GCC Dev/Master )
