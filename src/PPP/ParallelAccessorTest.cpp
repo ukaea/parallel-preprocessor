@@ -42,7 +42,8 @@ namespace PPP
         auto nCores = std::thread::hardware_concurrency();
         auto batchSize = 2;
 
-        auto threadPool = std::make_shared<ThreadPoolType>();
+        /// NOTE: tbb::task_group does not support std::make_shared<>() on clang
+        auto threadPool = std::shared_ptr<ThreadPoolType>(new ThreadPoolType());
         auto te = std::make_shared<ThreadPoolExecutor>(p, nCores, threadPool);
         if (isCoupled)
         {
