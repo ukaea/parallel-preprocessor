@@ -155,6 +155,21 @@ then run this action to update the package on each push.
       if: always()
 ```
 
+### Package upload privilege
+
+Error: Resource not accessible by integration
+
+https://github.com/ukaea/parallel-preprocessor/issues/7
+
+Only users in the admin group may have the write access to the repo ( e.g. upload packages to release points).
+Users sent PR will fail, leading to CI check failure.
+
+fix issue#7 by disable uploading package except main branch
+`if: github.ref == 'refs/heads/main'  # only upload package on main branch, not PR`
+
+Meanwhile developer working with a forked repo should have the write access to the release endpoint in the fork repo.
+
+
 ### Binary conda package (under-testing) for all platforms
 
 Conda package building also relies on `install(target ...)` cmake command.

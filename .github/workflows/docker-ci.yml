@@ -76,7 +76,7 @@ jobs:
        echo "start unit test in the folder:$(pwd)"
        if [ ! -f "run_all_tests.sh" ]; then cp ../scripts/run_all_tests.sh ./ ; fi
        sh run_all_tests.sh
-      if: always()  # tmp skip this step if failed
+      if: always()    # tmp skip this step if failed
   
     # those release asset filename (is created manually before running this action)
     - name: Upload binary package to release
@@ -88,5 +88,5 @@ jobs:
         tag: dev
         overwrite: true
         prerelease: true
-      if: always()
+      if: github.ref == 'refs/heads/main'  # only upload package on main branch, not PR, forks, which has no write access
   
