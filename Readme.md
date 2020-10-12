@@ -1,5 +1,7 @@
 
-![.github/workflows/github-ci.yml](https://github.com/ukaea/parallel-preprocessor/workflows/.github/workflows/github-ci.yml/badge.svg)
+
+![Ubuntu and MacOS CI](https://github.com/ukaea/parallel-preprocessor/workflows/parallel-preprocessor/badge.svg)
+![Fedora CI](https://github.com/ukaea/parallel-preprocessor/workflows/parallel-preprocessor-docker/badge.svg)
 
 **Parallel-preprocessor: a prototype of parallel CAE geometry preprocessing framework**
 
