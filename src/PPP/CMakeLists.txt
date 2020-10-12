@@ -36,7 +36,11 @@ else()
     target_compile_options(MyApp PRIVATE  -Wall -Wextra -flto -Wconversion -Wsuggest-override)
 
     if((${CMAKE_CXX_STANDARD} GREATER 17)  OR  (${CMAKE_CXX_STANDARD} EQUAL 17))
-        target_link_libraries(MyApp stdc++fs)
+        if(NOT APPLE)
+            if(GNUC)
+                target_link_libraries(MyApp stdc++fs)  # this seems only for Linux and GCC
+            endif()
+        endif()
     else()
         find_package(Boost REQUIRED COMPONENTS
                     filesystem)
