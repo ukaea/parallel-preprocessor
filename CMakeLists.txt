@@ -37,9 +37,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 if((${CMAKE_CXX_STANDARD} GREATER 17)  OR  (${CMAKE_CXX_STANDARD} EQUAL 17))
-    if(GNUC)
-        link_libraries(stdc++fs)  # this seems only for GCC compiler
-    
+    if(NOT APPLE)
+        if(GNUC)
+            link_libraries(stdc++fs)  # this seems only for GCC compiler
+        endif()
     endif()
 else()
     if(OFF)  # windows conda install has problem of vc version
@@ -270,7 +271,7 @@ if (UNIX)
         set(CPACK_GENERATOR "RPM")
         set(CPACK_PACKAGE_NAME "parallel-preprocessor_${CMAKE_OS_ID}-${CMAKE_OS_VERSION}")
     endif()
-    if (${CMAKE_OS_NAME} STREQUAL "OSX")
+    if (APPLE)
         set(CPACK_GENERATOR "DRAGNDROP")
         set(CPACK_PACKAGE_NAME "parallel-preprocessor_${CMAKE_OS_ID}-${CMAKE_OS_VERSION}")
     endif()

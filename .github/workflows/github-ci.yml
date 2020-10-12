@@ -26,6 +26,10 @@ jobs:
               comiler: gcc
               comilerpp: g++
               package_suffix: 'deb'
+            - os: 'macos-latest'
+              comiler: gcc
+              comilerpp: g++
+              package_suffix: 'dmg'
     steps:
     - uses: actions/checkout@v2
 
@@ -104,11 +108,11 @@ jobs:
         git submodule update --init --recursive
         mkdir build
         cd build
-        CC=gcc-9 CXX=g++-9 cmake -DCMAKE_BUILD_NAME=Release ..
+        cmake -DCMAKE_BUILD_NAME=Release ..
         make 2>&1 | tee clang_tidy_build_results.log
       if: matrix.os == 'macos-latest'
 
-    - name: package and installation on MacOS
+    - name: package on MacOS
       working-directory: ${{ github.workspace }}/build
       run: |
         echo "make package  in the folder $(pwd)"
