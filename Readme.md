@@ -52,7 +52,7 @@ Ubuntu deb package and fedora 30+ rpm package, conda packages for windows, it sh
 The package file has the name pattern: `parallel-preprocessor-<this_software_version>-dev_<OS name>-<OS version>.<package_suffix>`
 If your OS is not supported, you need to compile it by yourself,  there is documentation for installation dependency and build for all major platforms.
 
- [Download parallel-preprocessor for ubuntu version 18.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3_ubuntu-18.04.deb)
+ [Download parallel-preprocessor for ubuntu version 18.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-18.04.deb)
  [Download parallel-preprocessor for ubuntu version 20.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-20.04.deb)
 
 ### Compile from source
