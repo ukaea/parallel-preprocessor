@@ -117,6 +117,7 @@ jobs:
       run: |
         echo "make package  in the folder $(pwd)"
         make package
+        mv *.${{ matrix.package_suffix }} ${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}_${{ matrix.os }}.${{ matrix.package_suffix }}
       if: matrix.os == 'macos-latest'
 
     ###################  testing ##########################
@@ -128,7 +129,7 @@ jobs:
        sh run_all_tests.sh
       if: always()  # tmp skip this step if failed
 
-    # those release asset filename (is created mannually before running this action)
+    # those release asset filename (is created manually before running this action)
     - name: Upload binary package to release
       uses: svenstaro/upload-release-action@v2
       with:
