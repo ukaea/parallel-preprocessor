@@ -26,10 +26,10 @@ jobs:
               comiler: gcc
               comilerpp: g++
               package_suffix: 'deb'
-            - os: 'macos-latest'
-              comiler: gcc
-              comilerpp: g++
-              package_suffix: 'dmg'
+            # - os: 'macos-latest'
+            #   comiler: gcc
+            #   comilerpp: g++
+            #   package_suffix: 'dmg'
     steps:
     - uses: actions/checkout@v2
 
@@ -62,7 +62,7 @@ jobs:
         git submodule update --init --recursive
         mkdir build
         cd build
-        cmake  -DCODE_COVERAGE=ON -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..
+        cmake  -DCODE_COVERAGE=ON -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..  -Wno-dev
         make 2>&1 | tee clang_tidy_build_results.log
         # packup source code into zip and show in release : https://github.com/ukaea/parallel-preprocessor/archive/dev.zip
       if:  matrix.os == 'ubuntu-20.04'
@@ -75,7 +75,7 @@ jobs:
         git submodule update --init --recursive
         mkdir build
         cd build
-        cmake  -DCMAKE_BUILD_TYPE=Release -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..
+        cmake  -DCMAKE_BUILD_TYPE=Release -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..  -Wno-dev
         make 2>&1 | tee clang_tidy_build_results.log
       if:  matrix.os == 'ubuntu-18.04'
 
@@ -108,7 +108,7 @@ jobs:
         git submodule update --init --recursive
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_NAME=Release ..
+        cmake -DCMAKE_BUILD_NAME=Release ..  -Wno-dev
         make 2>&1 | tee clang_tidy_build_results.log
       if: matrix.os == 'macos-latest'
 
