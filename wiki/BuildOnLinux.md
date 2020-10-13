@@ -2,7 +2,7 @@
 
 ## Install Dependencies
 
-Note **Ubuntu and Fedora docker images with all dependencies are ready for quick testing.**
+Note **Ubuntu and Fedora Dockerfile with all dependencies are ready for quick testing.**
 
 ### Install from the pre-built binary package 
 
@@ -48,17 +48,34 @@ There are some third-party libraries already integrated into the source code tre
 
 ### Build from source
 
-Tested compiler: g++ 7.x, g++8.x, clang 6 (needs CMake 3.13+ )
+Tested compiler: g++ 7.x, g++8.x, clang 6 (needs CMake 3.13+ ) on ubuntu 18.04
 
-To use clang toolchain, use the following cmake command option.
+To use clang tool chain, `-T llvm` cmake command option may be needed to specify the linker app: lld-link
 ```bash
-cmake -T llvm 
-# llvm-10, to specify the linker app: lld-link
+# ubuntu 18.04, needs `-T llvm`
+cmake -T llvm ..  -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) -DCMAKE_BUILD_TYPE=Release
+
+# ubuntu 20.04, clang++ is v10,  pybind11 must be v2.6 to work
+CXX=clang++ cmake ..  -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) -DCMAKE_BUILD_TYPE=Release
+
 ```
+
+clang++ shares header files and libstdc++.so with G++
+
+Error with pybind11 when compiled by clang++10
+
+```
+/usr/include/pybind11/pybind11.h:1010:9: error: no matching function for call to 'operator delete'
+        ::operator delete(p, s);
+        ^~~~~~~~~~~~~~~~~
+
+```
+
+
 
 ### Method 1: building on local Linux
 
-####  Ubuntu 18.04 and 20.04
+####  Ubuntu 18.04 and 20.04, Debian 10
 
 The dependency is similar as Ubuntu 18.04, except OpenCASCADE is not installed from FreeCAD PPA, but Ubuntu official repository (version 7.3.3). 
 
@@ -84,6 +101,10 @@ if [ "$DISTRIB_CODENAME" == "focal" ]; then
 echo "libocct 7.3 can be installed from official repo"
 fi
 
+if [ "$DISTRIB_CODENAME" == "buster" ]; then
+echo "libocct 7.4 can be installed from official Debian repo"
+fi
+
 sudo apt-get install libocct*-dev occt*
 sudo apt-get install python3-dev libtbb-dev
 
@@ -95,7 +116,7 @@ sudo apt-get install libboost-dev
 
 # Qt interface,  see the gitlab CI scrypt for the most updated 
 
-#pybind11 has been added as a submodule, there is no need to install
+# pybind11 will be download if not found on system, there is no need to install
 #if you can prefer a system-wide install, uncomment the following line
 # sudo apt-get install python3-pybind11 pybind11-dev
 
@@ -176,7 +197,7 @@ make install
 # by default install to the prefix: /usr/local/
 ```
 
-### Compile parallel-preprocessor
+## Compile parallel-preprocessor
 
 CMake build system is employed to simplify cross-platform development
 
@@ -235,7 +256,7 @@ Note: change directory to the folder containing geomPipeline.py is not necessary
 
 #### add `bin` in the `build folder` to the user path
 
-Just append the `bin`folder to user path in `~/.bashrc`, that is all.  you should be able to imprint geometry by `geomPipeline.py  input_geometry_path`.
+Just append the `bin` folder to user `path` in `~/.bashrc`, that is all.  you should be able to imprint geometry by `geomPipeline.py  input_geometry_path`.   And also append `build/lib` to `LD_LIBRARY_PATH`
 
 This is the recommended way in this development stage, then it is easier to pull and build the latest source. There is no need for super user privilege.
 

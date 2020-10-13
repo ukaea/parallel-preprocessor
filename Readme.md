@@ -32,31 +32,40 @@ According to the open source [license](./LICENSE),  **there is no warranty for t
 
 This project has been designed to be cross-platform, but only Linux is supported as the baseline platform.
 
-+ Ubuntu as the primary/baseline development platform, with deb binary package generated 
++ Ubuntu latest LTS as the primary/baseline development platform, with deb binary package generated 
+    - Debian package should be achievable, since OpenCASCADE are available in official repository
 
-+ Fedora, Centos can compile ppp from source, with OpenCascade 7.x source code or copr package.
++ Fedora 30+  with OpenCascade 7.x package available from official repository, with rpm binary package generated.
 
-+ Centos8 should work without much effort; Centos7 software stack is outdated, using docker/singularity instead.
++ Compiling from source code for other Linux platforms is straight-forward,  driven by cmake and cpack, guidance provided. 
+    - Centos8 should work without much effort, but OpenCASCADE must be compiled from source at first.
+    - Centos7 software stack is outdated for compiler and cmake , using docker/singularity instead.
 
 + Windows 10 users are encouraged to use WSL with one of the supported Linux distributions, while guide to compile on Windows has been added.
 
-+ MacOS should be possible through homebrew, and compiling instruction has been provided.
++ MacOS compiling and packaging is done via homebrew, DragNDrop binary package is available.
 
 Conda package and Linux native package for Ubuntu LTS may be available in the future, see [packaging.md](wiki/Packaging.md)
 
 ## Installation guide
 
-### Download binary package
+**Note: user must install runtime dependencies (TBB, OpenCASCADE, etc, see Compile guide wiki pages for each platform) then install the downloaded binary package. Hint: if user have freecad installed, then all dependencies should have installed**
+
+### Download (x86_64 architecture) binary packages
 Ubuntu deb package and fedora 30+ rpm package, conda packages for windows, it should be available to download on **github Release** for this public github. The unstable package build from the latest code on the main branch can be downloaded here <https://github.com/ukaea/parallel-preprocessor/releases/tag/dev>
 
 **Note: choose the correct operation system, and the package is targeting at system-wide python3**
 
-The package file has the name pattern: `parallel-preprocessor-<this_software_version>-dev_<OS name>-<OS version>.<package_suffix>`
-If your OS is not supported, you need to compile it by yourself,  there is documentation for installation dependency and build for all major platforms.
+The package file has the name pattern: `parallel-preprocessor-<this_software_version>-dev_<OS name>-<OS version>.<package_suffix>` If your OS is not supported, you need to compile it by yourself,  there is documentation for installation dependency and build for all major platforms.
 
+`apt remove parallel-preprocessor`
+`dpkg -i parallel-preprocessor*.deb`
  [Download parallel-preprocessor for ubuntu version 18.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-18.04.deb)
 
  [Download parallel-preprocessor for ubuntu version 20.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-20.04.deb)
+
+[Download parallel-preprocessor for debian version 10](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_debian-10.deb)
+
 
  [Download parallel-preprocessor for fedora version 31](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_fedora-31.rpm)
 
@@ -64,6 +73,8 @@ If your OS is not supported, you need to compile it by yourself,  there is docum
 
  Coming soon: 
  [Download parallel-preprocessor for MacOS 10.15](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_macos-latest.dmg)
+
+ Coming later:   Conda package for Windows 10.
 
 ### Compile from source
 [wiki/BuildOnLinux.md](wiki/BuildOnLinux.md): Guide to install dependencies and compile on Linux (Centos, Fedora, Ubuntu), build instructions.

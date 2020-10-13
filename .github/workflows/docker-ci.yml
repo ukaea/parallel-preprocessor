@@ -28,28 +28,39 @@ jobs:
           #   compiler: gcc
           #   compilerpp: g++
           #   package_suffix: 'rpm'
+          #   docker-image: "centos:8"
+          - os: 'debian-10'
+            compiler: gcc
+            compilerpp: g++
+            package_suffix: 'deb'
+            docker-image: "debian:10"  # version 10 buster
     container:
-      image: fedora:32
+      image: ${{ matrix.docker-image }}
     steps:
-    - name: 'install git'
-      id: 'install-git'
+    - name: 'install dependencies on fedora'
+      id: 'install-dep-fedora'
       run: |
         yum install g++ gcc cmake make rpm-build git wget copr-cli -y && yum update -y
-    
-    - uses: actions/checkout@v2
-    # GitHub's actions/checkout requires git version 2.18 or later, if run inside docker
-    #- name: Checkout submodules
-    #  uses: textbook/git-checkout-submodule-action@master
-
-    - name: 'install dependencies'
-      id: 'install-dep'
-      run: |
         yum install tbb tbb-devel freetype freetype-devel freeimage freeimage-devel  \
                     glew-devel SDL2-devel SDL2_image-devel glm-devel libXmu-devel libXi-devel \
                     python3 python3-devel boost-devel -y
         yum install opencascade-foundation  opencascade-modeling opencascade-ocaf \
             opencascade-visualization opencascade-devel -y
+      if: matrix.os == 'fedora-31' || matrix.os == 'fedora-32'
 
+    - name: 'install dependencies on debian'
+      id: 'install-dep-debian'
+      run: |
+          apt-get update
+          apt-get install -y  g++ cmake git gcc build-essential
+          apt-get install -y libtbb*-dev libocct-*-dev occt-misc python3-dev python3-pybind11 libboost-dev
+          apt-get install -y libx11-dev libxmu-dev libxi-dev
+      if: matrix.os == 'debian-10'
+
+    - uses: actions/checkout@v2
+    # GitHub's actions/checkout requires git version 2.18 or later, if run inside docker
+    #- name: Checkout submodules
+    #  uses: textbook/git-checkout-submodule-action@master
 
     - name: 'build package'
       id: 'build-package'
