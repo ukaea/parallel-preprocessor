@@ -36,21 +36,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-# if((${CMAKE_CXX_STANDARD} GREATER 17)  OR  (${CMAKE_CXX_STANDARD} EQUAL 17))
-#     if(NOT APPLE)
-#         if(GNUC)
-#             link_libraries(stdc++fs)  # this seems only for GCC compiler
-#         endif()
-#     endif()
-# else()
-#     if(OFF)  # windows conda install has problem of vc version
-#         find_package(Boost REQUIRED COMPONENTS
-#                     filesystem)
-#         link_libraries(Boost::filesystem)
-#     endif()
-# endif()
-
-
 if(MSVC)
   find_package(Boost)
   include_directories(${Boost_INCLUDE_DIRS})

@@ -55,11 +55,14 @@ The package file has the name pattern: `parallel-preprocessor-<this_software_ver
 If your OS is not supported, you need to compile it by yourself,  there is documentation for installation dependency and build for all major platforms.
 
  [Download parallel-preprocessor for ubuntu version 18.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-18.04.deb)
+
  [Download parallel-preprocessor for ubuntu version 20.04](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_ubuntu-20.04.deb)
 
  [Download parallel-preprocessor for fedora version 31](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_fedora-31.rpm)
- [Download parallel-preprocessor for fedora version 31](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_fedora-32.rpm)
 
+ [Download parallel-preprocessor for fedora version 32](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_fedora-32.rpm)
+
+ Coming soon: 
  [Download parallel-preprocessor for MacOS 10.15](https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor-0.3-dev_macos-latest.dmg)
 
 ### Compile from source

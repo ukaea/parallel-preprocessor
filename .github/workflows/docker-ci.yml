@@ -62,7 +62,7 @@ jobs:
         git submodule update --init --recursive  # use an action instead
         mkdir build
         cd build
-        cmake  -DCMAKE_BUILD_TYPE=Release -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..
+        cmake  -DCMAKE_BUILD_TYPE=Release -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..  -Wno-dev
         make 2>&1 | tee clang_tidy_build_results.log
         make package
         ls *.${{ matrix.package_suffix }}

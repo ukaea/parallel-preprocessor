@@ -34,18 +34,6 @@ if(MSVC)
     target_compile_options(MyApp PRIVATE  /wd4251 /wd4275 )
 else()
     target_compile_options(MyApp PRIVATE  -Wall -Wextra -flto -Wconversion -Wsuggest-override)
-
-    if((${CMAKE_CXX_STANDARD} GREATER 17)  OR  (${CMAKE_CXX_STANDARD} EQUAL 17))
-        if(NOT APPLE)
-            if(GNUC)
-                target_link_libraries(MyApp stdc++fs)  # this seems only for Linux and GCC
-            endif()
-        endif()
-    else()
-        find_package(Boost REQUIRED COMPONENTS
-                    filesystem)
-        target_link_libraries(MyApp  Boost::filesystem)
-    endif()
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -63,6 +51,28 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     # endif()
 
 endif()
+
+
+message("====================== C++ filesystem linkage setup ======================\n")
+## this code block need extra care in the future
+## ubuntu 20.04 g++ 9 does not need to link with `stdc++fs`
+if((${CMAKE_CXX_STANDARD} GREATER 17)  OR  (${CMAKE_CXX_STANDARD} EQUAL 17))
+    if(NOT APPLE)  # on MacOS, g++ still use clang's libc++ lib
+        if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"  OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            #find_library(stdcpp_fs_lib stdc++fs)  # does not work
+
+            message("=== linked to stdc++fs on Linux platform for std::experimental::filesystem === ")
+            target_link_libraries(MyApp stdc++fs)  # this seems only for Linux and GCC before full C++17 support
+        endif()
+    else()
+        message("=== we should not get here for g++ on Linux  `NOT APPLE` and GNU === ")
+    endif()
+else()
+    message("=== c++17 is not enabled, using boost::filesystem instead === ")
+    find_package(Boost REQUIRED COMPONENTS   filesystem)
+    target_link_libraries(MyApp  Boost::filesystem)
+endif()
+message("======================== end of C++ filesystem linkage  setup =================\n")
 
 ################################################################
 # optional dep,  boost::process dep on boost::system
@@ -103,7 +113,7 @@ if(PPP_USE_MPI)
     endif()
 endif()
 
-########################################################
+############################# test should be move out ###########################
 set(PARALLEL_TEST_SOURCES 
   "ParallelAccessorTest.cpp"
 )
@@ -115,9 +125,22 @@ target_link_libraries(parallel_tests ${CMAKE_THREAD_LIBS_INIT}) # For pthreads
 add_dependencies(parallel_tests MyApp)
 target_link_libraries(parallel_tests MyApp)
 target_link_libraries(parallel_tests ${TBB_LIBRARIES})
+
 if(MSVC)
     target_compile_options(parallel_tests PRIVATE  /wd4251 /wd4275 )
 endif()
+
+# if((${CMAKE_CXX_STANDARD} GREATER 17)  OR  (${CMAKE_CXX_STANDARD} EQUAL 17))
+#     if(NOT APPLE)
+#         if(GNUC)
+#             message(STATUS "linked to stdc++fs on Linux platform for std::experimental::filesystem")
+#             target_link_libraries(parallel_tests stdc++fs)  # this seems only for Linux and GCC before full C++17 support
+#         endif()
+#     endif()
+# else()
+#     find_package(Boost REQUIRED COMPONENTS filesystem)
+#     target_link_libraries(parallel_tests Boost::filesystem)
+# endif()
 
 
 # if in catch2 test mode in the future, uncomment this line below
