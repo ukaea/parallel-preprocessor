@@ -16,11 +16,20 @@ Dr Andrew Davis of UKAEA, has contributed his technical insight,  test geometrie
 
 [**doxygen generated API documentation with wiki pages**](https://ukaea.github.io/parallel-preprocessor/site/doxygen-docs.html)
 
-## Overview
+## Feature overview
 
-Although this software aims to be a framework for more CAE/CAE preprocessing operatons, currently, this software provides only multi-threading geometry imprint and collision check, via command line user interface. This software has demonstrated faster and more controllable geometry imprinting on large geometry assemblies (10k+ parts) that is not possible on most existing CAD tools.
+This software aims to be a framework for more CAE/CAE **preprocessing operatons** for large geometry assemblies upto 1 millions parts, such as such as fusion reactor, areoplane, areo-engine as a whole, using high performance computation  infrastructure like Exa-scale super-computer. see more [Technical Overview](./wiki/TechOverview.md) on why a parallel preprocessor is needed in the era of E-scale (10^18 FLops) computation.
 
-Technical backgroud will be added later
+Currently, this software provides only multi-threading geometry imprint and collision check, via command line user interface. This software has demonstrated faster and more controllable geometry **collision-detection, imprinting** on **large geometry assemblies (10k+ parts)** that is not possible on most existing CAD tools.
+
+![CPU usage of parallel-preprocessor using 64 threads on a 32-core CPU](./wiki/assets/ppp_multithreading_cpu_usage.png)
+
+Screenshot for the CPU usage of parallel-preprocessor using 64 threads on a 32-core CPU (Source: Dr Andy Davis)
+
+
+## Future plan
+
+[wiki/Roadmap.md](wiki/Roadmap.md): lists short-term and long-term plan, depends on funding status. Partially sponsoring this project is welcomed to enhance existing modules or develop new modules.
 
 ## Disclaimer
 
@@ -118,13 +127,6 @@ The package file has the name pattern: `parallel-preprocessor-<this_software_ver
 
 ---
 
-## Future plan
-
-[wiki/Roadmap.md](wiki/Roadmap.md): lists short-term and long-term plan, depends on funding status. Partially sponsoring this project is welcomed to enhance existing modules or develop new modules.
-
-
----
-
 ## License consideration
 License consideration: LGPL v2.1 instead of LGPL v3, because all relevant projects, OCCT, salome, FreeCAD, are using LGPL v2.1. LGPL v3 and LGPL v2.1 is not fully compatible to mixed up in source code level.
 
@@ -136,4 +138,5 @@ Note:  the main branch of this repo is `main` not `master`.
 
 ## Acknowledgement
 
-Funding source: STEP project in UKAEA <http://www.ccfe.ac.uk/step.aspx>
+Funding from August 2019 ~ April 2020: STEP project in UKAEA <http://www.ccfe.ac.uk/step.aspx>
+
