@@ -20,11 +20,19 @@ if(OCC_FOUND)
 target_link_libraries(geom_tests ${OCC_LIBS}) # list should be used without quote
 endif()
 
+####################### standalone app #####################
+add_executable(UniqueIdValidator "UniqueIdValidator.cpp") #
+target_link_libraries(UniqueIdValidator ${OCC_LIBS})
+
+install(TARGETS UniqueIdValidator
+        RUNTIME DESTINATION bin
+        COMPONENT applications)
+
 ##################### standalone app ###########################
 if (${PPP_USE_QT})
     # relies on QT, but user may not enable QT GUI
     add_executable(OccBVHdemo "OccBVHdemo.cpp") #
-    target_link_libraries(OccBVHdemo ${OCC_LIBS}) # compiled but does not work with OCCT 7.3
+    target_link_libraries(OccBVHdemo ${OCC_LIBS})
     target_link_libraries(OccBVHdemo ${OCC_VIZ_LIBRARIES}) # list should be used without quote
     install(TARGETS OccBVHdemo
         RUNTIME DESTINATION bin
