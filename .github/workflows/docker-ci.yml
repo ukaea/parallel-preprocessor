@@ -1,4 +1,4 @@
-name: parallel-preprocessor-docker
+name: fedora-debian
 
 on: [push, pull_request]
 
