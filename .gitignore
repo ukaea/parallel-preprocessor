@@ -1,10 +1,11 @@
-#this file should not go publically
 
 .vscode/*
 build/*
+build-bionic/*
 build-focal/*
 vcbuild/*
 condabuild/*
+
 
 third-party/*
 bin/*

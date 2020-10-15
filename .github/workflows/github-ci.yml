@@ -26,10 +26,10 @@ jobs:
               compiler: gcc
               compilerpp: g++
               package_suffix: 'deb'
-            - os: 'macos-latest'
-              compiler: gcc
-              compilerpp: g++
-              package_suffix: 'dmg'
+            # - os: 'macos-latest'
+            #   compiler: gcc
+            #   compilerpp: g++
+            #   package_suffix: 'dmg'
     steps:
     - uses: actions/checkout@v2
 
@@ -59,6 +59,10 @@ jobs:
       #         CC: ${{ matrix.compiler }}
       #         CXX: ${{ matrix.compilerpp }}
       run: |
+      	cd ../ && 7z a -r ${{ env.PROJECT_VERSION }}.zip ${{ github.workspace }}
+      	mv ${{ env.PROJECT_VERSION }}.zip ${{ github.workspace }}/
+      	# sha256sum ${{ env.PROJECT_VERSION }}.zip
+      	cd ${{ github.workspace }}
         git submodule update --init --recursive
         mkdir build
         cd build
@@ -141,6 +145,21 @@ jobs:
         overwrite: true
         prerelease: true
       if: github.ref == 'refs/heads/main'  # only upload package on main branch, not PR, forks, which has no write access
+  
+    ###################  upload source code zip ##########################
+    # those release asset filename endpoint (not necessarily created before this upload)
+    - name: Upload sourc code to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ github.workspace }}/../${{ env.PROJECT_NAME }}.zip
+        asset_name: ${{ env.PROJECT_NAME }}.zip
+        tag: dev
+        overwrite: true
+        prerelease: true
+      if: github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-20.04'
+      # only upload package on main branch, not PR, forks, which has no write access
+      # https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor.zip
   
     ########################################## only for Ubuntu debug release ############################################
     - name: Run Cpp Check Flawfinder  Sim C++ ( Ubuntu GCC Dev/Master )
