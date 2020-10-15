@@ -28,13 +28,27 @@ target_link_libraries(app_tests MyBase)
 target_link_libraries(app_tests MyApp)
 target_link_libraries(app_tests Catch2::Catch2)
 
-####################### standalone app #####################
-add_executable(UniqueIdValidator "UniqueIdValidator.cpp") #
-target_link_libraries(UniqueIdValidator ${OCC_LIBS}) # compiled but does not work with OCCT 7.3
-install(TARGETS UniqueIdValidator
-RUNTIME DESTINATION bin
-COMPONENT applications)
 
+############################# ###########################
+set(PARALLEL_TEST_SOURCES 
+  "ParallelAccessorTest.cpp"
+)
+# Now simply link against gtest or gtest_main as needed. Eg
+add_executable(parallel_tests ${PARALLEL_TEST_SOURCES})
+set_target_properties(parallel_tests PROPERTIES OUTPUT_NAME "pppParallelTests")
+
+target_link_libraries(parallel_tests ${CMAKE_THREAD_LIBS_INIT}) # For pthreads
+add_dependencies(parallel_tests MyApp)
+target_link_libraries(parallel_tests MyApp)
+target_link_libraries(parallel_tests ${TBB_LIBRARIES})
+
+if(MSVC)
+    target_compile_options(parallel_tests PRIVATE  /wd4251 /wd4275 )
+endif()
+
+# if in catch2 test mode in the future, uncomment this line below
+#target_link_libraries(parallel_tests Catch2::Catch2)
+##########################################################
 
 ######################### test registration #####################
 #  using contrib/Catch.cmake, ParseAndAddCatchTests.cmake

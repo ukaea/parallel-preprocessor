@@ -1,0 +1,88 @@
+name: parallel-preprocessor-conda
+# https://github.com/marketplace/actions/setup-miniconda
+on: [push]
+
+jobs:
+  ppp-conda-ci:
+    name: Ex1 (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "windows-latest"]
+        python-version: ["3.6", "3.7"]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goanpeca/setup-miniconda@v1
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge
+          channel-priority: flexible
+          activate-environment: foo  # the default env
+          #activate-environment: anaconda-client-env
+          #environment-file: etc/example-environment.yml
+    
+      # - name: Conda install dependencies
+      #   shell: bash -l {0}
+      #   run: |
+      #         conda info
+      #         conda install cmake
+      #         #only cmake installed from conda can find the conda install package?
+      #         conda install -c conda-forge occt=7.4
+
+      # - name: compile on windows
+      #   shell: bash -l {0}
+      #   run: |
+      #         mkdir condabuild
+      #         cd condabuild
+      #         cmake -G "NMake Makefiles" ..
+      #         cmake --build .
+      #   if: matrix.os == 'windows-latest'
+
+      # - name: compile on unix-like OS
+      #   shell: bash -l {0}
+      #   run: |
+      #         mkdir condabuild
+      #         cd condabuild
+      #         cmake  ..
+      #         cmake --build .
+      #   if: matrix.os != 'windows-latest'
+
+      - name: build conda package on windows and Linux
+        #shell: bash -l {0}
+        run: |
+            conda info
+            conda install conda-build
+            conda build ../recipe/meta.yaml
+            
+      - name: test built package
+        shell: bash -l {0}
+        run: |
+      	    conda install -c local ppp
+            echo "start unit test in the folder:$(pwd)"
+	          if [ ! -f "run_all_tests.sh" ]; then cp ../scripts/run_all_tests.sh ./ ; fi
+	          bash run_all_tests.sh
+        if: matrix.os != 'windows-latest'
+
+     - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1  #https://github.com/actions/upload-release-asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./my-artifact.zip  # todo: tar.gz file on Linux
+          asset_name: my-artifact.zip
+          asset_content_type: application/zip

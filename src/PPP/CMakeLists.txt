@@ -113,39 +113,13 @@ if(PPP_USE_MPI)
     endif()
 endif()
 
-############################# test should be move out ###########################
-set(PARALLEL_TEST_SOURCES 
-  "ParallelAccessorTest.cpp"
-)
-# Now simply link against gtest or gtest_main as needed. Eg
-add_executable(parallel_tests ${PARALLEL_TEST_SOURCES})
-set_target_properties(parallel_tests PROPERTIES OUTPUT_NAME "pppParallelTests")
-
-target_link_libraries(parallel_tests ${CMAKE_THREAD_LIBS_INIT}) # For pthreads
-add_dependencies(parallel_tests MyApp)
-target_link_libraries(parallel_tests MyApp)
-target_link_libraries(parallel_tests ${TBB_LIBRARIES})
-
-if(MSVC)
-    target_compile_options(parallel_tests PRIVATE  /wd4251 /wd4275 )
+############################################################
+# unit test module
+############################################################
+if(PPP_USE_TEST)
+    add_subdirectory(CoreTests)
 endif()
 
-# if((${CMAKE_CXX_STANDARD} GREATER 17)  OR  (${CMAKE_CXX_STANDARD} EQUAL 17))
-#     if(NOT APPLE)
-#         if(GNUC)
-#             message(STATUS "linked to stdc++fs on Linux platform for std::experimental::filesystem")
-#             target_link_libraries(parallel_tests stdc++fs)  # this seems only for Linux and GCC before full C++17 support
-#         endif()
-#     endif()
-# else()
-#     find_package(Boost REQUIRED COMPONENTS filesystem)
-#     target_link_libraries(parallel_tests Boost::filesystem)
-# endif()
-
-
-# if in catch2 test mode in the future, uncomment this line below
-#target_link_libraries(parallel_tests Catch2::Catch2)
-##########################################################
 
 # header install, binded with other library object
 file(GLOB APP_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)  # sep by new line

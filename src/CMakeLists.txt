@@ -123,9 +123,8 @@ endif(PPP_USE_PYTHON)
 
 
 ############################################################
-# unit test module
+# unit test module, PropertyContainer is header only
 ############################################################
 if(PPP_USE_TEST)
-    add_subdirectory(test)
     add_subdirectory (PropertyContainer)  # Catch2 must be add() before this subdirectionary
 endif()

@@ -1,4 +1,4 @@
-name: parallel-preprocessor
+name: ubuntu-macos
 # adapted from: https://github.com/ScottishCovidResponse/Covid19_EERAModel/blob/dev/.github/workflows/eera.yml
 # Supported runners and hardware resources
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/specifications-for-github-hosted-runners#supported-runners-and-hardware-resources
@@ -19,17 +19,17 @@ jobs:
         matrix:
           include:
             - os: 'ubuntu-20.04'
-              comiler: gcc
-              comilerpp: g++
+              compiler: gcc
+              compilerpp: g++
               package_suffix: 'deb'
             - os: 'ubuntu-18.04'
-              comiler: gcc
-              comilerpp: g++
+              compiler: gcc
+              compilerpp: g++
               package_suffix: 'deb'
-            # - os: 'macos-latest'
-            #   comiler: gcc
-            #   comilerpp: g++
-            #   package_suffix: 'dmg'
+            - os: 'macos-latest'
+              compiler: gcc
+              compilerpp: g++
+              package_suffix: 'dmg'
     steps:
     - uses: actions/checkout@v2
 
@@ -39,7 +39,7 @@ jobs:
            #sudo apt-get upgrade
            sudo apt-get install -y  g++ cmake clang cppcheck similarity-tester flawfinder
            sudo apt-get install -y lcov htmldoc poppler-utils graphviz doxygen
-           sudo apt-get install -y libtbb*-dev libocct-*-dev occt-misc python3-dev python3-pybind11 freecad
+           sudo apt-get install -y libtbb*-dev libocct-*-dev occt-misc python3-dev python3-pybind11 libboost-dev freecad
            sudo apt-get install -y libx11-dev libxmu-dev libxi-dev
       if: matrix.os == 'ubuntu-20.04'
       # ubuntu-20.04 has opencascade in official repo, PPA not needed, python3-pybind11 is also latest enough
@@ -49,15 +49,15 @@ jobs:
            sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
            sudo apt-get update
            #sudo apt-get upgrade
-           sudo apt-get install -y libtbb*-dev libocct-*-dev occt-misc python3-dev freecad
+           sudo apt-get install -y libtbb*-dev libocct-*-dev occt-misc python3-dev freecad libboost-dev
            sudo apt-get install -y  g++ cmake clang lcov cppcheck similarity-tester flawfinder clang-format clang-tidy
            sudo apt-get install -y  libx11-dev libxmu-dev libxi-dev
       if: matrix.os == 'ubuntu-18.04'
 
     - name: Compile on Linux (debug)
       # env:
-      #         CC: ${{ matrix.config.compiler }}
-      #         CXX: ${{ matrix.config.compilerpp }}
+      #         CC: ${{ matrix.compiler }}
+      #         CXX: ${{ matrix.compilerpp }}
       run: |
         git submodule update --init --recursive
         mkdir build

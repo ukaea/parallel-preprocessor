@@ -106,18 +106,20 @@ Operator interaction:
    + python integration test
    + setup.py: python pypi package generator
 
-### [test module](../test)
-   - C++ unit tests for other modules, catch2
+### Unit tests 
+   Testing code has been gathered into a subfolder for each module
+   - C++ unit tests for each module
    - some demonstration executable written in C++
 
 ### [third-party](../third-party) libraries
-Single header libraries are integrated directly into this PPP project, 
+Third-party source code used by all modules, module specific third-party code are organized into a `third-party` in each module. 
+Single header libraries are integrated directly into this project.  
 
  - half.hpp: half precision floating point
  - json.hpp: as dump, configuration
  - mm.h: NIST matrix market read and write
 
-The other are incorporated as git submodule, see also [Design.md](./Design.md). 
+The other are incorporated as git submodule, see also [ArchitectureDesign.md](./ArchitectureDesign.md). 
    - [loguru](https://github.com/Delgan/loguru): thread-safe logging for C++
    - [catch2](): C++ unit test framework
    - [SGeom](https://github.com/ukaea/SGeom): geometry module extracted from [Salome platform](https://www.salome-platform.org/)
