@@ -37,7 +37,7 @@ jobs:
       run: |
            sudo apt-get update
            #sudo apt-get upgrade
-           sudo apt-get install -y  g++ cmake clang cppcheck similarity-tester flawfinder
+           sudo apt-get install -y  g++ cmake clang cppcheck similarity-tester flawfinder p7zip-full openssl
            sudo apt-get install -y lcov htmldoc poppler-utils graphviz doxygen
            sudo apt-get install -y libtbb*-dev libocct-*-dev occt-misc python3-dev python3-pybind11 libboost-dev freecad
            sudo apt-get install -y libx11-dev libxmu-dev libxi-dev
@@ -59,16 +59,11 @@ jobs:
       #         CC: ${{ matrix.compiler }}
       #         CXX: ${{ matrix.compilerpp }}
       run: |
-      	cd ../ && 7z a -r ${{ env.PROJECT_VERSION }}.zip ${{ github.workspace }}
-      	mv ${{ env.PROJECT_VERSION }}.zip ${{ github.workspace }}/
-      	# sha256sum ${{ env.PROJECT_VERSION }}.zip
-      	cd ${{ github.workspace }}
         git submodule update --init --recursive
         mkdir build
         cd build
         cmake  -DCODE_COVERAGE=ON -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..  -Wno-dev
         make 2>&1 | tee clang_tidy_build_results.log
-        # packup source code into zip and show in release : https://github.com/ukaea/parallel-preprocessor/archive/dev.zip
       if:  matrix.os == 'ubuntu-20.04'
 
     - name: Compile on Linux (release)
@@ -145,15 +140,36 @@ jobs:
         overwrite: true
         prerelease: true
       if: github.ref == 'refs/heads/main'  # only upload package on main branch, not PR, forks, which has no write access
-  
-    ###################  upload source code zip ##########################
+
+    ###################  zip and upload source code zip ##########################
+    - name: zip source code for release
+      run: |
+        cd ..
+        ls
+        7z a -r ${{ env.PROJECT_NAME }}.zip ${{ env.PROJECT_NAME }}
+        mv ${{ env.PROJECT_NAME }}.zip ${{ github.workspace }}/
+        cd ${{ github.workspace }}
+        sha256sum ${{ env.PROJECT_NAME }}.zip | awk '{ print $1; }' > ${{ github.workspace }}/${{ env.PROJECT_NAME }}.zip.sha256.txt
+      if:  matrix.os == 'ubuntu-20.04'
+
     # those release asset filename endpoint (not necessarily created before this upload)
-    - name: Upload sourc code to release
+    - name: Upload source code to release
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ github.workspace }}/../${{ env.PROJECT_NAME }}.zip
+        file: ${{ github.workspace }}/${{ env.PROJECT_NAME }}.zip
         asset_name: ${{ env.PROJECT_NAME }}.zip
+        tag: dev
+        overwrite: true
+        prerelease: true
+      if: github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-20.04'
+
+    - name: Upload source code checksum
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ github.workspace }}/${{ env.PROJECT_NAME }}.zip.sha256.txt
+        asset_name: ${{ env.PROJECT_NAME }}.zip.sha256.txt
         tag: dev
         overwrite: true
         prerelease: true
@@ -210,6 +226,7 @@ jobs:
       if: matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
 
     - name: Build Website Files ( Ubuntu GCC Dev/Master )
+      working-directory: ${{ github.workspace }}
       run: |
           python scripts/site_generation.py build/clang_tidy_build_results.log build/flawfinder.log build/sim_cpp.log
           git add -f site/*.html

@@ -89,7 +89,8 @@ if (UNIX)  # UNIX-like POSIX
   endif()
 
   ## Extra check for Ubuntu ____________________
-  if (${CMAKE_OS_ID} STREQUAL  "ubuntu")
+  if ("${CMAKE_OS_ID}" STREQUAL  "ubuntu")   
+    # without a quote enclosing ${CMAKE_OS_ID}, STREQUAL fails if CMAKE_OS_ID is empty
     set (CMAKE_OS_NAME Ubuntu CACHE STRING "Operating system name" FORCE)
     # only debian and ubuntu has codename
     find_program(LSB_RELEASE_COMMAND lsb_release)  #  uname must be there
