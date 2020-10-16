@@ -5,6 +5,6 @@
     },
     {
         "material": "another material",
-        "filename": "test_cubes.stp"
+        "stp_filename": "test_cubes.stp"
     }
 ]

@@ -30,9 +30,6 @@
 
 [ParallelDesign.md](ParallelDesign.md)  strategies for CPU, GPU and MPI parallel. In short, CPU-MPI is the focus of this framework, there are plenty framework for GPU acceleration.
 
-### License consideration
-License consideration: LGPL v2.1 instead of LGPL v3, because all relevant projects, OCCT, salome, FreeCAD, are using LGPL v2.1. LGPL v3 and LGPL v2.1 is not fully compatible to mixed up in source code level.
-
 ### Guide to module designer
 [DesignNewModule.md](DesignNewModule.md): describes how to design a new module or extend the existing module  
 

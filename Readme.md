@@ -18,8 +18,7 @@ Copyright UKAEA, 2019~2020
 
 Currently, this software provides multi-threading geometry imprint and collision check, via command line user interface. This software has demonstrated faster and more controllable geometry **collision-detection, imprinting** on **large geometry assemblies (10k+ parts)** that is not possible on most existing CAD tools.
 
-This software aims to be a framework for more CAE/CAE **preprocessing operatons** for large geometry assemblies upto 1 million parts, such as fusion reactor, aeroplane, aero-engine as a whole, using high performance computation  infrastructure like Exa-scale super-computer. see more [Technical Overview](./wiki/TechOverview.md) on why a parallel preprocessor is needed in the era of E-scale (10^18 FLops) computation.
-
+This software aims to be a framework for more CAE/CAE **preprocessing operatons** for large geometry assemblies upto 1 million parts, such as fusion reactor, aeroplane, aero-engine as a whole, using high performance computation  infrastructure like Exa-scale super-computer. Eventually, automatical and intelligent engineering design will be enabled through this framework and other software tools.  see more [Technical Overview](./wiki/TechOverview.md) on why a parallel preprocessor is needed in the era of E-scale (10^18 FLops) computation.
 
 ![CPU usage of parallel-preprocessor using 64 threads on a 32-core CPU](./wiki/assets/ppp_multithreading_cpu_usage.png)
 
@@ -53,7 +52,7 @@ This project has been designed to be cross-platform, but only Linux is supported
     - Centos8 should work without much effort, but OpenCASCADE must be compiled from source at first.
     - Centos7 software stack is outdated for compiler and cmake , using docker/singularity instead.
 
-+ Windows 10 users are encouraged to use WSL with one of the supported Linux distributions, while guide to compile on Windows has been added.
++ Windows 10 users are encouraged to use WSL with one of the supported Linux distributions, while guide to compile on Windows natively has been added.
 
 + MacOS compiling and packaging is done via homebrew, DragNDrop binary package is available.
 
@@ -82,9 +81,9 @@ For Fedora:
 remove the older version by `sudo dnf remove parallel-preprocessor`
 `sudo rpm -ivh parallel-preprocessor*.rpm` or double click to bring up package installer.
 
- Coming soon: parallel-preprocessor dmg package for MacOS 10.15
+Coming soon: parallel-preprocessor dmg package for MacOS 10.15
 
- Coming later:   Conda package for Windows 10.
+Coming later: conda package for Windows 10.
 
 ### Test the installation
 

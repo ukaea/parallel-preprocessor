@@ -54,6 +54,16 @@ jobs:
            sudo apt-get install -y  libx11-dev libxmu-dev libxi-dev
       if: matrix.os == 'ubuntu-18.04'
 
+    - name: zip source code for release
+      run: |
+        cd ..
+        ls
+        7z a -r ${{ env.PROJECT_NAME }}.zip ${{ env.PROJECT_NAME }}
+        mv ${{ env.PROJECT_NAME }}.zip ${{ github.workspace }}/
+        cd ${{ github.workspace }}
+        sha256sum ${{ env.PROJECT_NAME }}.zip | awk '{ print $1; }' > ${{ github.workspace }}/${{ env.PROJECT_NAME }}.zip.sha256.txt
+      if:  matrix.os == 'ubuntu-20.04'
+    
     - name: Compile on Linux (debug)
       # env:
       #         CC: ${{ matrix.compiler }}
@@ -142,16 +152,6 @@ jobs:
       if: github.ref == 'refs/heads/main'  # only upload package on main branch, not PR, forks, which has no write access
 
     ###################  zip and upload source code zip ##########################
-    - name: zip source code for release
-      run: |
-        cd ..
-        ls
-        7z a -r ${{ env.PROJECT_NAME }}.zip ${{ env.PROJECT_NAME }}
-        mv ${{ env.PROJECT_NAME }}.zip ${{ github.workspace }}/
-        cd ${{ github.workspace }}
-        sha256sum ${{ env.PROJECT_NAME }}.zip | awk '{ print $1; }' > ${{ github.workspace }}/${{ env.PROJECT_NAME }}.zip.sha256.txt
-      if:  matrix.os == 'ubuntu-20.04'
-
     # those release asset filename endpoint (not necessarily created before this upload)
     - name: Upload source code to release
       uses: svenstaro/upload-release-action@v2
