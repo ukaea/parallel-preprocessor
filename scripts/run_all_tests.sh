@@ -42,7 +42,7 @@ then
 fi
 geomPipeline.py detect ../data/test_geometry/test_geometry.stp --verbosity WARNING
 # run `geomPipeline.py` to generate a config.json file for test_*.py below
-geomPipeline.py ../data/test_geometry/test_geometry.stp --verbosity WARNING
+geomPipeline.py ../data/test_geometry/test_geometry.stp -o test_geometry_result.brep
 # test manifest.json input file type
 geomPipeline.py check ../data/test_geometry/test_geometry_manifest.json --verbosity WARNING
 if [ ! $? -eq 0 ] ; then   echo "Error during geometry test" ;  exit 1 ; fi

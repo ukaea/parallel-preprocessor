@@ -77,8 +77,11 @@ jobs:
         make 2>&1 | tee clang_tidy_build_results.log
         make package
         ls *.${{ matrix.package_suffix }}
+        if hash dpkg 2>/dev/null; then  dpkg -i *.${{ matrix.package_suffix }}; fi
+        if hash rpm 2>/dev/null; then  rpm -Uhv *.${{ matrix.package_suffix }}; fi
         # copy the package to $GITHUB_WORKSPACE, pointer to host path, is not possible, while upload from ${{ github.workspace }} is fine
         mv *.${{ matrix.package_suffix }} ${{ env.PROJECT_NAME }}-${{ env.PROJECT_VERSION }}_${{ matrix.os }}.${{ matrix.package_suffix }}
+
 
     ###################  testing ##########################
     - name: Run unit tests

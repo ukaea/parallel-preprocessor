@@ -47,14 +47,14 @@ def ppp_add_argument(parser):
 
     # optional arguments
     parser.add_argument(
-        "-o", "--outputFile", nargs=1, help="output file name (without folder path)"
+        "-o", "--outputFile", help="output file name (without folder path)"
     )
+    # do not use "nargs=1" it will return args.outputFile as a list instead of string
     parser.add_argument(
-        "--workingDir", nargs=1, help="working folder path, by default pwd"
+        "--workingDir", help="working folder path, by default pwd"
     )
     parser.add_argument(
         "--outputDir",
-        nargs=1,
         help="output folder path, by default a subfolder in workingDir",
     )
 
@@ -250,6 +250,7 @@ class PipelineController(object):
         pass
 
     def config(self):
+        # this must be override by derived class
 
         parser = argparse.ArgumentParser(usage=USAGE)
         parser = ppp_add_argument(parser)
