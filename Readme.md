@@ -94,16 +94,14 @@ remove the older version by `sudo dnf remove parallel-preprocessor`
 
 ## [Developer document and guide] (./DeveloperGuide.md)
 
++ compiling and packaging on Linux, MacOS, Windows
++ archicture, parallel, user interface, API, documentation design
 
 ---
 
-
 ## Contribution
 
-Please submit issue and fix pull request from this repository.
-
-Note:  the main branch of this repo is `main` not `master`. 
-
+Please submit issue on gihtub issues, and send in your fix by PR, see more details in [workflow for contribution](./wiki/Contribution.md)
 
 ## Acknowledgement
 
