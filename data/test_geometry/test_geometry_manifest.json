@@ -1,0 +1,10 @@
+[
+    {
+        "material": "one_material",
+        "filename": "test_geometry.stp"
+    },
+    {
+        "material": "another material",
+        "filename": "test_cubes.stp"
+    }
+]

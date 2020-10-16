@@ -44,6 +44,8 @@ fi
 python3 geomPipeline.py detect ../data/test_geometry/test_geometry.stp --verbosity WARNING
 # run `python3 geomPipeline.py` to generate a config.json file for test_*.py below
 python3 geomPipeline.py ../data/test_geometry/test_geometry.stp --verbosity WARNING
+# test manifest.json input file type
+python3 geomPipeline.py check ../data/test_geometry/test_geometry_manifest.json --verbosity WARNING
 
 if [ $? -eq 0 ]
 then

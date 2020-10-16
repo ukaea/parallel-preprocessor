@@ -23,7 +23,7 @@ namespace Geom
      * + step/stp AP214(with material and color meta data) OpenCASCADE XCAF
      * + IGES/igs: OpenCASCADE XCAF reader
      * + FreeCAD native format  *.FCStd
-     * + parallel preproessor output: *.brep + *_metadta.json
+     * + parallel preproessor output: *.brep + *_metadata.json(*.metadata.json)
      * + manifest.json textual format: a list of filename-materail json objects
      *     this json file must ended with "manifest.json", here is an exmaple:
      *    ```json
@@ -36,7 +36,9 @@ namespace Geom
      *       "filename": "absolute_path or path_relative_to_this_json_file/something.stp"
      *    }]
      *    ```
-     *
+     *    Note: 1. filename key can be any string contains substring "filename" such as "stp_filename"
+     *           but recommend to use just "filename".
+     *          2. currently all input geometry format must be of the same format.
      */
     class GeometryReader : public Reader
     {
@@ -134,17 +136,37 @@ namespace Geom
             i >> manifest;
             for (const auto& p : manifest)
             {
-                // todo:  utf8 string path
-                std::string file_name = (manifest_dir / p["filename"].get<std::string>()).string();
-                // calc the abs path, by refer to manifest file
-                if (fs::exists(fs::path(file_name)))
+                /// NOTE: requested by ISSUE 12, filename key now accepts this pattern  "*filename"
+                std::string filename_key = "filename";
+                if (not p.contains(filename_key))
                 {
-                    LOG_F(INFO, "read file: %s", file_name.c_str());
-                    read(file_name, p);
+                    for (json::const_iterator it = p.begin(); it != p.end(); ++it)
+                    {
+                        if (it.key().find(filename_key) != std::string::npos)
+                        {
+                            filename_key = it.key();
+                            break; /// break the for loop, use the first key found with the pattern "*filename"
+                        }
+                    }
+                    if (not p.contains(filename_key))
+                    {
+                        LOG_F(ERROR, "key `%s` does not exist `%s` ", filename_key.c_str(), p.dump(4).c_str());
+                    }
+                }
+
+                std::string file_name = p[filename_key].get<std::string>();
+                std::string file_path = file_name;
+                if (fs::path(file_name).is_relative())
+                    file_path = (manifest_dir / file_name).string();
+                // calc the abs path, by refer to manifest file
+                if (fs::exists(fs::path(file_path)))
+                {
+                    LOG_F(INFO, "read file: %s", file_path.c_str());
+                    read(file_path, p);
                 }
                 else
                 {
-                    LOG_F(ERROR, "input file: `%s` does not exist", file_name.c_str());
+                    LOG_F(ERROR, "input file: `%s` does not exist", file_path.c_str());
                 }
             }
         }
