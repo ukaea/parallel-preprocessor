@@ -90,16 +90,9 @@ if(PPP_DEV_MODE)
     message(STATUS "the developer mode can turn on more options than CI")
     set(PPP_USE_GUI OFF)
     set(PPP_USE_WEB OFF)
-    #set(CMAKE_BUILD_TYPE Debug)  ## almost no difference in performance
+    set(CMAKE_BUILD_TYPE Debug)  ## almost no difference in performance
     message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}, CMAKE_CXX_FLAGS_DEBUG = ${CMAKE_CXX_FLAGS_DEBUG}")
 endif()
-
-
-message("----- parallel-preprocessor Build Options -----")
-message(STATUS "Clang Tidy: ${CLANG_TIDY}")
-message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
-message(STATUS "Code Coverage: ${CODE_COVERAGE}")
-message("------------------------------------")
 
 
 ##############################################################
@@ -125,6 +118,12 @@ if(UNIX)
     endif()
 endif()
 
+
+message("----- parallel-preprocessor Build Options -----")
+message(STATUS "Clang Tidy: ${CLANG_TIDY}")
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Code Coverage: ${CODE_COVERAGE}")
+message("------------------------------------")
 
 ####################################################
 
@@ -179,7 +178,6 @@ add_subdirectory("src")
 
 
 message("============= test preparation =================== \n"
-" copy `python` source dir into `ppptest` in the building folder\n"
 " symbolic link `data` folder into build folder for testing \n"
 " run `./run_all_tests.sh` in the build folder after building \n "
 "============= end of preparation =================== \n")
@@ -202,18 +200,18 @@ else()
 endif()
 
 ######################## pyhton files and shell scripts for test ######################
-# will override each time? yes
-file(COPY ${PROJECT_SOURCE_DIR}/scripts/run_all_tests.sh 
-    DESTINATION ${PROJECT_BINARY_DIR}
-    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
-                    GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-)
-# copy python/ into build folder, to enable test in build folder without installation
-file(COPY  ${PROJECT_SOURCE_DIR}/src/python 
-    DESTINATION ${PROJECT_BINARY_DIR}/ppptest
-    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
-                    GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-)
+# # will override each time? yes
+# file(COPY ${PROJECT_SOURCE_DIR}/scripts/run_all_tests.sh 
+#     DESTINATION ${PROJECT_BINARY_DIR}
+#     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+#                     GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+# )
+# # copy python/ into build folder, to enable test in build folder without installation
+# file(COPY  ${PROJECT_SOURCE_DIR}/src/python 
+#     DESTINATION ${PROJECT_BINARY_DIR}/ppptest
+#     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+#                     GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+# )
 
 ############################################################
 # CPack configuration  `make package`
