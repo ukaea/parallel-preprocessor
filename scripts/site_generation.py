@@ -1,19 +1,34 @@
-#
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """
+Together with generate_site.sh, CMake config, 
+this script will generate html site for doxygen doc, coverage and other QA report/
+
 adapted from EERA: https://github.com/ScottishCovidResponse/Covid19_EERAModel/blob/dev/scripts/site_generation.py
-with hand-crafted: flawfinder parser
+with hand-crafted: flawfinder, simalrity, clang_tidy parsers
 
-currently, flowfinder.html page is missing
-similarity report has empty body
+Changelog: 
+    - coverage_report_folder by default is located in `build` folder
+    - generalized by extract out `my_project_name` as a variable 
+    - this python script works with generate_site.sh, run in build folder for local test
+    - github CI works in project root folder, while build folder must be called `build`
+
+Todo: flowfinder.html page is missing
 
 """
-my_project_name = "parallel-preprocessor"
 
 import os
 import re
 import os.path
 
+my_project_name = "parallel-preprocessor"
+if os.path.exists("src"):  # CI mode
+    coverage_report_folder = "build/{}_coverage/index.html".format(my_project_name)
+    doxygen_html_index = "doxygen/html/index.html"
+else:  # local build test mode
+    coverage_report_folder = "{}_coverage/index.html".format(my_project_name)
+    doxygen_html_index = "doxygen/html/index.html"
 
 class HTMLFileBuilder(object):
     def __init__(self, name=my_project_name):
@@ -23,11 +38,11 @@ class HTMLFileBuilder(object):
             "Documentation": {
                 "Doxygen Code Documentation": {
                     "filename": "doxygen-docs.html",
-                    "source": "../doxygen/html/index.html",
+                    "source": doxygen_html_index,
                 },
-                "Model Overview": {
-                    "filename": "model_documentation.html",
-                    "source": "../wiki/eera_model_overview.html",
+                "Developer Guide": {
+                    "filename": "developer_documentation.html",
+                    "source": doxygen_html_index,
                 },
             },
             "CodeTools": {
@@ -37,7 +52,7 @@ class HTMLFileBuilder(object):
                 },
                 "Code Coverage": {
                     "filename": "code-coverage.html",
-                    "source": "../{}_coverage/index.html".format(my_project_name),
+                    "source": coverage_report_folder,
                 },
                 "Flawfinder": {
                     "filename": "flawfinder.html",
@@ -52,7 +67,7 @@ class HTMLFileBuilder(object):
         }
         self._extern_pages = [
             "Doxygen Code Documentation",
-            "Model Overview",
+            "Developer Guide",
             "CPP Check",
             "Code Coverage",
         ]

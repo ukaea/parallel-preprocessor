@@ -67,7 +67,7 @@ debugging = 0  # this debugging only control this python script, set 1 for more
 
 def geom_add_argument(parser):
     parser.add_argument(
-        "--metadata", nargs=1, help="input metadata file, only for brep input geometry"
+        "--metadata", help="input metadata file, only for brep input geometry"
     )
 
     # set the global parameters
@@ -112,21 +112,26 @@ case_name = inputFilename[: inputFilename.rfind(".")]
 outputFile = case_name + "_processed.brep"  # saved to case output folder
 if args.outputFile:
     outputFile = args.outputFile
+    print("args.outputFile = ", args.outputFile)
+
+# output metadata filename
+outputMetadataFile = outputFile[: outputFile.rfind(".")] + "_metadata.json"
 
 ################################ geom arg ##############################
-hasInputMetadataFile = True
+hasInputMetadataFile = False
 if args.metadata:
     if os.path.exists(args.metadata):
         inputMetadataFile = args.metadata
+        hasInputMetadataFile = True
     else:
         raise IOError("input metadata file does not exist: ", args.metadata)
 else:
     if inputFile.find(".brep") > 0 or inputFile.find(".brp"):
         inputMetadataFile = inputFile[: inputFile.rfind(".")] + "_metadata.json"
-    else:
-        hasInputMetadataFile = False
+        if os.path.exists(inputMetadataFile):
+            hasInputMetadataFile = True
 
-globalTolerance = 0.001
+globalTolerance = 0.001  # length unit is mm
 if args.tolerance:
     globalTolerance = args.tolerance
 
@@ -138,8 +143,6 @@ ignoreFailed = False
 if args.ignore_failed != None and args.ignore_failed:
     ignoreFailed = True
 
-# output metadata filename
-outputMetadataFile = case_name + "_processed" + "_metadata.json"
 
 if debugging > 0:
     print("action on the geometry is ", args.action)

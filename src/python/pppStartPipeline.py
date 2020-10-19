@@ -51,7 +51,7 @@ def ppp_start_pipeline(config_file_name):
         p.process()
     else:
         import subprocess
-        result = subprocess.check_output([ppp_executable, config_file_name])
+        result = subprocess.check_output([ppp_geom_executable, config_file_name])
         print(result)
 
 

@@ -794,12 +794,13 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
+
 INPUT                  =  @PROJECT_SOURCE_DIR@/Readme.md \
-                        @PROJECT_SOURCE_DIR@/Base \
-                        @PROJECT_SOURCE_DIR@/App \
-                        @PROJECT_SOURCE_DIR@/Geom \
-                        @PROJECT_SOURCE_DIR@/PropertyContainer \
-                        @PROJECT_SOURCE_DIR@/wiki
+                                @PROJECT_SOURCE_DIR@/third-party/Base \
+                                @PROJECT_SOURCE_DIR@/src/PPP \
+                                @PROJECT_SOURCE_DIR@/src/Geom \
+                                @PROJECT_SOURCE_DIR@/src/PropertyContainer \
+                                @PROJECT_SOURCE_DIR@/wiki
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -898,7 +899,9 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = 
+EXCLUDE_PATTERNS = @PROJECT_SOURCE_DIR@/src/*/third-party/*  \
+                                    @PROJECT_SOURCE_DIR@/src/*/*Tests/*
+
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
