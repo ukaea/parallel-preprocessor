@@ -46,7 +46,7 @@ There are some third-party libraries already integrated into the source code tre
 
 ---
 
-### Build from source
+## Build from source
 
 Tested compiler: g++ 7.x, g++8.x, clang 6 (needs CMake 3.13+ ) on ubuntu 18.04
 
@@ -62,16 +62,15 @@ CXX=clang++ cmake ..  -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) -DCMAKE_BUIL
 
 clang++ shares header files and libstdc++.so with G++
 
-Error with pybind11 when compiled by clang++10
+Error with pybind11 when compiled by clang++10, which has been fixed in latest pybind11 (v2.6).
 
 ```
 /usr/include/pybind11/pybind11.h:1010:9: error: no matching function for call to 'operator delete'
         ::operator delete(p, s);
         ^~~~~~~~~~~~~~~~~
-
 ```
 
-
+User can either sticks with g++ or upgrade pybind11 installation to fix this error. 
 
 ### Method 1: building on local Linux
 
@@ -157,9 +156,10 @@ yum install python3 python3-devel  -y
 yum install qt5-devel qt5-qtwebsockets-devel qt5-qtwebsockets -y
 ```
 
-2. Install OpenCASCADE 7.x
+### Install OpenCASCADE 7.x
 
-2.1 option 1: Install opencascade 7.4 from package repository
+#### Option 1: Install opencascade 7.4 from package repository
+
 For fedora 30+ since Jan 2020, there are freecad (python3) and opencascade 7.4 in repository to install
 
 ```bash
@@ -168,7 +168,9 @@ yum install opencascade-draw, opencascade-foundation,  opencascade-modeling,  op
     opencascade-visualization opencascade-devel freecad -y
 ```
 
-2.2 Option 2: Download the opencascade source code and compile from source, if not in package repository
+#### Option 2: Download the opencascade source code and compile from source.
+
+ if not in package repository
 
 ```bash
 ###### dependencies needed to build OpenCASCADE from source ##########
@@ -182,22 +184,29 @@ yum install tk tcl tk-devel tcl-devel -y
 yum install  openmpi-devel boost-devel -y
 ```
 
-To get the latest source code from [OCCT official website](https://www.opencascade.com/), you need register (free of charge)
+To get the latest source code from [OCCT official website](https://www.opencascade.com/), you need register (free of charge). Registered user may setup public ssh key and get readonly access to the occt repo
+`git clone -b V7_4_0p1 gitolite@git.dev.opencascade.org:occt occt`
+<https://old.opencascade.com/doc/occt-7.4.0/overview/html/occt_dev_guides__git_guide.html>
 
-Note for UKAEA users: I put the source code on UKAEA one drive to share: user your webbrowser with UKAEA email login to open the link, otherwise login in office 365
-<https://ukaeauk-my.sharepoint.com/:u:/g/personal/qingfeng_xia_ukaea_uk/Efs6Dhazcb1MtH44bCyYSqUBpJ2nzvbb3wgytEjYtLIhXA?e=uo32mf>
+To get the release source code, this can be downloaded by wget from a link 
+`wget "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz" `
+"V7_4_0p1" is the tag version name, more version tags can be found on `http://git.dev.opencascade.org/gitweb/?p=occt.git`
+
 
 ```bash
-cd opencascade*
+
+wget "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz" -O occt.tar.gz
+tar -xzf occt.tar.gz
+cd occt-*
 mkdir build
 cd build
-cmake ..
+cmake .. 
 make -j$(nproc)
-make install
+sudo make install
 # by default install to the prefix: /usr/local/
 ```
 
-## Compile parallel-preprocessor
+### Compile parallel-preprocessor
 
 CMake build system is employed to simplify cross-platform development
 
@@ -211,59 +220,19 @@ cd parallel-preprocessor
 #
 mkdir build
 cd build
-cmake ..
+cmake .. -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
 ```
 
-If python3 is not detected by pybind11,  then 
-`cmake -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) ..`
-Qt5 have not yet been configured to compile on fedora in docker
-
-
-### Method2: use docker image 
-
-This image is based on ubuntu 18.04 with OpenCASCADE and FreeCAD installed.
-```bash
-docker pull qingfengxia/freecad-daily-python3
-docker pull qingfengxia/ppp-fedora
-
-# cd to your working folder
-# I can not git clone this internal repo inside image, so it is done outside docker VM
-# git clone will NOT download the external submodule loguru, so run this command
-git submodule update --init --recursive
-
-# log into this image, using full host path for volume binding
-docker run  -ti  -u root -w /home/user/parallel-preprocessor -v $(pwd)/parallel-preprocessor:/home/user/parallel-preprocessor qingfengxia/freecad-daily-python3:latest  /bin/bash
-
-# to run docker image locally, you can mapping dir and xwindows
-# https://github.com/mviereck/x11docker
-
-```
-
-Inside the docker VM, or if you have managed all dep locally, change dir into the repo folder
-`mkdir build && cd build && cmake -DPython_EXECUTABLE=$(which python3) .. && make -j4`
-
-It is a CMake project. `rm -rf build` if you want to rebuild after some change in CMakeLists.txt
 
 ## Installation
-### Use without system-wide installation
 
-Without installation, this software can be evaluated by running [geomPipeline.py path_to_geometry_file](./python/geomPipeline.py), after building from source.
+### install by "sudo make install"
 
-After out of source build in the `parallel-preprocessor/build` folder by `cmake -DPython_EXECUTABLE=$(which python3) .. && make -j6`, change directory to `cd parallel-preprocessor/build/ppptest`, run `python3 geomPipeline.py  path-to-your-geometry.stp`. User can user absolute or relative path for the input geometry file.
+`sudo make install` to install to `/usr` or any  other defined by `CMAKE_INSTALL_PREFIX`
+`sudo make uninstall` in the build folder to uninstall.
 
-Note: change directory to the folder containing geomPipeline.py is not necessary, if user has put full path of `parallel-preprocessor/build/bin/` folder into user path. For example, by editing PATH varialbe in `~/.bashrc` on Ubuntu, it will just work as installed program.
-
-#### add `bin` in the `build folder` to the user path
-
-Just append the `bin` folder to user `path` in `~/.bashrc`, that is all.  you should be able to imprint geometry by `geomPipeline.py  input_geometry_path`.   And also append `build/lib` to `LD_LIBRARY_PATH`
-
-This is the recommended way in this development stage, then it is easier to pull and build the latest source. There is no need for super user privilege.
-
-However, unit test application such as `pppGeomTests` must be run in the `build/ppptest` folder for the moment, since test data in `parallel-preprocessor/build/data` are referred using relative path. 
-
-
-### Use after install the deb/rpm package
+### Use after built the deb/rpm package
 #### Generate deb/rpm package
 
 After successfully build this software from source using cmake, `make package` will generate the platform binary package, deb or rpm (currently, only Ubuntu 18.04 and fedora 30+). see [./Packaging.md] for more details.
@@ -272,20 +241,22 @@ After successfully build this software from source using cmake, `make package` w
 Precompiled binary packages may be provided in the future.
 
 Platform package rpm and deb has been generated in the build directory, install it.
-`sudo rpm -i parallel-preprocessor*`  on RedHat systems 
+`sudo rpm -Uhv parallel-preprocessor*`  on fedora/RedHat systems 
 or `sudo dpkg -i parallel-preprocessor*` on debian/ubuntu
 
-Note, super user privilege may be needed, depending on install prefix specified in cmake configuraton.
+### Use without system-wide installation
 
-#### Use after installation
-All python scripts and binary programs are installed to path, so there is no need to specify `geomPipeline.py` path. It can be run as a python3 script executable
-`geomPipeline.py <your_geometry_file_path>`
+Without installation, this software can be evaluated by running [geomPipeline.py path_to_geometry_file](./python/geomPipeline.py), after building from source.
 
-### Install python conda package
+Note: change directory to the folder containing geomPipeline.py is not necessary, if user has put full path of `parallel-preprocessor/build/bin/` folder into user path. For example, by editing PATH varialbe in `~/.bashrc` on Ubuntu, it will just work as installed program.
 
-A conda package can be generated to support more Linux platforms. 
+Just append the `bin` folder to user `path` in `~/.bashrc`, that is all.  you should be able to imprint geometry by `geomPipeline.py  input_geometry_path`.   And also append `build/lib` to `LD_LIBRARY_PATH`
 
-However, it is not completed and tested yet since there is built C-extension module involved. User should install all the necessary dependency, such as OpenCASCADE 7.x, TBB, FreeCAD.
+This is the recommended way in this development stage, then it is easier to pull and build the latest source.  Super user privilege is needed.
+
+
+
+
 
 
 
