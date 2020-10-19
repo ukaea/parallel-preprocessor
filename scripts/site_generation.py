@@ -6,7 +6,10 @@ Together with generate_site.sh, CMake config,
 this script will generate html site for doxygen doc, coverage and other QA report/
 
 adapted from EERA: https://github.com/ScottishCovidResponse/Covid19_EERAModel/blob/dev/scripts/site_generation.py
-with hand-crafted: flawfinder, simalrity, clang_tidy parsers
+with hand-crafted: flawfinder, similarity, clang_tidy parsers
+
+All generated html file are located in repo_root/site/, 
+so all other resource path pathes should be relative to repo_root/site/
 
 Changelog: 
     - coverage_report_folder by default is located in `build` folder
@@ -14,7 +17,9 @@ Changelog:
     - this python script works with generate_site.sh, run in build folder for local test
     - github CI works in project root folder, while build folder must be called `build`
 
+
 Todo: flowfinder.html page is missing
+      CI badge URL is hardcoded to this repo, 
 
 """
 
@@ -23,9 +28,9 @@ import re
 import os.path
 
 my_project_name = "parallel-preprocessor"
-if os.path.exists("src"):  # CI mode
-    coverage_report_folder = "build/{}_coverage/index.html".format(my_project_name)
-    doxygen_html_index = "doxygen/html/index.html"
+if os.path.exists("src"):  # CI mode. all pathes should be relative to repo_root/site/
+    coverage_report_folder = "../build/{}_coverage/index.html".format(my_project_name)
+    doxygen_html_index = "../doxygen/html/index.html"
 else:  # local build test mode
     coverage_report_folder = "{}_coverage/index.html".format(my_project_name)
     doxygen_html_index = "doxygen/html/index.html"
@@ -258,16 +263,16 @@ class HTMLFileBuilder(object):
               </thead>
               <tbody>
                 <tr>
-                  <td>master</td>
-                  <td> <img src="https://github.com/ScottishCovidResponse/Covid19_EERAModel/workflows/Covid19EERAModel/badge.svg?branch=master&event=push" class="img-rounded" alt="Master Status"> </td>
+                  <td>master branch on UKAEA</td>
+                  <td> <img src="https://github.com/ukaea/parallel-preprocessor/workflows/ubuntu-macos/badge.svg?branch=master&event=push" class="img-rounded" alt="Master Status"> </td>
                 </tr>
                 <tr>
-                    <td>dev</td>
-                    <td> <img src="https://github.com/ScottishCovidResponse/Covid19_EERAModel/workflows/Covid19EERAModel/badge.svg?branch=dev&event=push" class="img-rounded" alt="Dev Status"> </td>
+                    <td>dev of Qingfeng Xia fork</td>
+                    <td> <img src="https://github.com/qingfengxia/parallel-preprocessor/workflows/ubuntu-macos/badge.svg?branch=dev&event=push" class="img-rounded" alt="Dev Status"> </td>
                 </tr>
                 <tr>
                     <td>gh-pages</td>
-                    <td> <img src="https://github.com/ScottishCovidResponse/Covid19_EERAModel/workflows/Covid19EERAModel/badge.svg?branch=gh-pages&event=push" class="img-rounded" alt="GitHub Pages Status"> </td>
+                    <td> <img src="https://github.com/ukaea/parallel-preprocessor/workflows/ubuntu-macos/badge.svg?branch=gh-pages&event=push" class="img-rounded" alt="GitHub Pages Status"> </td>
                 </tr>
               </tbody>
             </table>
