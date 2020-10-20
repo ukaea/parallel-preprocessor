@@ -1,10 +1,19 @@
-## Get Started
+# Get Started
 
-### Command line interface
+## Command line interface
 
-Geometry pipeline can be started in a terminal. `geomPipeline.py` takes 2 positional arguments, the first is the action, and the second is the input file path. For example,  `geomPipeline.py imprint your_geometry_file_path` ,  just replace *your_geometry_file_path* by your geometry. 
+Following installation (see [wiki/Installation.md](wiki/Installation.md)), the starting point for users is the command line:
 
-Optional arguments for all pipelines, it is expected other pipelines also follow this convention.
+```bash
+geomPipeline.py imprint your_geometry_file_path
+```
+
+(with *your_geometry_file_path* replaced by the path to your geometry.)
+
+This starts the geometry pipeline. `geomPipeline.py` takes 2 positional arguments, the first is the action, and the second is the input file path.
+
+Optional arguments for all pipelines:
+
 ```
   -h, --help            show this help message and exit
   -o OUTPUT_FILE, --output-file OUTPUT_FILE
@@ -22,7 +31,8 @@ Optional arguments for all pipelines, it is expected other pipelines also follow
                         verbosity: for console or terminal: DEBUG, PROGRESS, INFO, WARNING, ERROR
 ```
 
-optional arguments for geometry pipeline
+Optional arguments for the geometry pipeline:
+
 ```
   --metadata METADATA   input metadata file, only for brep input geometry
   --tolerance TOLERANCE
@@ -33,7 +43,7 @@ optional arguments for geometry pipeline
 
 Always run `geomPipeline.py -h` to get the latest arguments.  
 
-### Geometry preprocessing features
+## Geometry preprocessing features
 
 Implemented geometry processing actions are: `check,detect,merge,imprint,search`, some other planned actions `tessellate, fix, decompose` can be found in [Roadmap.md](Roadmap.md)
 
@@ -48,21 +58,21 @@ Usage of other actions such as `search, check, detect, decompose`
 `geomPipeline.py check geometry_file` will check for errors, e.g. volume too small, invalid geometry, etc
 `geomPipeline.py detect geometry_file` will detect collision between solid shapes, see more shape spatial relationship types defined in the type `Geom::CollisionType`
 
-### Input geometry format supported
+## Input geometry format supported
 
 + FreeCAD native format, *.FCStd
-+ Step geometry exchange format, *.step/*.step
-+ OpenCASCADE native format, *.brep/*.brp, may combined with `*.metadata.json` (parallel-processor output meta data format)
++ Step geometry exchange format, *.step
++ OpenCASCADE native format, \*.brep/\*.brp, may combined with `*.metadata.json` (PPP output meta data format)
 + a json manifest file: a list of dict (geometry file path + material name)
-  ```json
+
+```json
     [{"material": "Copper",  "filename": "path_to_geometry_file1" },
-     {"material": "Steel",  "filename": "path_to_geometry_file2" },
-    ]
-  ```
+     {"material": "Steel",  "filename": "path_to_geometry_file2" }]
+```
+
   see doxygen generate document for this class for most updated information <>
 
-
-### Debug your installation
+## Debug your installation
 
 `which geomPipeline` on Unix-like system, or `where geomPipeline` on Windows to see if executable has been installed on PATH. 
 
@@ -70,9 +80,9 @@ NOTE:  if installed using deb/rpm on ubuntu and fedora, while user has anaconda 
 
 On windows, a batch file calling may be generated to run python script "geomPipeline.py" without "python path_to/geomePipeline.py".
 
+## Advanced usage (adjust pipeline parameters)
 
-### Advanced usage (adjust pipeline parameters)
-####  Pipeline configuration generation (python script)
+### Pipeline configuration generation (python script)
 
 `geomPipeline.py` will generate a json configuration based on user input (by default `config.json` in the current folder),  then starts the geometry preprocessing pipeline. For example, the imprint action will be organized into a pipeline of several GeometryProcessors, with default parameters written into the `config.json`. 
 
@@ -81,6 +91,6 @@ If the output is not ideal, users can edit parameters in the generated `config.j
 Actually, all the processing computation is done by `pppGeomPipeline` which is an executable compiled from C++ code. This executable only accepts a json configuration file, e.g. `pppGeomPipeline path_to_json_config.json`.  
 
 The split of high-level user-oriented python script and lower-level C++ program has the benefits:
+
 + to ease the debugging of mixed python and C++ programming
 + to ease the parallel programming, since Python has the GIL problem
-
