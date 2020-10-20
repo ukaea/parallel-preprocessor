@@ -3,14 +3,14 @@
 
 """
 this enable test for the cases: test after package installed or test in the build folder
-using ppp module is importable, otherwise use the executable: geomPipeline
+using ppp module is importable, otherwise use the executable: pppGeomPipeline
 """
 
 import shutil
 import sys
 import os.path
 
-ppp_geom_executable = "geomPipeline"
+ppp_geom_executable = "pppGeomPipeline"
 
 try:
     import ppp  # in case this python module has been installed
@@ -28,10 +28,10 @@ except ImportError:
     try:
         import ppp  # in case of running this module in the build folder
     except ImportError:
-        print("parallel-preprocessor python module `ppp` is not installed/importable")
+        # print("parallel-preprocessor python module `ppp` is not installed/importable")
         # print("if not installed, ppp module must be located in build folder")
         # print("../lib/ related to this script")
-        print("start to run `geomPipeline config.json`in an external process")
+        # print("start to run `pppGeomPipeline config.json`in an external process")
         ppp = None
 
 has_ppp_module = bool(ppp)

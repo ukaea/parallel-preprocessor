@@ -46,7 +46,7 @@ add_executable(MyGeomMain "GeometryMain.cpp")
 add_dependencies(MyGeomMain MyGeom)
 
 target_link_libraries(MyGeomMain MyGeom)
-set_target_properties(MyGeomMain PROPERTIES OUTPUT_NAME "geomPipeline")
+set_target_properties(MyGeomMain PROPERTIES OUTPUT_NAME "pppGeomPipeline")
 
 if(MSVC)
     target_compile_options(MyGeomMain PRIVATE /wd4996 /wd4251)

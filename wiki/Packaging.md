@@ -142,7 +142,7 @@ First of all, I create release tag, then upload binary package manually (creatin
 then run this action to update the package on each push. 
 
 ```yml
-    # those release asset filename (is created mannually before running this action)
+    # those release asset filename (is created manually before running this action)
     - name: Upload binary package to release
       uses: svenstaro/upload-release-action@v2
       with:
