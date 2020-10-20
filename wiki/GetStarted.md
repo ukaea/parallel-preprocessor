@@ -1,22 +1,52 @@
 ## Get Started
 
-### Quick start
-The command line `geomPipeline.py imprint your_geometry_file_path` is the starting point for users, just replace *your_geometry_file_path* by your geometry. 
+### Command line interface
 
-run `geomPipeline.py -h` for more options. 
+Geometry pipeline can be started in a terminal. `geomPipeline.py` takes 2 positional arguments, the first is the action, and the second is the input file path. For example,  `geomPipeline.py imprint your_geometry_file_path` ,  just replace *your_geometry_file_path* by your geometry. 
+
+Optional arguments for all pipelines, it is expected other pipelines also follow this convention.
+```
+  -h, --help            show this help message and exit
+  -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                        output file name (without folder path)
+  --working-dir WORKING_DIR
+                        working folder path, by default the current working folder
+  --output-dir OUTPUT_DIR
+                        output folder path, by default, a subfolder in workingDir
+  --config              only generate config.json without run the pipeline
+
+  -nt THREAD_COUNT, --thread-count THREAD_COUNT
+                        number of thread to use, max = hardware core number
+
+  -v VERBOSITY, --verbosity VERBOSITY
+                        verbosity: for console or terminal: DEBUG, PROGRESS, INFO, WARNING, ERROR
+```
+
+optional arguments for geometry pipeline
+```
+  --metadata METADATA   input metadata file, only for brep input geometry
+  --tolerance TOLERANCE
+                        tolerance for imprinting, unit MilliMeter
+  --no-merge            do not merge the imprinted shapes, for two-step workflow
+  --ignore-failed       ignore failed (in BOP check, collision detect, etc) solids
+```
+
+Always run `geomPipeline.py -h` to get the latest arguments.  
 
 ### Geometry preprocessing features
 
-The default action is **imprint**, outputting a geometry file (`*._processed.brep`) of one shape with duplicated shared faces removed, and also a `*_processed_metadata.json` file of meta data.  The latter file contains meta data such as material information for the geometry brep file. All the output files are located in a folder in the current directory.
+Implemented geometry processing actions are: `check,detect,merge,imprint,search`, some other planned actions `tessellate, fix, decompose` can be found in [Roadmap.md](Roadmap.md)
 
-The imprint operation can be split into 2 steps:  Imprint faces and Merge faces:
+The  **imprint** action outputs a geometry file (`*._processed.brep`) of one shape with duplicated shared faces removed, and also a `*_processed_metadata.json` file of meta data.  The latter file contains meta data such as material information for the geometry brep file. All the output files are located in a folder in the current directory.
+
+The imprint operation is accomplished in 2 steps:  Imprint faces and Merge faces:
 `geomPipeline.py imprint geometry_file --thread-count 6  --no-merge`
 `geomPipeline.py merge  /home/qxia/Documents/StepMultiphysics/parallel-preprocessor/result --thread-count 6`
 
-Other actions are `search, check, detect, decompose`, etc, see more options by running `geomPipeline.py -h`. 
+Usage of other actions such as `search, check, detect, decompose`
 
 `geomPipeline.py check geometry_file` will check for errors, e.g. volume too small, invalid geometry, etc
-`geomPipeline.py detect geometry_file` will detect collision between solid shapes, see more shape relations types at Geom::CollisionType
+`geomPipeline.py detect geometry_file` will detect collision between solid shapes, see more shape spatial relationship types defined in the type `Geom::CollisionType`
 
 ### Input geometry format supported
 
@@ -29,23 +59,28 @@ Other actions are `search, check, detect, decompose`, etc, see more options by r
      {"material": "Steel",  "filename": "path_to_geometry_file2" },
     ]
   ```
-
-### Advanced usage (adjust pipeline parameters)
-####  Pipeline configuration generation (python script)
-
-`geomPipeline.py` will generate a json configuration based on user input (by default `config.json` in the current folder),  then starts the geometry preprocessing pipeline. For example, the imprint action will be organized into a pipeline of several GeometryProcessors, with default parameters written into the `config.json`. If the output is not ideal, users can edit parameters in the generated `config.json` and re-run the pipeline by `python3 geomPipeline.py config.json`, or equally `geomPipeline path_to_json_config.json`.  
-
-In fact, python pipeline controller such as `geomPipeline.py` generates input configuration, all the processing computation is done by `geomPipeline` which is an executable compiled from C++ code. This executable only accepts a json configuration file, e.g. `geomPipeline path_to_json_config.json`.  
-
-The split of high-level user-oriented python script and lower-level C++ program has the benifits:
-+ to ease the debugging of mixed python and C++ programming
-+ to ease the parallel programming, since Python has the GIL problem
+  see doxygen generate document for this class for most updated information <>
 
 
 ### Debug your installation
 
-NOTE:  if installed using deb/rpm on ubuntu and fedora, while user has anaconda activated, then user should give the full path of system python3 path, as the Linux package of ppp link  to system python `/usr/bin/python3`, and install ppp module to system python site. For example, on Ubuntu the ppp module `ppp.cpython-36m-x86_64-linux-gnu.so` is installed to `/usr/lib/python3/dist-packages/`
+`which geomPipeline` on Unix-like system, or `where geomPipeline` on Windows to see if executable has been installed on PATH. 
 
-To use `geomPipeline.py`
+NOTE:  if installed using deb/rpm on ubuntu and fedora, while user has anaconda activated, then user will not be able to use c-extension module `ppp`. For example, on Ubuntu the ppp module `ppp.cpython-36m-x86_64-linux-gnu.so` is installed to `/usr/lib/python3/dist-packages/`. In that case, `python3 /usr/bin/geomPipeline.py manifest.json` will start an external process by python to run pipeline without using `ppp` module.
 
-`/usr/bin/python3 /user/bin/geomPipeline.py manifest.json`
+On windows, a batch file calling may be generated to run python script "geomPipeline.py" without "python path_to/geomePipeline.py".
+
+
+### Advanced usage (adjust pipeline parameters)
+####  Pipeline configuration generation (python script)
+
+`geomPipeline.py` will generate a json configuration based on user input (by default `config.json` in the current folder),  then starts the geometry preprocessing pipeline. For example, the imprint action will be organized into a pipeline of several GeometryProcessors, with default parameters written into the `config.json`. 
+
+If the output is not ideal, users can edit parameters in the generated `config.json` and re-run the pipeline by `python3 geomPipeline.py config.json`, or equally `pppGeomPipeline path_to_json_config.json`.  
+
+Actually, all the processing computation is done by `pppGeomPipeline` which is an executable compiled from C++ code. This executable only accepts a json configuration file, e.g. `pppGeomPipeline path_to_json_config.json`.  
+
+The split of high-level user-oriented python script and lower-level C++ program has the benefits:
++ to ease the debugging of mixed python and C++ programming
++ to ease the parallel programming, since Python has the GIL problem
+
