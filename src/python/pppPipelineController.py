@@ -5,10 +5,12 @@
 # created and tested on Sunday March 22, 2020
 
 """
-This is a demonstration of usage of PPP module, using CommandLineProcessor
+This script defines utility functions that can be shared by all pipeline controllers such as GeomPipeline.py.
+By using those functions,  consistent command line argument and config.json header can be achived.
+
+At the end of this script. a demonstration of usage of PPP core module, using CommandLineProcessor.
 ParallelAccessorTest.cpp is a demo (test) of instantiation of ProcessorTemplate class in C++
 
-todo: make it a class, to be reused with GeomPipeline.py
 """
 
 import sys
@@ -17,8 +19,7 @@ import json
 import copy
 from collections import OrderedDict
 from multiprocessing import cpu_count
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import argparse
 import shutil
@@ -40,29 +41,45 @@ if debugging:
 
 
 def ppp_add_argument(parser):
-    # the only compulsory arg
+    # call this function after the first positional arg has been added to parser 
+
+    # the second positional arg for input file
     parser.add_argument(
-        "inputFile", help="input data file, detect type from file suffix"
+        "input", help="input data file, detect type from file suffix",
     )
 
     # optional arguments
+    # do not use "nargs=1", it will return args.outputFile as a list instead of string
     parser.add_argument(
-        "-o", "--outputFile", help="output file name (without folder path)"
+        "--working-dir", help="working folder path, by default, the current working folder",
+        dest = "workingDir"
     )
-    # do not use "nargs=1" it will return args.outputFile as a list instead of string
+
     parser.add_argument(
-        "--workingDir", help="working folder path, by default pwd"
+        "-o", "--output-file", help="output file name (without folder path)",
+        dest = "outputFile"
     )
+
     parser.add_argument(
-        "--outputDir",
-        help="output folder path, by default a subfolder in workingDir",
+        "--output-dir",
+        help="output folder path, by default a subfolder in the working dir",
+        dest = "outputDir"
     )
 
     parser.add_argument(
         "--config",
         dest="config_only",
         action="store_true",
-        help=" only generate config.json without run the pipeline",
+        help=" only generate config.json without run the pipeline processors",
+    )
+
+    parser.add_argument(
+        "-nt",
+        "--thread-count",
+        dest="thread_count",
+        type=int,
+        default=cpu_count(),
+        help="number of thread to use, by default, hardware core number",
     )
 
     parser.add_argument(
@@ -70,19 +87,11 @@ def ppp_add_argument(parser):
         "--verbosity",
         type=str,
         default="INFO",
-        help="verbosity: for console or termimal: DEBUG, PROGRESS, INFO, WARNING, ERROR",
+        help="verbosity: for console or terminal: DEBUG, PROGRESS, INFO, WARNING, ERROR",
     )
-    parser.add_argument(
-        "-nt",
-        "--thread-count",
-        dest="thread_count",
-        type=int,
-        default=cpu_count(),
-        help="number of thread to use, max = hardware core number",
-    )
-    return (
-        parser  # must return parser, otherwise, modification to input parser will lost
-    )
+
+    # must return parser, otherwise, modification to input parser will lost
+    return parser  
 
 
 ############################ input and output ##############################
@@ -94,18 +103,18 @@ def is_url(s):
 
 
 def ppp_parse_input(args):
-    if args.inputFile:
-        if is_url(args.inputFile):
+    if args.input:
+        if is_url(args.input):
             # download to current folder
             import urllib.request
 
-            urllib.request.urlretrieve(args.inputFile, "input_data")
+            urllib.request.urlretrieve(args.input, "input_data")
             return "input_data"
 
-        elif os.path.exists(args.inputFile):
-            return args.inputFile
+        elif os.path.exists(args.input):
+            return args.input
         else:
-            raise IOError("input file does not exist: ", args.inputFile)
+            raise IOError("input file does not exist: ", args.input)
     else:
         raise Exception("input file must be given as an argument")
 
@@ -173,22 +182,19 @@ def ppp_post_process(args):
             print("failed to create symbolic link", linkToInputFile)
 
 
-#####################################################
-
-
 def generate_config_file(config_file_content, args):
     # parse args first, the write config file
 
     config_file_given = False
     generated_config_file_name = "config.json"
     # input json file is config, but not geomtry input manifest file
-    if args.inputFile.find(".json") > 0:
-        with open(args.inputFile, "r") as f:
+    if args.input.find(".json") > 0:
+        with open(args.input, "r") as f:
             _json_file_content = json.loads(f.read())
             # check compulsory key in config.json file
             if "readers" in _json_file_content:
                 config_file_given = True
-                input_config_file_name = args.inputFile
+                input_config_file_name = args.input
             else:
                 pass  # it is a multiple geometry-material manifest json file
     #
@@ -242,7 +248,7 @@ CommandLineProcessor = {
     },
 }
 
-###############################################################################
+######################### module specific pipeline control ############################
 
 
 class PipelineController(object):

@@ -3,12 +3,13 @@
 
 """
 After installation by pip/system package manager, `geomPipeline.py` should be on executable PATH
+On Windows, it is not possible to run geomPipeline.py without make a batch file.
 
-`geomPipeline.py  path-to-your-geometry.stp`
+`geomPipeline.py imprint path-to-your-geometry.stp`
 this script will generate a config file, save result into a folder has the name of your geometry file stem
 
 test command line arguments by
-python3 geomPipeline.py --thread-count 4 --tolerance=0.1 --config  --no-merge ../data/test_geometry/test_geometry.stp && scite config.json
+python3 geomPipeline.py imprint --thread-count 4 --tolerance=0.1 --config  --no-merge ../data/test_geometry/test_geometry.stp && scite config.json
 
 you can keep the `config_file_content` dict in `geomPipeline.py` as it is, which will build a default pipeline
 
@@ -19,8 +20,8 @@ geomPipeline.py merge  geometry_file --thread-count 6
 """
 
 USAGE = """
-geomPipeline.py  action[imprint|check|detect|decompose|...] input_filename
-see more details and optional arguments by `geomPipeline.py -h`
+geomPipeline.py  {imprint|check|detect|decompose|...} input_filename
+
 """
 
 import sys
@@ -93,7 +94,7 @@ def geom_add_argument(parser):
 
 ############################### arg parse ###############################
 parser = argparse.ArgumentParser(usage=USAGE)
-# positional argument, the first positional argument can be ignored
+# positional argument, the first positional argument can have a default
 parser.add_argument(
     "action", nargs="?", type=Action, default=Action.imprint, choices=list(Action)
 )
