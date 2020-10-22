@@ -66,7 +66,7 @@ namespace PPP
          * */
         const double LENGTH_SCALE = 0.01;
         // if the value is close to zero after scaling, regarded as zero in comparison
-        const static double ZERO_THRESHOLD = 1e-4;
+        const static double ZERO_THRESHOLD = 1; // changed from 1e-4 to 1 on Oct 2020, issue 20
         /// rounding: mask out east significant bits for approximately comparison
         const std::uint16_t ROUND_PRECISION_MASK = 0x0008;
 
