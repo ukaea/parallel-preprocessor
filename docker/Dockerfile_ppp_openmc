@@ -1,0 +1,274 @@
+######################################
+# adapted from https://github.com/Shimwell/openmc_workshop_dependencies
+#
+# Changelog:  1) merge commands to improve performance
+#             2) add gmsh, ppp, occ_faceter, freecad
+#             3) both X11 and jupyter web interface should be supported
+#             4) ssh server
+#             5) base image can be selected from ubuntu:bionic (18.04), ubuntu:focal (20.04), jupyter/minimal-notebook
+######################################
+#
+# build with the following command
+#       sudo docker build -f Dockerfile_ppp_openmc -t  ppp_openmc . --no-cache
+#       build without  `--no-cache` can help recover build from where error happened if start quickly enough, 
+#       useful when modify this Dockerfile. The drawback is lots of disk space will be used during trial-and-error process,
+#       It needs to reclaim by docker command afterwards.
+#       use --no-cache  if you know there is no error in this Dockerfile, to save disk space
+# USAGE:  see README.md
+################################################
+
+
+# jupyter/minimal-notebook is based on ubuntu-focal, so FROM ubuntu:focal should be working
+# if you do not want jupyter-notebook, you can base on ubuntu:focal
+FROM jupyter/minimal-notebook
+#FROM ubuntu:focal
+
+
+# only last CMD is working, if multiple CMD exists, interactive mode also suppress this CMD
+# jupyter can create a terminal, just like ssh
+# uncomment this CMD if the base image is not jupyter, assuming ssh server installation section is kept
+#CMD ["/usr/sbin/sshd","-D"]
+
+
+LABEL name="ppp_openmc" \
+    maintainer="qingfeng.xia @ UKAEA" \
+    version="0.3" \
+    description="OpenMC, FreeCAD, parallel-preprocessor, DAGMC, MOAB, gmsh"
+
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+
+# for local X11 forwarding, this env var gives a default value
+# this can be overridden to another DISPLAY value
+# by providing environment variable on docker command line `-e DISPLAY=xxx`
+ENV DISPLAY :0
+
+# this is required to install programs on the base image
+USER root
+
+RUN apt-get --yes update && apt-get --yes upgrade
+
+#  sudo is needed as the install NJOY script has a sudo make install command
+RUN apt-get -y install sudo git g++ cmake build-essential wget software-properties-common  
+
+#########################################
+## if not using jupyter base docker image 
+#########################################
+# pip install is used later, but pip3 is not installed on ubuntu base images
+# this alias makes sure pip and pip3 are same
+RUN  if test "$NB_UID" = "" ; then \
+            apt install -y python3 python3-pip  python3-matplotlib python3-numpy  && \
+            apt-get --yes update && \
+            ln -s /usr/bin/pip3 /usr/bin/pip && \
+            ln -s /usr/bin/python3 /usr/bin/python; \
+        fi
+########################################################
+
+###################### 
+## ubuntu:bionic only 
+#####################
+# newer CMake version (3.12) allows us to set libraries, includes of the  imported DAGMC target in CMake
+# for ubuntu foal, cmake version is high enough,  freecad 0.18 is in focal repository
+RUN  if test $(awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed 's/\"//' | sed 's/\"$//' ) = "18.04" ; then \
+            add-apt-repository ppa:freecad-maintainers/freecad-stable && \
+            apt remove -y cmake && \
+            pip3 install cmake==3.12; \
+      fi
+##########################################################
+
+
+##########################
+install QT and full graphic software stack
+##########################
+# install full QT software stack, to make sure matplotlib working with X11 forwarding, 
+# it is not needed if freecad will be installed
+# RUN apt install -y python3-pyside2.qtgui
+
+# add apt option --no-recommended to
+RUN apt update && apt install   freecad -y --no-install-recommends
+
+
+
+# why non-root user is needed? because jupyter base image is used, put all files in user home
+# this environment is jupyter/minimal specific 
+# ARG NB_USER="jovyan"
+# see https://github.com/jupyter/docker-stacks/blob/master/base-notebook/Dockerfile
+# if built on ubuntu:focal, build with  -e NB_USER=root
+USER $NB_USER
+
+###################### dependencies for openmc, maob, dagmc ###################
+# OpenMC required packages identified from openmc travis.yml
+# libnetcdf-dev is needed to allow NETCDF on MOAB which helps with tet meshes in OpenMC
+RUN apt-get --yes install imagemagick hdf5-tools mpich  libmpich-dev libhdf5-serial-dev libhdf5-mpich-dev libblas-dev liblapack-dev libnetcdf-dev libeigen3-dev
+
+
+##################################################################
+# MOAB Variables
+ENV MOAB_BRANCH='Version5.1.0'
+ENV MOAB_REPO='https://bitbucket.org/fathomteam/moab/'
+ENV MOAB_INSTALL_DIR=$HOME/MOAB/
+
+# MOAB Install
+RUN cd $HOME && \
+    mkdir MOAB && \
+    cd MOAB && \
+    git clone -b $MOAB_BRANCH $MOAB_REPO  && \
+    mkdir build && cd build && \
+    cmake ../moab -DENABLE_HDF5=ON -DENABLE_MPI=off -DENABLE_NETCDF=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$MOAB_INSTALL_DIR && \
+    make -j$(nproc)  &&  \
+    make install  && \
+    cmake ../moab -DBUILD_SHARED_LIBS=OFF && \
+    make -j$(nproc) && make  install && \
+    rm -rf $HOME/MOAB/moab $HOME/MOAB/build
+
+####################################################################
+# DAGMC Variables
+ENV DAGMC_BRANCH='develop'
+ENV DAGMC_REPO='https://github.com/svalinn/dagmc'
+ENV DAGMC_INSTALL_DIR=$HOME/DAGMC/
+
+# DAGMC Install
+RUN cd $HOME && \
+    mkdir DAGMC && cd DAGMC && \
+    git clone -b $DAGMC_BRANCH $DAGMC_REPO && \
+    mkdir build && \
+    cd build && \
+    cmake ../dagmc -DBUILD_TALLY=ON -DCMAKE_INSTALL_PREFIX=$DAGMC_INSTALL_DIR -DMOAB_DIR=$MOAB_INSTALL_DIR && \
+    make -j$(nproc)  install && \
+    rm -rf $HOME/DAGMC/dagmc $HOME/DAGMC/build
+
+
+###############################################
+# Clone and install NJOY2016
+RUN cd $HOME && git clone https://github.com/njoy/NJOY2016 && \
+        cd NJOY2016 && mkdir build && cd build && \
+        cmake -Dstatic=on ..  && \
+        make 2>/dev/null && \
+        sudo make install && \
+        cd .. && rm -rf build
+
+
+###################### OpenMC ##########################
+# /opt folder is owned by root
+USER root
+
+# numpy is needed by openmc-python
+RUN pip install --upgrade numpy matplotlib pyside2
+
+# openmc should be installed to default location  /usr/local/ 
+# so cmake can find OpenMCConfig.cmake, which is under /usr/local/lib/cmake/OpenMC
+# installs OpenMC from source (latest)
+RUN cd /opt &&  git clone https://github.com/openmc-dev/openmc.git && \
+        cd /opt/openmc && git checkout develop && \
+        cd /opt/openmc && mkdir build && \
+        cd /opt/openmc/build && cmake -Ddagmc=ON -DDAGMC_ROOT=$DAGMC_INSTALL_DIR -DHDF5_PREFER_PARALLEL=OFF -DCMAKE_INSTALL_PREFIX=..  ..  && \
+        cd /opt/openmc/build && make -j$(nproc)  && \
+        cd /opt/openmc/build && make install
+
+# build and install python interface for openmc
+RUN cd /opt/openmc/ && python setup.py install && \
+        cd .. && rm -rf build
+
+## some python package is needed for openmc
+RUN pip install neutronics_material_maker --user
+
+# Oct 2020, openmc must be installed to /opt/openmc, to install this parametric-plasma-source
+RUN pip install git+https://github.com/open-radiation-sources/parametric-plasma-source.git
+
+
+## to make sure openmc etc are on path for jupyter notebook
+ENV LD_LIBRARY_PATH=$HOME/MOAB/lib:$HOME/DAGMC/lib
+ENV PATH=$PATH:$HOME/MOAB/bin:/opt/openmc/bin:$HOME/DAGMC/bin
+
+
+####################  
+install ssh server 
+####################
+RUN apt install  openssh-server  nano  -y
+
+# to enable X11 forwarding via ssh
+RUN echo "ForwardX11 yes" >> /etc/ssh/ssh_config &&  echo "ForwardX11Trusted no" >> /etc/ssh/ssh_config 
+
+# use UID 1001, as 1000 has been used by another user
+RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1001 test 
+
+# set password for the user test as "test"
+RUN  echo 'test:test' | chpasswd
+RUN service ssh start
+
+# expose port, the default
+EXPOSE 22
+##################
+
+
+##############  
+## install gmsh and pygmsh 
+##############
+RUN apt-get install  -y  gmsh python3-gmsh
+RUN pip install pygmsh
+
+############################################
+## install dependencies for PPP & occ_faceter
+#############################################
+
+# ubuntu 18.04 needs PPA to install occt and freecad
+# occ_faceter needs libcgal-dev, 
+RUN apt-get install  -y libocct*-dev occt* python3-dev pybind11-dev libtbb-dev libboost-dev libx11-dev libxmu-dev libxi-dev libcgal-dev 
+
+
+## install occ_faceter
+RUN cd $HOME && git clone https://github.com/makeclean/occ_faceter.git && \
+    cd occ_faceter && \
+    mkdir build && cd build && \
+    export MOAB_ROOT=$MOAB_INSTALL_DIR && \
+    export LIBRARY_PATH=$LIBRARY_PATH:$MOAB_INSTALL_DIR/lib && \
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr && \
+    make && \
+    make install && \
+    cd .. && rm -rf build
+
+## install parallel-preprocessor 
+RUN cd $HOME && git clone https://github.com/ukaea/parallel-preprocessor.git && \
+    cd parallel-preprocessor && git submodule update --init --recursive && \
+    mkdir build && cd build && \
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && rm -rf build
+
+##################  
+## nuclear material data for openmc 
+###################
+# consider to split the docker image from here
+# copy data into docker image could be skipped and use volume map instead
+# but host folder must be mapped to /mat_dir in the container
+
+# installed on host, the copy into container
+COPY tendl-2019-hdf5 /mat_dir
+
+ENV MAT_DIR=/mat_dir
+ENV OPENMC_CROSS_SECTIONS=$MAT_DIR/cross_sections.xml
+
+##  another way to install material is 
+# clone data repository
+# RUN cd $HOME  && git clone https://github.com/openmc-dev/data.git
+# run script that converts ACE data to hdf5 data
+#RUN python data/convert_nndc71.py --cleanup
+
+
+################# openmc workshop ###################
+
+# for jupyter to work:  switch to USER $NB_USER
+USER $NB_USER
+
+RUN git clone -b develop https://github.com/ukaea/openmc_workshop
+# currently there is some bug stop install parametric_plasma_source 
+#RUN cd openmc_workshop && pip install -r requirements.txt
+
+# can WORKDIR be override by command line option yes, by -w argument
+WORKDIR openmc_workshop/tasks
+
+###################### some extra tools ###########################
+RUN pip install --upgrade vtk pyansys --user
+
