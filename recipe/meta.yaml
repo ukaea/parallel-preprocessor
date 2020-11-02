@@ -1,43 +1,80 @@
 # manually update or generated from template
 package:
-    name: ppp
-    version: 0.3
+    name: parallel-preprocessor
+    version: '0.3'
 source:
-    #sha256: 0387bf0f9d313e2311742e1ad0b64e07f2f3e76039eed20e3b9aa9951b88e187
-    #url: https://pocoproject.org/releases/poco-1.9.0/poco-1.9.0-all.tar.gz
-    path: ../
+    # calc check sum by command sha256sum
+    #sha256: 3f779c5096acc8a2c39dc645e09c577d2741f0271c7b3c589e2ff77a54588833
+    url: https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor.zip
+
 build:
-    number: '2003'  # should be generated, or manully update
-    string: hdef9aff_2003
+    # number should be generated, or manually update, YYMM pattern here, must be 0 for the first PR
+    number: '0'
+    string: oct_2020
+    skip: true  # [py < 38]
+
+# libGL needs Core Dependency Tree (CDT) packages
+# https://conda-forge.org/docs/maintainer/knowledge_base.html#special-dependencies
 requirements:
+    run_constrained:
+        - __osx >={{ MACOSX_DEPLOYMENT_TARGET|default("10.9") }}  # [osx]
     build:
+        - python
         - cmake
-        - vs2015_runtime [win]
-        - vs2015_win-64 [win]
+        - git
+        - ninja
+        - make  # [unix]
+        - {{ compiler("cxx") }}
+        - {{ cdt('mesa-libgl-devel') }}      # [linux]
+        - {{ cdt('mesa-dri-drivers') }}      # [linux]
+        - {{ cdt('mesa-libegl-devel') }}     # [linux]
+        - {{ cdt('libselinux') }}            # [linux]
+        - {{ cdt('libxdamage') }}            # [linux]
+        - {{ cdt('libxfixes') }}             # [linux]
+        - {{ cdt('libxxf86vm') }}            # [linux]
+        - {{ cdt('libxcb') }}                # [linux]
+        - {{ cdt('libxext') }}               # [linux]
+        - {{ cdt('xorg-x11-server-xvfb') }}  # [linux]
+        - {{ cdt('libxau') }}                # [linux]
+        - {{ cdt('libxi-devel') }}           # [linux]
         - occt >=7.4
         - tbb
+        - freetype
         - tbb-devel
+        - pybind11
     host:
+        - python
+        - boost-cpp
         - ca-certificates
         - openssl
-        - vc >=14,<15.0a0 [win]
-        - vs2015_runtime [win]
-    run:  # test
-        - openssl
+        - occt >=7.4
+        - xorg-libxt  # [linux]
+        - xorg-libxpm   # [linux]
+        - xorg-libxaw   # [linux]
+        - xorg-libxfixes  # [linux]
+        - vtk
+    run:
+        - python
         - occt >=7.4
         - tbb
-        - vc >=14,<15.0a0 [win]
-#test:
-#    commands:
-#        - if not exist %LIBRARY_BIN%\pppApp%SHLIB_EXT% exit 1
+        - xorg-libxt  # [linux]
+        - freetype
+
+test:
+    commands:
+        - if not exist %LIBRARY_BIN%\pppApp%SHLIB_EXT% exit 1  # [win]
+        - test -f $PREFIX/lib/libpppApp$SHLIB_EXT  # [unix]
+        - echo "started test in the folder $(pwd)"  # [unix]
+        - if [ -d conda-build ]; then cd conda-build; fi  # [unix]
+        #- if [ -f run_all_tests.sh ]; then sh run_all_tests.sh; fi  # [unix]
+ 
 about:
-    home: https://github.com/qingfengxia/CAE_pipeline
-    license: LGPL
-    license_family: OTHER
-    #license_file: LICENSE
-    summary: 'parallel preprocessor for CAD and CAE'
+    home: https://github.com/ukaea/parallel-preprocessor
+    license: LGPL-2.1-only
+    license_family: LGPL
+    license_file: LICENSE
+    summary: 'parallel CAD preprocessor for large assembly simulation'
+
 extra:
-    copy_test_source_files: true
-    final: true
     recipe-maintainers:
         - qingfengxia
