@@ -64,18 +64,6 @@ jobs:
         sha256sum ${{ env.PROJECT_NAME }}.zip | awk '{ print $1; }' > ${{ github.workspace }}/${{ env.PROJECT_NAME }}.zip.sha256.txt
       if:  matrix.os == 'ubuntu-20.04'
     
-    - name: Compile on Linux (debug)
-      # env:
-      #         CC: ${{ matrix.compiler }}
-      #         CXX: ${{ matrix.compilerpp }}
-      run: |
-        git submodule update --init --recursive
-        mkdir build
-        cd build
-        cmake  -DCODE_COVERAGE=ON -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..  -Wno-dev
-        make 2>&1 | tee clang_tidy_build_results.log
-      if:  matrix.os == 'ubuntu-20.04'
-
     - name: Compile on Linux (release)
       env:
           CC: ${{ matrix.compiler }}
@@ -86,7 +74,7 @@ jobs:
         cd build
         cmake  -DCMAKE_BUILD_TYPE=Release -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..  -Wno-dev
         make 2>&1 | tee clang_tidy_build_results.log
-      if:  matrix.os == 'ubuntu-18.04'
+      if:  matrix.os == 'ubuntu-18.04' || matrix.os == 'ubuntu-20.04'
 
     - name: package and installation on Ubuntu
       working-directory: ${{ github.workspace }}/build
@@ -178,6 +166,19 @@ jobs:
       # https://github.com/ukaea/parallel-preprocessor/releases/download/dev/parallel-preprocessor.zip
   
     ########################################## only for Ubuntu debug release ############################################
+    - name: Re-compile on Linux (debug + coverage)
+      working-directory: ${{ github.workspace }}
+      # env:
+      #         CC: ${{ matrix.compiler }}
+      #         CXX: ${{ matrix.compilerpp }}
+      run: |
+        rm -rf build
+        mkdir build
+        cd build
+        cmake  -DCODE_COVERAGE=ON -DPython_EXECUTABLE=$(which python3) -DPPP_VERSION_NAME=${{ env.PROJECT_VERSION }} ..  -Wno-dev
+        make 2>&1 | tee clang_tidy_build_results.log
+      if:  matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
+    
     - name: Run Cpp Check Flawfinder  Sim C++ ( Ubuntu GCC Dev/Master )
       working-directory: ${{ github.workspace }}
       run: |
