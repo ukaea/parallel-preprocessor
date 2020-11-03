@@ -1,0 +1,81 @@
+# command to build: docker build  --rm -f Dockerfile_centos  -t qingfengxia/ppp-centos .  --no-cache
+# docker push qingfengxia/ppp-centos:latest
+# Use multi-stage builds: https://docs.docker.com/develop/develop-images/multistage-build/
+# rebuild on top of local image (instead of base OS layer) for quick modification, run without `--rm`
+# docker build  -f Dockerfile_centos  -t qingfengxia/ppp-centos .
+
+# Base OS layer: 
+FROM centos:8
+
+LABEL name="ppp-centos" \
+    maintainer="qingfeng.xia @ UKAEA" \
+    version="0.3" \
+    description="parallel with OpenCASCADE"
+
+#USER root
+
+# avoid interactive timezone selection, ENV setting will affect child image
+# ENV TZ=Europe/London
+# RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# using yum command -y
+ENV DEBIAN_FRONTEND=noninteractive
+
+# centos-release-scl is only needed for cento 7.6 or lower
+# yum install epel-release centos-release-scl -y
+# the default cmake version is too low 2.8 for centos7
+
+# you must update before any yum install or add a repo
+# dnf group install "Development Tools" -y
+RUN   yum install epel-release -y && yum update -y && dnf groupinstall "Development Tools" -y \
+       && yum install wget  cmake  git python3 python3-devel -y
+
+
+RUN yum install tbb tbb-devel freetype freetype-devel fontconfig-devel freeimage freeimage-devel -y
+
+# for OpenCASCADE, openGL is needed for BUILD_MODULE_Visualization, and TKService
+RUN yum install libXmu-devel libX11-devel libXi-devel  -y
+
+# install those below if Draw module is enabled for building OpenCASCADE
+# yum install tk tcl tk-devel tcl-devel -y
+
+# these packages SDL2_image-devel  name maybe centos7, or needed by centos7 only
+RUN if test $(awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed 's/\"//' | sed 's/\"$//' ) = "7" ; then \
+       yum install SDL2-devel  glew-devel  glm-devel  -y; \
+    fi
+
+# centos8 install fron non-official repo
+RUN if test $(awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed 's/\"//' | sed 's/\"$//' ) = "8" ; then \
+        dnf --enablerepo=PowerTools install glew-devel glm-devel SDL2-devel -y; \
+    fi
+
+# install OpenCASCADE from official readonly repo is not working, it needs to upload ssh pubkey
+# https://old.opencascade.com/doc/occt-7.0.0/overview/html/occt_dev_guides__git_guide.html
+# git clone -b V7_4_0p1 gitolite@git.dev.opencascade.org:occt occt
+
+RUN cd $HOME && wget "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz" -O occt.tar.gz && \
+    tar -xzf occt.tar.gz 
+    
+RUN cd $HOME && cd occt-* && \
+    mkdir build && cd build && \
+    cmake ..  -DUSE_TBB=ON -DBUILD_MODULE_Draw=OFF -DBUILD_MODULE_Visualization=OFF && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && rm -rf build
+
+
+ENV DISPLAY :0
+
+
+RUN cd $HOME && git clone https://github.com/ukaea/parallel-preprocessor.git && \
+    cd parallel-preprocessor && git submodule update --init --recursive && \
+    mkdir build && cd build && \
+    dnf install which -y && \
+    cmake .. -DPYTHON_EXECUTABLE=$(which python3) -DCMAKE_BUILD_TYPE=Release && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && rm -rf build
+
+#  pppGeomPipeline: error while loading shared libraries: libpppGeom.so: cannot open shared object file: No such file or directory
+# /usr/local/lib is not system LD path, the solution is below
+ENV LD_LIBRARY_PATH=/usr/local/lib
