@@ -170,19 +170,7 @@ yum install opencascade-draw, opencascade-foundation,  opencascade-modeling,  op
 
 #### Option 2: Download the opencascade source code and compile from source.
 
- if not in package repository
-
-```bash
-###### dependencies needed to build OpenCASCADE from source ##########
-# for OpenCASCADE, openGL is needed
-yum install tbb tbb-devel freetype freetype-devel freeimage freeimage-devel -y \
-        && yum install libXmu-devel libXi-devel glew-devel SDL2-devel SDL2_image-devel glm-devel -y
-# install those below if draw module is enabled for building OpenCASCADE
-yum install tk tcl tk-devel tcl-devel -y
-
-# package name distinguish capital letter, while debian name is just  libxmu
-yum install  openmpi-devel boost-devel -y
-```
+ Compile opencascade if not available in package repository, e.g. centos 7/8,  see the "Dockerfile_centos" file for updated instructions.
 
 To get the latest source code from [OCCT official website](https://www.opencascade.com/), you need register (free of charge). Registered user may setup public ssh key and get readonly access to the occt repo
 `git clone -b V7_4_0p1 gitolite@git.dev.opencascade.org:occt occt`
@@ -200,7 +188,7 @@ tar -xzf occt.tar.gz
 cd occt-*
 mkdir build
 cd build
-cmake .. 
+cmake .. -DUSE_TBB=ON -DBUILD_MODULE_Draw=OFF
 make -j$(nproc)
 sudo make install
 # by default install to the prefix: /usr/local/

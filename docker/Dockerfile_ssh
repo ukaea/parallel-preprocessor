@@ -1,0 +1,65 @@
+# this layer add ssh, X11 forwarding, sudo capacity
+# it can be based on any image, to add ssh access feature
+#       mkdir .ssh
+#       ssh-keygen -b 1024 -t rsa -f .ssh/ssh_host_key_rsa
+# build with the following command (in the folder where pubkey has been generated)
+#       sudo docker build -f Dockerfile_ssh -t  ppp_openmc_ssh . --no-cache
+
+# To test ssh X11Forwarding
+# 1) client must have been tested to be working with X11 forwarding with other remote ssh server
+#    debug connection by -v option  `ssh -vv -Y -p 2222 jovyan@10.215.131.63`
+# 2) user root is not usually allowed to do X11 forwarding, 
+#
+# if can not open DISPLAY, check if -X or -Y option has been set in ssh client command
+# 
+# error "X11 forwarding request failed on channel 0"
+# solved by adding `X11UseLocalhost no`  `X11Forwarding yes`  to  /etc/ssh/sshd_config
+############################################################################
+
+FROM qingfengxia/ppp_openmc
+
+USER root
+
+####################  
+# install ssh server 
+####################
+RUN apt-get install  openssh-server  nano  -y
+
+################# ssh user ####################
+
+
+# change password, add to sudo group
+RUN  echo 'jovyan:test' | chpasswd  && usermod -aG sudo $NB_USER
+
+# Allow members of group sudo to execute any command
+# TAB key causes some trouble,  use more spaces before "ALL=" seems working
+RUN echo "%sudo    ALL=(ALL:ALL) ALL" >> /etc/sudoers
+# if above still not working add this user to /etc/sudoers
+#RUN echo "$NB_USER	        ALL=(ALL:ALL) ALL" >> /etc/sudoers
+
+############### host key setup #################
+# https://nickjanetakis.com/blog/docker-tip-56-volume-mounting-ssh-keys-into-a-docker-container
+# copy the ssh key from host, so to fix the host public key when rebuilding the image
+
+COPY .ssh /root/.ssh
+RUN  chmod 700 /root/.ssh && \
+     chmod 644 /root/.ssh/ssh_host_key_rsa.pub && \
+     chmod 600 /root/.ssh/ssh_host_key_rsa
+
+RUN  cp /root/.ssh/ssh_host_key_rsa.pub  /etc/ssh/ && \
+        cp /root/.ssh/ssh_host_key_rsa /etc/ssh/
+       
+# sshd_config has been modified by adding those lines
+# to enable X11 forwarding via ssh, by default has been enabled
+RUN echo "X11Forwarding yes" >> /etc/ssh/sshd_config  && echo "X11UseLocalhost no" >> /etc/ssh/sshd_config
+RUN echo "HostKey /etc/ssh/ssh_host_key_rsa" >> /etc/ssh/sshd_config
+
+# expose port, the default port
+EXPOSE 22
+##################
+
+
+CMD ["/usr/sbin/sshd", "-D"]
+
+
+USER $NB_USER
