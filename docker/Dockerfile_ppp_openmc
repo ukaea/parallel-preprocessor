@@ -4,8 +4,7 @@
 # Changelog:  1) merge commands to improve performance
 #             2) add gmsh, ppp, occ_faceter, freecad
 #             3) both X11 and jupyter web interface should be supported
-#             4) ssh server
-#             5) base image can be selected from ubuntu:bionic (18.04), ubuntu:focal (20.04), jupyter/minimal-notebook
+#             4) base image can be selected from ubuntu:bionic (18.04), ubuntu:focal (20.04), jupyter/minimal-notebook
 ######################################
 #
 # build with the following command
@@ -26,8 +25,6 @@ FROM jupyter/minimal-notebook
 
 # only last CMD is working, if multiple CMD exists, interactive mode also suppress this CMD
 # jupyter can create a terminal, just like ssh
-# uncomment this CMD if the base image is not jupyter, assuming ssh server installation section is kept
-#CMD ["/usr/sbin/sshd","-D"]
 
 
 LABEL name="ppp_openmc" \
@@ -171,7 +168,7 @@ RUN cd /opt/openmc/ && python setup.py install && \
         cd .. && rm -rf build
 
 ## some python package is needed for openmc
-RUN pip install neutronics_material_maker --user
+RUN pip install neutronics_material_maker
 
 # Oct 2020, openmc must be installed to /opt/openmc, to install this parametric-plasma-source
 RUN pip install git+https://github.com/open-radiation-sources/parametric-plasma-source.git
@@ -180,26 +177,6 @@ RUN pip install git+https://github.com/open-radiation-sources/parametric-plasma-
 ## to make sure openmc etc are on path for jupyter notebook
 ENV LD_LIBRARY_PATH=$HOME/MOAB/lib:$HOME/DAGMC/lib
 ENV PATH=$PATH:$HOME/MOAB/bin:/opt/openmc/bin:$HOME/DAGMC/bin
-
-
-####################  
-install ssh server 
-####################
-RUN apt install  openssh-server  nano  -y
-
-# to enable X11 forwarding via ssh
-RUN echo "ForwardX11 yes" >> /etc/ssh/ssh_config &&  echo "ForwardX11Trusted no" >> /etc/ssh/ssh_config 
-
-# use UID 1001, as 1000 has been used by another user
-RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1001 test 
-
-# set password for the user test as "test"
-RUN  echo 'test:test' | chpasswd
-RUN service ssh start
-
-# expose port, the default
-EXPOSE 22
-##################
 
 
 ##############  
@@ -261,6 +238,10 @@ ENV OPENMC_CROSS_SECTIONS=$MAT_DIR/cross_sections.xml
 
 # for jupyter to work:  switch to USER $NB_USER
 USER $NB_USER
+
+# for ssh login user to have path setup
+RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/MOAB/lib:$HOME/DAGMC/lib" >> $HOME/.bashrc
+RUN echo "export PATH=$PATH:$HOME/MOAB/bin:/opt/openmc/bin:$HOME/DAGMC/bin"  >> $HOME/.bashrc
 
 RUN git clone -b develop https://github.com/ukaea/openmc_workshop
 # currently there is some bug stop install parametric_plasma_source 

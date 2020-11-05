@@ -1,13 +1,13 @@
 # Parallel-preprocessor in Docker
 
-Since binary packages are available for Ubuntu, fedora and Debian, there is no need to provide Dockerfile on each platforms, but Docker based on centos would be sufficient. 
+Since binary packages are available for Ubuntu, fedora and Debian, there is no need to provide Dockerfile on each platforms, but only one Docker image based on centos will be maintained
 
-## Readme for ppp_centos docker image
+## Readme for ppp-centos docker image
 
-`docker pull qingfengxia/ppp_centos`
+`docker pull qingfengxia/ppp-centos`
+This is should be a small image (size 1.6 GB) based on centos8, with only occt (v7.4)  and PPP compiled from source.
 
-This is should be small image with only occt  and ppp; both are compiled from source.
-
+It is designed for any user want to try ppp using docker. 
 
 ## Readme for ppp_openmc docker image
 
@@ -17,7 +17,8 @@ Note: this image is large, about 10 GB
 
 ## Get the docker image
 
-`docker pull qingfengxia/ppp_openmc`
+`docker pull qingfengxia/ppp_openmc`  for jupyter notebook way
+`docker pull qingfengxia/ppp_openmc_ssh`  for jupyter notebook and ssh ways, it is based on image `qingfengxia/ppp_openmc`
 
 https://hub.docker.com/repository/docker/qingfengxia/ppp_openmc
 
@@ -27,7 +28,7 @@ The docker image is based on `jupyter/mini-notebook` , but it can be switched to
 
 ## Use this image 
 
-There are 3 ways to use this docker image, choose the one you like
+There are 3 ways to use these docker images, choose the one you like
 
 ### 1. The jupyter notebook way
 
@@ -44,7 +45,7 @@ https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html
 
 > -e GRANT_SUDO=yes - Instructs the startup script to grant the NB_USER user passwordless sudo capability. You do not need this option to allow the user to conda or pip install additional packages. This option is useful, however, when you wish to give $NB_USER the ability to install OS packages with apt or modify other root-owned files in the container. For this option to take effect, you must run the container with --user root. (The start-notebook.sh script will su $NB_USER after adding $NB_USER to sudoers.) You should only enable sudo if you trust the user or if the container is running on an isolated host.
 
-### 2. X11 forwarding on local machine
+### 2. X11 forwarding on local Linux host machine  (deprecated as X11 via SSH is more convenient)
 
 to get an interative bash shell, as ubuntu 20.04
 
@@ -68,24 +69,24 @@ See  https://medium.com/@l10nn/running-x11-applications-with-docker-75133178d090
 
 ### 3. SSH remote shell 
 SSH has also X11 forwarding turned on
-`docker run --rm -p 2222:22  -e GRANT_SUDO=yes  --user root  -it ppp_openmc bash ` then start the ssh server by `sudo service ssh start `
+`docker run --rm -p 2222:22 -p 8888:8888  -e GRANT_SUDO=yes  --user root  -it ppp_openmc_ssh bash ` then start the ssh server by `sudo service ssh start `
 
 This argument `-p 2222:22` map container's port 22 to host 2222 port. 
-To access this container by ssh: 
-either `ssh localhost -p 2222` or  `ssh <container_ip> -p 22`
+To access this container by ssh  (-v means verbose,  -Y means X11 forwarding): 
+either `ssh -v -Y localhost -p 2222` or  `ssh -v -Y <container_ip> -p 22`  
 
 see also [How to setup an ssh server within a docker container](https://phoenixnap.com/kb/how-to-ssh-into-docker-container)
 rebuild the image will change ssh server public key, as the ssh server installation  will generate new key pair each time.
 
-#### user name and password for ssh both “test”
+#### user name is "jovyan" and password is “test”
 
 On Ubuntu, install the `sshpass` package, then use it like this:  `sshpass -p 'YourPassword' ssh user@host` 
 
 #### start ssh server automatically
 
-Automatically start the ssh server is possible by uncomment `CMD ["/usr/sbin/sshd","-D"]`  in Dockerfile if **Rebuild with ubuntu:focal as the base image**. 
+Automatically start the ssh server is possible by `CMD ["/usr/sbin/sshd","-D"]`  in Dockerfile_ssh, if the docker container is running non-interactively (without -it option) 
 
-Currently, `CMD ["/usr/sbin/sshd","-D"]`  is commented out, because it will override the jupyter’s start_notebook CMD. 
+In Dockerfile_ssh, the line `CMD ["/usr/sbin/sshd","-D"]` will override the jupyter’s start_notebook CMD. 
 
 > Multiple CMD commands:  In principle, there should only be one CMD command in your Dockerfile. When CMD is used multiple times, only the last instance is executed.
    https://www.educative.io/edpresso/what-is-the-cmd-command-in-docker
@@ -94,7 +95,6 @@ Currently, `CMD ["/usr/sbin/sshd","-D"]`  is commented out, because it will over
 ### Rebuild with ubuntu:focal as the base image
 change in Dockerfile before build:  
    1) FROM   ubuntu:focal        
-   2) uncomment  `CMD ["/usr/sbin/sshd","-D"]`
 Then build with command line, 
 `sudo docker build -f  -e NB_USER=root Dockerfile_ppp_openmc -t  ppp_openmc . --no-cache`
 
