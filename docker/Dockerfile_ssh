@@ -6,6 +6,7 @@
 #       sudo docker build -f Dockerfile_ssh -t  ppp_openmc_ssh . --no-cache
 
 # To test ssh X11Forwarding
+#     docker run --rm -p 2222:22 ppp_openmc_ssh
 # 1) client must have been tested to be working with X11 forwarding with other remote ssh server
 #    debug connection by -v option  `ssh -vv -Y -p 2222 jovyan@10.215.131.63`
 # 2) user root is not usually allowed to do X11 forwarding, 
@@ -33,7 +34,9 @@ RUN  echo 'jovyan:test' | chpasswd  && usermod -aG sudo $NB_USER
 
 # Allow members of group sudo to execute any command
 # TAB key causes some trouble,  use more spaces before "ALL=" seems working
+
 RUN echo "%sudo    ALL=(ALL:ALL) ALL" >> /etc/sudoers
+
 # if above still not working add this user to /etc/sudoers
 #RUN echo "$NB_USER	        ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
@@ -48,18 +51,27 @@ RUN  chmod 700 /root/.ssh && \
 
 RUN  cp /root/.ssh/ssh_host_key_rsa.pub  /etc/ssh/ && \
         cp /root/.ssh/ssh_host_key_rsa /etc/ssh/
-       
+
 # sshd_config has been modified by adding those lines
 # to enable X11 forwarding via ssh, by default has been enabled
 RUN echo "X11Forwarding yes" >> /etc/ssh/sshd_config  && echo "X11UseLocalhost no" >> /etc/ssh/sshd_config
 RUN echo "HostKey /etc/ssh/ssh_host_key_rsa" >> /etc/ssh/sshd_config
 
-# expose port, the default port
+# expose port, the default port, docker will map to another part on host like 2222
 EXPOSE 22
 ##################
 
 
+# the public key has a "user@host" fixed as the key creator
+# Error "Unable to load host key: /etc/ssh/ssh_host_key_rsa"
 CMD ["/usr/sbin/sshd", "-D"]
+#CMD ["service ssh start"]   # this does not work, Error: exec service ssh start failed: No such file or directory
 
 
 USER $NB_USER
+
+# matplotlib needs this XDG_RUNTIME_DIR for ssh user
+RUN  mkdir $HOME/.xdg_runtime_dir && chmod 700 $HOME/.xdg_runtime_dir  \ 
+         && echo  "export XDG_RUNTIME_DIR=$HOME/.xdg_runtime_dir" >> $HOME/.bashrc
+
+COPY test_openmc_docker_image.sh  $HOME/test_openmc_docker_image.sh

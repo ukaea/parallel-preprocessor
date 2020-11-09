@@ -8,7 +8,7 @@
 ######################################
 #
 # build with the following command
-#       sudo docker build -f Dockerfile_ppp_openmc -t  ppp_openmc . --no-cache
+#       sudo docker build -f Dockerfile_ppp_openmc -t  qingfengxia/ppp_openmc the_path_to_openmc_material_data --no-cache
 #       build without  `--no-cache` can help recover build from where error happened if start quickly enough, 
 #       useful when modify this Dockerfile. The drawback is lots of disk space will be used during trial-and-error process,
 #       It needs to reclaim by docker command afterwards.
@@ -76,7 +76,7 @@ RUN  if test $(awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed 
 
 
 ##########################
-install QT and full graphic software stack
+# install QT and full graphic software stack
 ##########################
 # install full QT software stack, to make sure matplotlib working with X11 forwarding, 
 # it is not needed if freecad will be installed
@@ -85,8 +85,13 @@ install QT and full graphic software stack
 # add apt option --no-recommended to
 RUN apt update && apt install   freecad -y --no-install-recommends
 
+###################### dependencies for openmc, maob, dagmc ###################
+# OpenMC required packages identified from openmc travis.yml
+# libnetcdf-dev is needed to allow NETCDF on MOAB which helps with tet meshes in OpenMC
+RUN apt-get --yes install imagemagick hdf5-tools mpich  libmpich-dev libhdf5-serial-dev libhdf5-mpich-dev libblas-dev liblapack-dev libnetcdf-dev libeigen3-dev
 
 
+####################### switch user ##############################
 # why non-root user is needed? because jupyter base image is used, put all files in user home
 # this environment is jupyter/minimal specific 
 # ARG NB_USER="jovyan"
@@ -94,20 +99,16 @@ RUN apt update && apt install   freecad -y --no-install-recommends
 # if built on ubuntu:focal, build with  -e NB_USER=root
 USER $NB_USER
 
-###################### dependencies for openmc, maob, dagmc ###################
-# OpenMC required packages identified from openmc travis.yml
-# libnetcdf-dev is needed to allow NETCDF on MOAB which helps with tet meshes in OpenMC
-RUN apt-get --yes install imagemagick hdf5-tools mpich  libmpich-dev libhdf5-serial-dev libhdf5-mpich-dev libblas-dev liblapack-dev libnetcdf-dev libeigen3-dev
-
+ENV REPO_DIR=$HOME
 
 ##################################################################
 # MOAB Variables
 ENV MOAB_BRANCH='Version5.1.0'
 ENV MOAB_REPO='https://bitbucket.org/fathomteam/moab/'
-ENV MOAB_INSTALL_DIR=$HOME/MOAB/
+ENV MOAB_INSTALL_DIR=$REPO_DIR/MOAB/
 
-# MOAB Install
-RUN cd $HOME && \
+# MOAB Install, build twice to make python interface built
+RUN cd $REPO_DIR && \
     mkdir MOAB && \
     cd MOAB && \
     git clone -b $MOAB_BRANCH $MOAB_REPO  && \
@@ -117,32 +118,32 @@ RUN cd $HOME && \
     make install  && \
     cmake ../moab -DBUILD_SHARED_LIBS=OFF && \
     make -j$(nproc) && make  install && \
-    rm -rf $HOME/MOAB/moab $HOME/MOAB/build
+    rm -rf $REPO_DIR/MOAB/moab $HOME/MOAB/build
 
 ####################################################################
 # DAGMC Variables
 ENV DAGMC_BRANCH='develop'
 ENV DAGMC_REPO='https://github.com/svalinn/dagmc'
-ENV DAGMC_INSTALL_DIR=$HOME/DAGMC/
+ENV DAGMC_INSTALL_DIR=$REPO_DIR/DAGMC/
 
 # DAGMC Install
-RUN cd $HOME && \
+RUN cd $REPO_DIR && \
     mkdir DAGMC && cd DAGMC && \
     git clone -b $DAGMC_BRANCH $DAGMC_REPO && \
     mkdir build && \
     cd build && \
     cmake ../dagmc -DBUILD_TALLY=ON -DCMAKE_INSTALL_PREFIX=$DAGMC_INSTALL_DIR -DMOAB_DIR=$MOAB_INSTALL_DIR && \
     make -j$(nproc)  install && \
-    rm -rf $HOME/DAGMC/dagmc $HOME/DAGMC/build
+    rm -rf $REPO_DIR/DAGMC/dagmc $HOME/DAGMC/build
 
 
 ###############################################
 # Clone and install NJOY2016
 RUN cd $HOME && git clone https://github.com/njoy/NJOY2016 && \
         cd NJOY2016 && mkdir build && cd build && \
-        cmake -Dstatic=on ..  && \
+        cmake -Dstatic=on ..  -DCMAKE_INSTALL_PREFIX=$DAGMC_INSTALL_DIR && \
         make 2>/dev/null && \
-        sudo make install && \
+        make install && \
         cd .. && rm -rf build
 
 
@@ -167,17 +168,11 @@ RUN cd /opt &&  git clone https://github.com/openmc-dev/openmc.git && \
 RUN cd /opt/openmc/ && python setup.py install && \
         cd .. && rm -rf build
 
-## some python package is needed for openmc
-RUN pip install neutronics_material_maker
 
-# Oct 2020, openmc must be installed to /opt/openmc, to install this parametric-plasma-source
-RUN pip install git+https://github.com/open-radiation-sources/parametric-plasma-source.git
-
-
+# does it make difference for ENV for user?
 ## to make sure openmc etc are on path for jupyter notebook
-ENV LD_LIBRARY_PATH=$HOME/MOAB/lib:$HOME/DAGMC/lib
-ENV PATH=$PATH:$HOME/MOAB/bin:/opt/openmc/bin:$HOME/DAGMC/bin
-
+ENV LD_LIBRARY_PATH=$REPO_DIR/MOAB/lib:$REPO_DIR/DAGMC/lib
+ENV PATH=/opt/conda/bin:$PATH:$REPO_DIR/MOAB/bin:/opt/openmc/bin:$REPO_DIR/DAGMC/bin
 
 ##############  
 ## install gmsh and pygmsh 
@@ -195,7 +190,7 @@ RUN apt-get install  -y libocct*-dev occt* python3-dev pybind11-dev libtbb-dev l
 
 
 ## install occ_faceter
-RUN cd $HOME && git clone https://github.com/makeclean/occ_faceter.git && \
+RUN cd $REPO_DIR && git clone https://github.com/makeclean/occ_faceter.git && \
     cd occ_faceter && \
     mkdir build && cd build && \
     export MOAB_ROOT=$MOAB_INSTALL_DIR && \
@@ -206,7 +201,7 @@ RUN cd $HOME && git clone https://github.com/makeclean/occ_faceter.git && \
     cd .. && rm -rf build
 
 ## install parallel-preprocessor 
-RUN cd $HOME && git clone https://github.com/ukaea/parallel-preprocessor.git && \
+RUN cd $REPO_DIR && git clone https://github.com/ukaea/parallel-preprocessor.git && \
     cd parallel-preprocessor && git submodule update --init --recursive && \
     mkdir build && cd build && \
     cmake .. -DCMAKE_INSTALL_PREFIX=/usr && \
@@ -224,14 +219,11 @@ RUN cd $HOME && git clone https://github.com/ukaea/parallel-preprocessor.git && 
 # installed on host, the copy into container
 COPY tendl-2019-hdf5 /mat_dir
 
-ENV MAT_DIR=/mat_dir
-ENV OPENMC_CROSS_SECTIONS=$MAT_DIR/cross_sections.xml
-
-##  another way to install material is 
+##  another way to install material is below:
 # clone data repository
 # RUN cd $HOME  && git clone https://github.com/openmc-dev/data.git
 # run script that converts ACE data to hdf5 data
-#RUN python data/convert_nndc71.py --cleanup
+# RUN python data/convert_nndc71.py --cleanup
 
 
 ################# openmc workshop ###################
@@ -239,17 +231,46 @@ ENV OPENMC_CROSS_SECTIONS=$MAT_DIR/cross_sections.xml
 # for jupyter to work:  switch to USER $NB_USER
 USER $NB_USER
 
-# for ssh login user to have path setup
-RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/MOAB/lib:$HOME/DAGMC/lib" >> $HOME/.bashrc
-RUN echo "export PATH=$PATH:$HOME/MOAB/bin:/opt/openmc/bin:$HOME/DAGMC/bin"  >> $HOME/.bashrc
+
+ENV MAT_DIR=/mat_dir
+ENV OPENMC_CROSS_SECTIONS=$MAT_DIR/cross_sections.xml
+
+# for ssh login user to have path setup,  all ENV setup will not work for ssh login user
+# even .bashrc will not been source for ssh user for non-interactive command mode `ssh user@host  command`
+# To setup env: `ssh user@host  ". .openmc_env.sh; command" `
+# also put /opt/conda/bin at the first position of PATH, it conda is not installed, system will just ignore this path
+# /opt/conda/lib  should not been put into LD_LIBRARY_PATH, cause confliction with system lib
+
+RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/MOAB/lib:$HOME/DAGMC/lib" > $HOME/.openmc_env.sh
+RUN echo "export PATH=/opt/conda/bin:$PATH:$HOME/MOAB/bin:/opt/openmc/bin:$HOME/DAGMC/bin"  >> $HOME/.openmc_env.sh
+RUN echo "export OPENMC_CROSS_SECTIONS=/mat_dir/cross_sections.xml"  >> $HOME/.openmc_env.sh
+RUN echo "source ~/.openmc_env.sh" >> $HOME/.bashrc
+
 
 RUN git clone -b develop https://github.com/ukaea/openmc_workshop
-# currently there is some bug stop install parametric_plasma_source 
-#RUN cd openmc_workshop && pip install -r requirements.txt
-
 # can WORKDIR be override by command line option yes, by -w argument
 WORKDIR openmc_workshop/tasks
 
+
+# currently there is some bug stop install parametric_plasma_source 
+#RUN cd openmc_workshop && pip install -r requirements.txt
+
+## some python package is needed for openmc
+RUN pip install neutronics_material_maker
+
+# Oct 2020, openmc must be installed to /opt/openmc, to install this parametric-plasma-source
+#RUN pip install git+https://github.com/open-radiation-sources/parametric-plasma-source.git
+#
+# Nov 2020, cmake supported add to detect openmc, but it does not work for me, while pip install is working
+RUN pip install parametric-plasma-source
+#RUN cd $REPO_DIR && git clone https://github.com/open-radiation-sources/parametric-plasma-source.git && \
+#    cd parametric-plasma-source && git submodule update --init --recursive && \
+#    mkdir build && cd build && \
+#    cmake .. -DOPENMC_DIR=/opt/openmc && \
+#    make -j$(nproc) && \
+#    make install && \
+#    cd .. && rm -rf build
+
 ###################### some extra tools ###########################
-RUN pip install --upgrade vtk pyansys --user
+RUN pip install --upgrade vtk pyansys
 
