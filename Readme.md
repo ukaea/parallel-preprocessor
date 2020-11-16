@@ -57,7 +57,11 @@ This project has been designed to be cross-platform, and currently a number of L
 
 + Versions can be built from the source code for other Linux platforms (using CMake and CPack).  Centos8 should work without much effort (with OpenCascade compiled from source). The build tools in the Centos7 software stack are too old, so Docker/Singularity should be used for Centos7 support.
 
-Conda packages may be available in the future. See [wiki/Packaging.md](wiki/Packaging.md).
++ Centos8 **Docker image** is ready for quick started without installation
+`docker pull qingfengxia/ppp-centos`
+This is a small image (size 1.6 GB) based on centos8, with only occt (v7.4)  and PPP compiled from source.
+
++ Conda packages may be available in the future. See [wiki/Packaging.md](wiki/Packaging.md).
 
 ## Installation guide
 

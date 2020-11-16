@@ -1,25 +1,7 @@
 # Build on Linux
 
-## Install Dependencies
 
-Note **Ubuntu and Fedora Dockerfile with all dependencies are ready for quick testing.**
-
-### Install from the pre-built binary package 
-
-In short, if FreeCAD has been installed, all the runtime dependencies such OpenCASCADE, TBB, would have been installed. 
-
-For example, on Ubuntu 18.04
-```bash
-# assume FreeCAD ppa has been added to your repository list
-sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
-sudo apt update
-sudo install freecad
-sudo apt-get install libtbb2 libocct-foundation-7.3  libocct-data-exchange-7.3  libocct-modeling-data-7.3 libocct-modeling-algorithms-7.3  libocct-ocaf-7.3
-# download the deb
-sudo dpkg -i parallel-preprocessor*.deb
-```
-
-#### packages needed to build or develop
+### packages needed to build from source
 
 note: **package name are debian based**, see installation section for RedHat based operation systems
 
@@ -42,39 +24,11 @@ Future dependencies:
 
 If you follow the official guide and you can build FreeCAD-daily 0.19 (python3 is strongly recommended), you should get the OpenCASCADE 7.3 dev from their PPA repo.
 
-There are some third-party libraries already integrated into the source code tree, see more details on [software design wiki page](./wiki/Design.md)
+There are some third-party libraries already integrated into the source code tree, see more details on [software design wiki page](./wiki/CodeStructure.md)
 
 ---
 
-## Build from source
-
-Tested compiler: g++ 7.x, g++8.x, clang 6 (needs CMake 3.13+ ) on ubuntu 18.04
-
-To use clang tool chain, `-T llvm` cmake command option may be needed to specify the linker app: lld-link
-```bash
-# ubuntu 18.04, needs `-T llvm`
-cmake -T llvm ..  -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) -DCMAKE_BUILD_TYPE=Release
-
-# ubuntu 20.04, clang++ is v10,  pybind11 must be v2.6 to work
-CXX=clang++ cmake ..  -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) -DCMAKE_BUILD_TYPE=Release
-
-```
-
-clang++ shares header files and libstdc++.so with G++
-
-Error with pybind11 when compiled by clang++10, which has been fixed in latest pybind11 (v2.6).
-
-```
-/usr/include/pybind11/pybind11.h:1010:9: error: no matching function for call to 'operator delete'
-        ::operator delete(p, s);
-        ^~~~~~~~~~~~~~~~~
-```
-
-User can either sticks with g++ or upgrade pybind11 installation to fix this error. 
-
-### Method 1: building on local Linux
-
-####  Ubuntu 18.04 and 20.04, Debian 10
+###  Ubuntu 18.04 and 20.04, Debian 10
 
 The dependency is similar as Ubuntu 18.04, except OpenCASCADE is not installed from FreeCAD PPA, but Ubuntu official repository (version 7.3.3). 
 
@@ -125,16 +79,13 @@ sudo apt-get install libboost-dev
 ```
 
 
-####  Fedora29+ and Centos8
-
-Tested out on fedora 30, but it should work for fedora 29+ ,see [dockerfile for fedora](./Dockerfile_fedora)
+###  Fedora30+
 
 Fedora 31 and 32 have OpenCASCADE in repository, there is no needs to compile from source.
 
-1. install dependencies
+1. install compiler and tools
 ```bash
 #this script is extracted from dockerfile
-
 
 # you must update before any yum install or add a repo
 #fedora30 has the default python as python3
@@ -156,9 +107,7 @@ yum install python3 python3-devel  -y
 yum install qt5-devel qt5-qtwebsockets-devel qt5-qtwebsockets -y
 ```
 
-### Install OpenCASCADE 7.x
-
-#### Option 1: Install opencascade 7.4 from package repository
+2. Install opencascade 7.4 from package repository
 
 For fedora 30+ since Jan 2020, there are freecad (python3) and opencascade 7.4 in repository to install
 
@@ -168,9 +117,11 @@ yum install opencascade-draw, opencascade-foundation,  opencascade-modeling,  op
     opencascade-visualization opencascade-devel freecad -y
 ```
 
-#### Option 2: Download the opencascade source code and compile from source.
+### For OSs without OCCT packages, compile OpenCASCADE 7.x from source
 
- Compile opencascade if not available in package repository, e.g. centos 7/8,  see the "Dockerfile_centos" file for updated instructions.
+For centos7 and centos7, the Dockerfile has updated unix shell commmand to install compiler toolchain.
+
+Download the opencascade source code and compile from source, Compile opencascade if not available in package repository, e.g. centos 7/8,  see the "Dockerfile_centos" file for updated instructions.
 
 To get the latest source code from [OCCT official website](https://www.opencascade.com/), you need register (free of charge). Registered user may setup public ssh key and get readonly access to the occt repo
 `git clone -b V7_4_0p1 gitolite@git.dev.opencascade.org:occt occt`
@@ -212,8 +163,35 @@ cmake .. -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) -DCMAKE_BUILD_TYPE=Releas
 make -j$(nproc)
 ```
 
+### Notes on compilers supported
 
-## Installation
+Tested compilers: g++ 7.x, g++8.x, clang 6 (needs CMake 3.13+ ) on ubuntu 18.04
+
+To use clang tool chain, `-T llvm` cmake command option may be needed to specify the linker app: lld-link
+```bash
+# ubuntu 18.04, needs `-T llvm`
+cmake -T llvm ..  -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) -DCMAKE_BUILD_TYPE=Release
+
+# ubuntu 20.04, clang++ is v10,  pybind11 must be v2.6 to work
+CXX=clang++ cmake ..  -DPYTHON_EXECUTABLE:FILEPATH=$(which python3) -DCMAKE_BUILD_TYPE=Release
+
+```
+
+clang++ shares header files and libstdc++.so with G++
+
+Error with pybind11 when compiled by clang++10, which has been fixed in latest pybind11 (v2.6).
+
+```
+/usr/include/pybind11/pybind11.h:1010:9: error: no matching function for call to 'operator delete'
+        ::operator delete(p, s);
+        ^~~~~~~~~~~~~~~~~
+```
+
+User can either sticks with g++ or upgrade pybind11 installation to fix this error. 
+
+---
+
+## Installation after building
 
 ### install by "sudo make install"
 

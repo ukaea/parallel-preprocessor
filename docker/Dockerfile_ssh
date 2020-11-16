@@ -70,6 +70,9 @@ CMD ["/usr/sbin/sshd", "-D"]
 
 USER $NB_USER
 
+# make software linked with opengl to work in ssh remote X11  (do not use hardware 3D acceleration)
+RUN echo "export LIBGL_ALWAYS_INDIRECT=1" >> $HOME/.bashrc
+
 # matplotlib needs this XDG_RUNTIME_DIR for ssh user
 RUN  mkdir $HOME/.xdg_runtime_dir && chmod 700 $HOME/.xdg_runtime_dir  \ 
          && echo  "export XDG_RUNTIME_DIR=$HOME/.xdg_runtime_dir" >> $HOME/.bashrc

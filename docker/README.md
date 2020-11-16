@@ -1,21 +1,12 @@
-# Parallel-preprocessor in Docker
-
-Since binary packages are available for Ubuntu, fedora and Debian, there is no need to provide Dockerfile on each platforms, but only one Docker image based on centos will be maintained
-
-## Readme for ppp-centos docker image
-
-`docker pull qingfengxia/ppp-centos`
-This is should be a small image (size 1.6 GB) based on centos8, with only occt (v7.4)  and PPP compiled from source.
-
-It is designed for any user want to try ppp using docker. 
-
 ## Readme for ppp_openmc docker image
 
 This is a image with all open source tools for: FreeCAD + PPP + occ_faceter + gmsh + openmc  workflow
 
 Note: this image is large, about 10 GB
 
-## Get the docker image
+For evaluation of parallel-preprocessor, use the smaller image `ppp-centos` instead.
+
+### Get the docker image
 
 `docker pull qingfengxia/ppp_openmc`  for jupyter notebook way
 `docker pull qingfengxia/ppp_openmc_ssh`  for jupyter notebook and ssh ways, it is based on image `qingfengxia/ppp_openmc`
@@ -92,7 +83,7 @@ In Dockerfile_ssh, the line `CMD ["/usr/sbin/sshd","-D"]` will override the jupy
    https://www.educative.io/edpresso/what-is-the-cmd-command-in-docker
 
 
-### Rebuild with ubuntu:focal as the base image
+### Rebuild ppp_openmc with ubuntu:focal as the base image
 change in Dockerfile before build:  
    1) FROM   ubuntu:focal        
 Then build with command line, 

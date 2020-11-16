@@ -1,4 +1,4 @@
-# A prototype of general property container based on `std::any`
+# property container
 
 **A true heterogeneous container in modern C++ based on `std::any` to mimic dynamic property**
 
