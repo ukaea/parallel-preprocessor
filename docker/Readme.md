@@ -6,6 +6,8 @@ Note: this image is large, about 10 GB
 
 For evaluation of parallel-preprocessor, use the smaller image `ppp-centos` instead.
 
+OpenMC witth MPI is not supported in this docker image, consider using singularity image to support MPI parallelization on HPC platforms.
+
 ### Get the docker image
 
 `docker pull qingfengxia/ppp_openmc`  for jupyter notebook way
