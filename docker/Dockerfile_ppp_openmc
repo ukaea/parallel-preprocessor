@@ -5,6 +5,9 @@
 #             2) add gmsh, ppp, occ_faceter, freecad
 #             3) both X11 and jupyter web interface should be supported
 #             4) base image can be selected from ubuntu:bionic (18.04), ubuntu:focal (20.04), jupyter/minimal-notebook
+#             5) add MPI arg
+#             6) ssh login with X11 forwarding can be supported by a topup layer: Dockerfile_ssh
+#
 ######################################
 #
 # build with the following command
@@ -13,15 +16,30 @@
 #       useful when modify this Dockerfile. The drawback is lots of disk space will be used during trial-and-error process,
 #       It needs to reclaim by docker command afterwards.
 #       use --no-cache  if you know there is no error in this Dockerfile, to save disk space
-# USAGE:  see README.md
+#       
+# USAGE:  see README.md for build with different ARG  `--build-arg ENABLE_MPI=true`
 ################################################
 
 
 # jupyter/minimal-notebook is based on ubuntu-focal, so FROM ubuntu:focal should be working
 # if you do not want jupyter-notebook, you can base on ubuntu:focal
-FROM jupyter/minimal-notebook
-#FROM ubuntu:focal
+FROM ubuntu:focal
 
+# those ARG must be set after `FROM image`
+# set it false when build image, can exclude FreeCAD, parallel-preprocessor etc
+ARG include_preprocessor="true"
+ARG include_jupyter="true"
+
+ARG ENABLE_MPI="false"
+ARG BUILD_MPI="true"
+ARG MPI_VERSION=3.0.1
+ARG MPI_VER=3.0
+
+ARG include_material_data="true"
+ARG include_embree="true"
+
+ARG NB_USER="jovyan"
+ARG PW="test"
 
 # only last CMD is working, if multiple CMD exists, interactive mode also suppress this CMD
 # jupyter can create a terminal, just like ssh
@@ -35,6 +53,10 @@ LABEL name="ppp_openmc" \
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# debug print
+RUN echo "include_preprocessor = ${include_preprocessor}" && \ 
+    echo "include_embree = ${include_embree}" && \ 
+    echo "ENABLE_MPI = ${ENABLE_MPI}"
 
 # for local X11 forwarding, this env var gives a default value
 # this can be overridden to another DISPLAY value
@@ -47,19 +69,20 @@ USER root
 RUN apt-get --yes update && apt-get --yes upgrade
 
 #  sudo is needed as the install NJOY script has a sudo make install command
-RUN apt-get -y install sudo git g++ cmake build-essential wget software-properties-common  
+RUN apt-get -y install sudo nano git g++ gfortran cmake build-essential wget software-properties-common  
 
 #########################################
 ## if not using jupyter base docker image 
 #########################################
 # pip install is used later, but pip3 is not installed on ubuntu base images
 # this alias makes sure pip and pip3 are same
-RUN  if test "$NB_UID" = "" ; then \
-            apt install -y python3 python3-pip  python3-matplotlib python3-numpy  && \
-            apt-get --yes update && \
-            ln -s /usr/bin/pip3 /usr/bin/pip && \
-            ln -s /usr/bin/python3 /usr/bin/python; \
-        fi
+RUN  if test "$include_jupyter" != "true" ; then \
+        apt install -y python3 python3-pip python3-matplotlib && \
+        apt-get --yes update && \
+        ln -s /usr/bin/pip3 /usr/bin/pip && \
+        ln -s /usr/bin/python3 /usr/bin/python; \
+        pip3 install --upgrade numpy; \
+    fi
 ########################################################
 
 ###################### 
@@ -75,122 +98,249 @@ RUN  if test $(awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed 
 ##########################################################
 
 
-##########################
-# install QT and full graphic software stack
-##########################
-# install full QT software stack, to make sure matplotlib working with X11 forwarding, 
-# it is not needed if freecad will be installed
-# RUN apt install -y python3-pyside2.qtgui
-
-# add apt option --no-recommended to
-RUN apt update && apt install   freecad -y --no-install-recommends
-
 ###################### dependencies for openmc, maob, dagmc ###################
 # OpenMC required packages identified from openmc travis.yml
 # libnetcdf-dev is needed to allow NETCDF on MOAB which helps with tet meshes in OpenMC
-RUN apt-get --yes install imagemagick hdf5-tools mpich  libmpich-dev libhdf5-serial-dev libhdf5-mpich-dev libblas-dev liblapack-dev libnetcdf-dev libeigen3-dev
+#  libtbb-dev  has been used by multiple software
+RUN apt-get --yes install  libtbb-dev imagemagick hdf5-tools  libhdf5-serial-dev  libblas-dev liblapack-dev libnetcdf-dev libeigen3-dev
+
+# embree depends on libglfw3-dev, make an independent RUN as it will install lots of other packages
+RUN if [ "$include_embree" = "true" ] ; then  \
+    apt-get --yes install libglfw3-dev ; \
+fi
+
+######################## MPI #################################
+# mpi can be installed from official repo, such as
+# RUN apt-get install --yes mpich libmpich-dev libhdf5-mpich-dev
+# or build from source, to match MPI version system MPI installation, 
+# it is safe to just install the same version in a singularity container image
+# https://sylabs.io/guides/3.4/user-guide/mpi.html
+# note: ${MPI_VERSION:0:3} is substr extraction, get first 3 letters from 3.0.1, not working with sh
+
+ENV MPI_DIR=/opt/mpi
+RUN if test "$BUILD_MPI" = "true" ; then \
+    export MPI_DIR=$MPI_DIR ; \
+    mkdir -p $MPI_DIR ; \
+    echo "v3.0/openmpi-$MPI_VERSION.tar.bz2" ; \
+    export MPI_URL="https://download.open-mpi.org/release/open-mpi/v$MPI_VER/openmpi-$MPI_VERSION.tar.bz2" ; \
+    mkdir -p /tmp/ompi ; \
+    cd /tmp/ompi && wget -O "openmpi-$MPI_VERSION.tar.bz2" "$MPI_URL" && \ 
+    tar -xjf openmpi-$MPI_VERSION.tar.bz2 && \
+    cd /tmp/ompi/openmpi-$MPI_VERSION && ./configure --prefix=$MPI_DIR && make install && \
+    rm -rf /tmp/ompi ; \
+    export PATH=$MPI_DIR/bin:$PATH && \
+    export LD_LIBRARY_PATH=$MPI_DIR/lib:$LD_LIBRARY_PATH && \
+    cd $HOME && pip3 install mpi4py  ; \
+fi
+
+RUN if [ "$BUILD_MPI" = "false" ] && [ "$ENABLE_MPI" = "true" ] ; then \
+    apt install --yes openmpi-bin libopenmpi-dev libhdf5-openmpi-dev ; \
+fi
 
 
 ####################### switch user ##############################
 # why non-root user is needed? because jupyter base image is used, put all files in user home
+# ssh and mpi both prefer to run NOT as root
+#  sudo group does not exist: && usermod -aG sudo $NB_USER, so add to root group at first
+RUN  if test "$include_jupyter" != "true" ; then \
+        echo "create login user $NB_USER" ; \
+        useradd -rm -d /home/$NB_USER -s /bin/bash -g root -G sudo -u 1000 $NB_USER ; \
+        echo "$NB_USER:$PW" | chpasswd ; \
+    fi
+
 # this environment is jupyter/minimal specific 
 # ARG NB_USER="jovyan"
 # see https://github.com/jupyter/docker-stacks/blob/master/base-notebook/Dockerfile
-# if built on ubuntu:focal, build with  -e NB_USER=root
+# if built on ubuntu:focal, build with  --build-arg NB_USER="jovyan"
 USER $NB_USER
 
-ENV REPO_DIR=$HOME
+ENV REPO_DIR="/home/$NB_USER"
 
-##################################################################
+################################ MOAB #############################
 # MOAB Variables
-ENV MOAB_BRANCH='Version5.1.0'
+#ENV MOAB_BRANCH='Version5.1.0'   this is too old to build double-down
+ENV MOAB_BRANCH='master'
 ENV MOAB_REPO='https://bitbucket.org/fathomteam/moab/'
 ENV MOAB_INSTALL_DIR=$REPO_DIR/MOAB/
 
 # MOAB Install, build twice to make python interface built
+# MPI build has not been enabled
 RUN cd $REPO_DIR && \
     mkdir MOAB && \
     cd MOAB && \
     git clone -b $MOAB_BRANCH $MOAB_REPO  && \
     mkdir build && cd build && \
-    cmake ../moab -DENABLE_HDF5=ON -DENABLE_MPI=off -DENABLE_NETCDF=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$MOAB_INSTALL_DIR && \
+    cmake ../moab   -DENABLE_HDF5=ON -DENABLE_MPI=off \
+                    -DENABLE_NETCDF=ON -DBUILD_SHARED_LIBS=ON \
+                    -DCMAKE_INSTALL_PREFIX=$MOAB_INSTALL_DIR && \
     make -j$(nproc)  &&  \
     make install  && \
     cmake ../moab -DBUILD_SHARED_LIBS=OFF && \
     make -j$(nproc) && make  install && \
-    rm -rf $REPO_DIR/MOAB/moab $HOME/MOAB/build
+    rm -rf $REPO_DIR/MOAB/build
 
-####################################################################
+########################### embree and double-down ################################
+# can be put into another docker image layer
+#  double-down CMakeLists.txt has fixed the embree version as 3.6.1 !
+ENV EMBREE_BRANCH='v3.6.1'
+ENV EMBREE_INSTALL_DIR=$MOAB_INSTALL_DIR
+ENV EMBREE_DIR=$EMBREE_INSTALL_DIR
+
+# install to MOAB DIR to simplify env setup for path and ld path
+ENV DD_INSTALL_DIR=$MOAB_INSTALL_DIR
+ENV DD_DIR=$DD_INSTALL_DIR
+
+# Clone and install Embree, seems fixed version 
+RUN if [ "$include_embree" = "true" ] ; then  \
+    cd $REPO_DIR ; \
+    git clone -b $EMBREE_BRANCH https://github.com/embree/embree ; \
+    cd embree ; \
+    mkdir build ; \
+    cd build ; \
+    cmake .. -DCMAKE_INSTALL_PREFIX=$EMBREE_INSTALL_DIR \
+             -DEMBREE_ISPC_SUPPORT=OFF ; \
+    make -j$(nproc) ; \
+    make install ; \
+    export EMBREE_DIR=$EMBREE_INSTALL_DIR ; \ 
+    cd .. && rm -rf build ; \
+fi
+
+# Clone and install Double-Down (double precision)
+RUN if [ "$include_embree" = "true" ] ; then \
+    cd $REPO_DIR ; \
+    git clone https://github.com/pshriwise/double-down ; \
+    cd double-down ; \
+    mkdir build ; \
+    cd build ; \
+    cmake .. -DCMAKE_INSTALL_PREFIX=$DD_INSTALL_DIR \
+        -DMOAB_DIR=$MOAB_INSTALL_DIR \
+        -DEMBREE_DIR=$EMBREE_INSTALL_DIR \
+        -DEMBREE_ROOT=$EMBREE_INSTALL_DIR; \
+    make -j$(nproc) ; \
+    make install ; \
+    cd .. && rm -rf build ; \
+    export DD_DIR=$REPO_DIR/double-down/lib/cmake ; \    
+fi
+
+RUN if [ "$include_embree" = "true" ] ; then \
+    echo "put embree into PATH" ; \
+fi
+
+#############################################################
 # DAGMC Variables
 ENV DAGMC_BRANCH='develop'
 ENV DAGMC_REPO='https://github.com/svalinn/dagmc'
-ENV DAGMC_INSTALL_DIR=$REPO_DIR/DAGMC/
+ENV DAGMC_INSTALL_DIR=$REPO_DIR/dagmc/
 
 # DAGMC Install
 RUN cd $REPO_DIR && \
-    mkdir DAGMC && cd DAGMC && \
+    echo "REPO_DIR = $REPO_DIR" ; \
     git clone -b $DAGMC_BRANCH $DAGMC_REPO && \
-    mkdir build && \
-    cd build && \
-    cmake ../dagmc -DBUILD_TALLY=ON -DCMAKE_INSTALL_PREFIX=$DAGMC_INSTALL_DIR -DMOAB_DIR=$MOAB_INSTALL_DIR && \
-    make -j$(nproc)  install && \
-    rm -rf $REPO_DIR/DAGMC/dagmc $HOME/DAGMC/build
+    cd dagmc && \
+    mkdir build
+
+RUN if [ "$include_embree" = "true" ] ; then \
+        cd $REPO_DIR/dagmc/build && \
+        cmake .. -DBUILD_TALLY=ON -DCMAKE_INSTALL_PREFIX=$DAGMC_INSTALL_DIR -DMOAB_DIR=$MOAB_INSTALL_DIR \
+              -DBUILD_STATIC_LIBS=OFF -DDOUBLE_DOWN=ON -DDOUBLE_DOWN_DIR=$DD_DIR ; \ 
+    else \
+        cd $REPO_DIR/dagmc/build && \
+        cmake ..  -DBUILD_TALLY=ON -DCMAKE_INSTALL_PREFIX=$DAGMC_INSTALL_DIR -DMOAB_DIR=$MOAB_INSTALL_DIR ; \
+    fi
+
+RUN cd $REPO_DIR/dagmc/build &&  \
+        make -j$(nproc)   && make install &&  rm -rf $REPO_DIR/dagmc/build
 
 
 ###############################################
 # Clone and install NJOY2016
-RUN cd $HOME && git clone https://github.com/njoy/NJOY2016 && \
+RUN cd $REPO_DIR && git clone https://github.com/njoy/NJOY2016 && \
         cd NJOY2016 && mkdir build && cd build && \
         cmake -Dstatic=on ..  -DCMAKE_INSTALL_PREFIX=$DAGMC_INSTALL_DIR && \
         make 2>/dev/null && \
         make install && \
         cd .. && rm -rf build
 
-
 ###################### OpenMC ##########################
+
+
 # /opt folder is owned by root
 USER root
 
-# numpy is needed by openmc-python
-RUN pip install --upgrade numpy matplotlib pyside2
+## to make sure openmc etc are on path for jupyter notebook
+# some path may be invalid e.g /opt/conda  /opt/mpi  but does not hurt
+ENV LD_LIBRARY_PATH=$REPO_DIR/MOAB/lib:$REPO_DIR/dagmc/lib:$MPI_DIR/lib
+ENV PATH=/opt/conda/bin:$PATH:$REPO_DIR/MOAB/bin:/opt/openmc/bin:$REPO_DIR/dagmc/bin:$MPI_DIR/bin
 
 # openmc should be installed to default location  /usr/local/ 
 # so cmake can find OpenMCConfig.cmake, which is under /usr/local/lib/cmake/OpenMC
 # installs OpenMC from source (latest)
-RUN cd /opt &&  git clone https://github.com/openmc-dev/openmc.git && \
+RUN     cd /opt &&  git clone https://github.com/openmc-dev/openmc.git && \
         cd /opt/openmc && git checkout develop && \
-        cd /opt/openmc && mkdir build && \
-        cd /opt/openmc/build && cmake -Ddagmc=ON -DDAGMC_ROOT=$DAGMC_INSTALL_DIR -DHDF5_PREFER_PARALLEL=OFF -DCMAKE_INSTALL_PREFIX=..  ..  && \
-        cd /opt/openmc/build && make -j$(nproc)  && \
-        cd /opt/openmc/build && make install
+        cd /opt/openmc && mkdir build
 
-# build and install python interface for openmc
-RUN cd /opt/openmc/ && python setup.py install && \
-        cd .. && rm -rf build
+# -DHDF5_PREFER_PARALLEL=on needs HDF-mpi-dev installed
+RUN if [ "$ENABLE_MPI" = "true" ]; then \
+        cd /opt/openmc/build  ; \
+        CC=mpicc CXX=mpicxx \
+        cmake -Ddagmc=ON -DDAGMC_ROOT=$DAGMC_INSTALL_DIR -DHDF5_PREFER_PARALLEL=OFF \
+            -DCMAKE_INSTALL_PREFIX=$DAGMC_INSTALL_DIR  .. ; \
+    else \
+        cd /opt/openmc/build ; \
+        cmake -Ddagmc=ON -DDAGMC_ROOT=$DAGMC_INSTALL_DIR -DHDF5_PREFER_PARALLEL=OFF \
+        -DCMAKE_INSTALL_PREFIX=$DAGMC_INSTALL_DIR  .. ; \
+    fi
+
+# build and install openmc, and install python interface for openmc
+RUN  cd /opt/openmc/build && make -j$(nproc)  && \
+        cd /opt/openmc/build && make install && \
+        cd /opt/openmc/ && pip3 install . && \
+        cd /opt/openmc/ && rm -rf build
 
 
-# does it make difference for ENV for user?
-## to make sure openmc etc are on path for jupyter notebook
-ENV LD_LIBRARY_PATH=$REPO_DIR/MOAB/lib:$REPO_DIR/DAGMC/lib
-ENV PATH=/opt/conda/bin:$PATH:$REPO_DIR/MOAB/bin:/opt/openmc/bin:$REPO_DIR/DAGMC/bin
 
-##############  
+###########################################
+# install FreeCAD preprocessor tools
+############################################
+# add apt option --no-recommended to reduce image size
+RUN if [ "$include_preprocessor" = "true" ]; then \
+    apt update && apt install   freecad -y --no-install-recommends; \
+fi
+
+###############################################
+# install QT and full graphic software stack
+# for xwindows forwarding via ssh, or local X11
+##############################################
+# install full QT software stack, to make sure matplotlib working with XWindows
+# it is not needed if freecad will be installed
+
+RUN if [ "$include_preprocessor" != "true" ]; then \
+    apt install -y python3-matplotlib python3-pyside2.qtgui ; \
+fi
+
+
+###########################################
 ## install gmsh and pygmsh 
-##############
-RUN apt-get install  -y  gmsh python3-gmsh
-RUN pip install pygmsh
+###########################################
+
+RUN if [ "$include_preprocessor" = "true" ]; then \
+    apt-get install  -y  gmsh python3-gmsh  && pip install pygmsh; \
+fi
 
 ############################################
 ## install dependencies for PPP & occ_faceter
 #############################################
 
 # ubuntu 18.04 needs PPA to install occt and freecad
-# occ_faceter needs libcgal-dev, 
-RUN apt-get install  -y libocct*-dev occt* python3-dev pybind11-dev libtbb-dev libboost-dev libx11-dev libxmu-dev libxi-dev libcgal-dev 
-
+# occ_faceter needs libcgal-dev,   libtbb-dev has been moved forward for embree
+RUN if [ "$include_preprocessor" = "true" ]; then \
+        apt-get install  -y libocct*-dev occt* python3-dev pybind11-dev \
+                libboost-dev libx11-dev libxmu-dev libxi-dev libcgal-dev ; \
+    fi
 
 ## install occ_faceter
-RUN cd $REPO_DIR && git clone https://github.com/makeclean/occ_faceter.git && \
+RUN if [ "$include_preprocessor" = "true" ]; then \
+    cd $REPO_DIR && git clone https://github.com/makeclean/occ_faceter.git && \
     cd occ_faceter && \
     mkdir build && cd build && \
     export MOAB_ROOT=$MOAB_INSTALL_DIR && \
@@ -198,26 +348,34 @@ RUN cd $REPO_DIR && git clone https://github.com/makeclean/occ_faceter.git && \
     cmake .. -DCMAKE_INSTALL_PREFIX=/usr && \
     make && \
     make install && \
-    cd .. && rm -rf build
+    cd .. && rm -rf build ; \
+fi
 
 ## install parallel-preprocessor 
-RUN cd $REPO_DIR && git clone https://github.com/ukaea/parallel-preprocessor.git && \
+RUN if [ "$include_preprocessor" = "true" ]; then \
+    cd $REPO_DIR && git clone https://github.com/ukaea/parallel-preprocessor.git && \
     cd parallel-preprocessor && git submodule update --init --recursive && \
     mkdir build && cd build && \
     cmake .. -DCMAKE_INSTALL_PREFIX=/usr && \
     make -j$(nproc) && \
     make install && \
-    cd .. && rm -rf build
+    cd .. && rm -rf build ; \
+fi
 
-##################  
-## nuclear material data for openmc 
-###################
+##################################################
+## nuclear material cross-section data for openmc 
+##################################################
 # consider to split the docker image from here
 # copy data into docker image could be skipped and use volume map instead
 # but host folder must be mapped to /mat_dir in the container
 
+ENV MAT_DIR=/mat_dir
+ENV OPENMC_CROSS_SECTIONS=$MAT_DIR/cross_sections.xml
+
 # installed on host, the copy into container
-COPY tendl-2019-hdf5 /mat_dir
+RUN if [ "$include_material_data" = "true" ]; then \
+    COPY tendl-2019-hdf5 $MAT_DIR ; \
+fi
 
 ##  another way to install material is below:
 # clone data repository
@@ -225,44 +383,22 @@ COPY tendl-2019-hdf5 /mat_dir
 # run script that converts ACE data to hdf5 data
 # RUN python data/convert_nndc71.py --cleanup
 
-
-################# openmc workshop ###################
-
-# for jupyter to work:  switch to USER $NB_USER
-USER $NB_USER
-
-
-ENV MAT_DIR=/mat_dir
-ENV OPENMC_CROSS_SECTIONS=$MAT_DIR/cross_sections.xml
-
-# for ssh login user to have path setup,  all ENV setup will not work for ssh login user
-# even .bashrc will not been source for ssh user for non-interactive command mode `ssh user@host  command`
-# To setup env: `ssh user@host  ". .openmc_env.sh; command" `
-# also put /opt/conda/bin at the first position of PATH, it conda is not installed, system will just ignore this path
-# /opt/conda/lib  should not been put into LD_LIBRARY_PATH, cause confliction with system lib
-
-RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/MOAB/lib:$HOME/DAGMC/lib" > $HOME/.openmc_env.sh
-RUN echo "export PATH=/opt/conda/bin:$PATH:$HOME/MOAB/bin:/opt/openmc/bin:$HOME/DAGMC/bin"  >> $HOME/.openmc_env.sh
-RUN echo "export OPENMC_CROSS_SECTIONS=/mat_dir/cross_sections.xml"  >> $HOME/.openmc_env.sh
-RUN echo "source ~/.openmc_env.sh" >> $HOME/.bashrc
-
-
-RUN git clone -b develop https://github.com/ukaea/openmc_workshop
-# can WORKDIR be override by command line option yes, by -w argument
-WORKDIR openmc_workshop/tasks
-
-
-# currently there is some bug stop install parametric_plasma_source 
-#RUN cd openmc_workshop && pip install -r requirements.txt
+###################### some extra post processing tools ###########################
+# install systemwide for singularity usage
+RUN pip install --upgrade vtk pyansys
 
 ## some python package is needed for openmc
 RUN pip install neutronics_material_maker
 
+############################################################################################
 # Oct 2020, openmc must be installed to /opt/openmc, to install this parametric-plasma-source
 #RUN pip install git+https://github.com/open-radiation-sources/parametric-plasma-source.git
 #
-# Nov 2020, cmake supported add to detect openmc, but it does not work for me, while pip install is working
+# 09 Nov 2020, cmake supported add to detect openmc, but it does not work for me, while pip install is working for v0.0.8
 RUN pip install parametric-plasma-source
+# soon later, new PR would be merged to master
+# pip install "parametric-plasma-source>=0.0.9.dev0" --no-cache-dir --index https://test.pypi.org/simple --extra-index-url https://pypi.org/simple
+#
 #RUN cd $REPO_DIR && git clone https://github.com/open-radiation-sources/parametric-plasma-source.git && \
 #    cd parametric-plasma-source && git submodule update --init --recursive && \
 #    mkdir build && cd build && \
@@ -271,6 +407,38 @@ RUN pip install parametric-plasma-source
 #    make install && \
 #    cd .. && rm -rf build
 
-###################### some extra tools ###########################
-RUN pip install --upgrade vtk pyansys
+
+# for ubuntu 20.04 matplotlib cause error when import openmc
+RUN  if test "$include_jupyter" != "true" ; then \
+    pip uninstall matplotlib ; \
+fi
+
+
+################# openmc workshop ###################
+
+# for jupyter to work:  switch to USER $NB_USER
+USER $NB_USER
+
+
+# for ssh login user to have path setup,  all ENV setup will not work for ssh login user
+# even .bashrc will not been source for ssh user for non-interactive command mode `ssh user@host  command`
+# To setup env: `ssh user@host  ". .openmc_env.sh; command" `
+# also put /opt/conda/bin at the first position of PATH, it conda is not installed, system will just ignore this path
+# /opt/conda/lib  should not been put into LD_LIBRARY_PATH, cause confliction with system lib
+
+RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$REPO_DIR/MOAB/lib:$DAGMC_INSTALL_DIR/lib" > $HOME/.openmc_env.sh
+RUN echo "export PATH=/opt/conda/bin:$PATH:$REPO_DIR/MOAB/bin:/opt/openmc/bin:$DAGMC_INSTALL_DIR/bin"  >> $HOME/.openmc_env.sh
+RUN echo "export OPENMC_CROSS_SECTIONS=/mat_dir/cross_sections.xml"  >> $HOME/.openmc_env.sh
+RUN echo "source ~/.openmc_env.sh" >> $HOME/.bashrc
+
+
+RUN cd $REPO_DIR && git clone -b develop https://github.com/ukaea/openmc_workshop
+# can WORKDIR be override by command line option yes, by -w argument
+WORKDIR $REPO_DIR/openmc_workshop/tasks
+
+
+# currently there is some bug stop install parametric_plasma_source 
+#RUN cd openmc_workshop && pip install -r requirements.txt
+
+
 
