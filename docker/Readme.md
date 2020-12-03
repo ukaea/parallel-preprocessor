@@ -8,7 +8,7 @@ For evaluation of parallel-preprocessor, use the smaller image `ppp-centos` inst
 
 OpenMC witth MPI is not supported in this docker image, consider using singularity image to support MPI parallelization on HPC platforms.
 
-### Get the docker image
+### Get docker images
 
 `docker pull qingfengxia/ppp_openmc`  for jupyter notebook way
 `docker pull qingfengxia/ppp_openmc_ssh`  for jupyter notebook and ssh ways, it is based on image `qingfengxia/ppp_openmc`
@@ -61,7 +61,10 @@ To understand why those arguments are needed
 See  https://medium.com/@l10nn/running-x11-applications-with-docker-75133178d090
 
 ### 3. SSH remote shell 
-SSH has also X11 forwarding turned on
+
+SSH login is enabled by topping up the image with another thin layer, defined in `Dockerfile_ssh`
+
+SSH has also X11 forwarding turned on after start the docker container:
 `docker run --rm -p 2222:22 -p 8888:8888  -e GRANT_SUDO=yes  --user root  -it ppp_openmc_ssh bash ` then start the ssh server by `sudo service ssh start `
 
 This argument `-p 2222:22` map container's port 22 to host 2222 port. 
@@ -71,7 +74,7 @@ either `ssh -v -Y localhost -p 2222` or  `ssh -v -Y <container_ip> -p 22`
 see also [How to setup an ssh server within a docker container](https://phoenixnap.com/kb/how-to-ssh-into-docker-container)
 rebuild the image will change ssh server public key, as the ssh server installation  will generate new key pair each time.
 
-#### user name is "jovyan" and password is “test”
+#### user name is "jovyan" and password can be set during image building
 
 On Ubuntu, install the `sshpass` package, then use it like this:  `sshpass -p 'YourPassword' ssh user@host` 
 
@@ -86,11 +89,37 @@ In Dockerfile_ssh, the line `CMD ["/usr/sbin/sshd","-D"]` will override the jupy
 
 
 ### Rebuild ppp_openmc with ubuntu:focal as the base image
-change in Dockerfile before build:  
-   1) FROM   ubuntu:focal        
-Then build with command line, 
-`sudo docker build -f  -e NB_USER=root Dockerfile_ppp_openmc -t  ppp_openmc . --no-cache`
 
-Note: `-e NB_USER=root` is needed to be compatible with jupyter-notebook base image
+1) change the base image in Dockerfile before build:       `FROM   ubuntu:focal`
+
+
+2) then build with command line, with different ARG values, 
+
+`sudo docker build -f Dockerfile_ppp_openmc  -t  ppp_openmc . --no-cache --build-arg NB_USER=jovyan`
+
+Note: `NB_USER=jovyan` is needed to be compatible with jupyter-notebook base image
+
+see gull example in [build_openmc_mpi.sh](build_openmc_mpi.sh)
+
+### MPI support for HPC cluster
+
+Singularity will bind host HOME into the image, so python package installed into normal user home's `.local` will not visiable.  One solution will be install all python module as root user into systemwide site-packages.
+
+
+MPI version can be selected during image building,  therefore to match with HPC cluster's MPI version.
+
+```
+--build-arg MPI_VER=3.0 \
+--build-arg MPI_VERSION=3.0.1 \
+```
+
+This image can then be converted into singularity image and bind the cluster host MPI library.
+
+```bash
+singularity pull docker://qingfengxia/openmc_mpi
+# depends on singularity version, for version 2.x there is no needs to prefix mpirun inside container
+mpirun -np 2 singularity exec --bind  ./openmc_mpi.simg openmc -h
+
+```
 
 
