@@ -41,6 +41,9 @@ ARG include_embree="true"
 ARG NB_USER="jovyan"
 ARG PW="test"
 
+# make this available in derived dockerfile
+ENV NB_USER=$NB_USER
+
 # only last CMD is working, if multiple CMD exists, interactive mode also suppress this CMD
 # jupyter can create a terminal, just like ssh
 

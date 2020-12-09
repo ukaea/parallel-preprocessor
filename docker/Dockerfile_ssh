@@ -1,10 +1,15 @@
+#  ############  SECURITY WARNING ! ###################
+# run this docker image behind firewall, as this will expose an port
+# and allow password ssh login
+# default user password must be specified during docker build as an ARG
+#########################################################################
 # this layer add ssh, X11 forwarding, sudo capacity
 # it can be based on any image, to add ssh access feature
 #       mkdir .ssh
 #       ssh-keygen -b 1024 -t rsa -f .ssh/ssh_host_key_rsa
 # build with the following command (in the folder where pubkey has been generated)
-#       sudo docker build -f Dockerfile_ssh -t  ppp_openmc_ssh . --no-cache
-
+#       sudo docker build -f Dockerfile_ssh -t  ppp_openmc_ssh . --no-cache --build-arg PW=your_password
+#
 # To test ssh X11Forwarding
 #     docker run --rm -p 2222:22 ppp_openmc_ssh
 # 1) client must have been tested to be working with X11 forwarding with other remote ssh server
@@ -17,20 +22,30 @@
 # solved by adding `X11UseLocalhost no`  `X11Forwarding yes`  to  /etc/ssh/sshd_config
 ############################################################################
 
-FROM qingfengxia/ppp_openmc
+FROM qingfengxia/ppp_openmc_mpi
+
+# for SECURITY reason, password must not been hardcoded into dockerfile
+ARG PW
+# normal login user created in base image as ENV NB_USER="jovyan"
+
 
 USER root
 
 ####################  
 # install ssh server 
 ####################
-RUN apt-get install  openssh-server  nano  -y
+RUN apt-get install sudo openssh-server  nano  -y
 
 ################# ssh user ####################
-
+# for ubuntu base image, there is no such group of sudo, no user except root
+RUN  if [ ! -d "/home/$NB_USER" ] ; then \
+        echo "create login user $NB_USER" ; \
+        useradd -rm -d /home/$NB_USER -s /bin/bash -g $NB_USER -G sudo -u 1000 $NB_USER ; \
+    fi
 
 # change password, add to sudo group
-RUN  echo 'jovyan:test' | chpasswd  && usermod -aG sudo $NB_USER
+#RUN  echo '$NB_USER:$PW' | chpasswd  && usermod -aG sudo $NB_USER
+RUN  echo "$NB_USER:$PW" && echo "$NB_USER:$PW" | chpasswd  && usermod -aG sudo $NB_USER
 
 # Allow members of group sudo to execute any command
 # TAB key causes some trouble,  use more spaces before "ALL=" seems working
@@ -43,6 +58,7 @@ RUN echo "%sudo    ALL=(ALL:ALL) ALL" >> /etc/sudoers
 ############### host key setup #################
 # https://nickjanetakis.com/blog/docker-tip-56-volume-mounting-ssh-keys-into-a-docker-container
 # copy the ssh key from host, so to fix the host public key when rebuilding the image
+# everytime install openssh-server, ssh key will be generated
 
 COPY .ssh /root/.ssh
 RUN  chmod 700 /root/.ssh && \
