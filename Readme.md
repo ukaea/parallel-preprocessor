@@ -19,11 +19,14 @@ For more information, please see the
 
 ## Feature overview
 
-This software provides multi-threaded geometry **collision detection and imprinting** via a command line interface. It has faster and more controllable performance on **large geometry assemblies (with 10k+ parts)** than is possible with most existing CAD tools.
+This software provides multi-threaded geometry **collision detection and imprinting** via a command line interface and more advanced json configuration interface. It has faster and more controllable performance on **large geometry assemblies (with 10k+ parts)** than is possible with most existing CAD tools.
 
 The following screenshot shows the software making good use of multiple CPUs, with high CPU usage across 64 threads on a 32-core CPU.  (Source: Dr Andrew Davis)
 
 ![CPU usage of parallel-preprocessor using 64 threads on a 32-core CPU](./wiki/assets/ppp_multithreading_cpu_usage.png)
+
+
+More details on benchmarking on parallel geometry imprinting can be found in [wiki/Benchmarking.md](wiki/Benchmarking.md).
 
 ## Getting started
 

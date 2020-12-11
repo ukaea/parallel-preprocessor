@@ -83,15 +83,19 @@ MastU.step:  prototype of MAST upgrade fusion reactor, early stage prototype wit
 
 ![mustU simplified model](assets/ppp_mastu_simplified_geometry.png)
 
-This picture of MASTU is available on intranet, https://users.mastu.ukaea.uk/,  find a journal paper or public image instead. 
+This picture of MASTU is available on intranet <https://users.mastu.ukaea.uk>
+
+![mustU detailed model](assets/ppp_mastu_detailed_geometry.jpg)
+Image source: [BBC: UK fusion experiment used in hunt for clean energy
+](https://www.bbc.co.uk/news/science-environment-54741375)
 
 #### Imprint mustU.stp on FreeCAD 
 
-In GUI mode, select all and do "boolean fragments",   program got killed (killed, reason not know, memory usage?)  2 minutes later. 
+In GUI mode of FreeCAD, select all parts and do "boolean fragments",  FreeCAD program got killed  2 minutes later (reason not know, maybe out of memory). 
 
 Secondly, select about 100 parts from the object trees and do  "boolean fragments",   system dialog "Wait or force quit" pop up but can be ignored.  memory usage 1.6 G  goes up to 3.2 GB in 15 minutes later.  "boolean fragments" can be completed.
 
-Source code of FreeCAD shows, it does not use boundbox to exclude the parts far away, which means any pair of solids has gone through the expensive bool operation process. 
+Source code of FreeCAD shows, it does not use boundbox to exclude the parts far away, which means any pair of solids has gone through the expensive bool operation process. Without an official assembly module, FreeCAD is not designed to deal with large geometry assembly. 
 
 #### Imprint on a commercial CAD tool
 
@@ -153,5 +157,7 @@ https://forum.freecadweb.org/viewtopic.php?f=24&t=38602&start=10
 + alternative way for collision detection if some parts can not achieve bool operation
 
 + improve the algorithm to exclude parts that are not in contact, currently boundbox is used.
+
++ robustness to handle problematic part
 
   
