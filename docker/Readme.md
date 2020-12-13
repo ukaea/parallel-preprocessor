@@ -91,7 +91,7 @@ In Dockerfile_ssh, the line `CMD ["/usr/sbin/sshd","-D"]` will override the jupy
 ### Rebuild ppp_openmc with ubuntu:focal as the base image
 
 1) change the base image in Dockerfile before build:       `FROM   ubuntu:focal`
-
+ or docker build with arg lie this `--build-arg IMAGE_NAME="qingfengxia/openmc_mpi" \  `
 
 2) then build with command line, with different ARG values, 
 

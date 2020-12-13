@@ -8,7 +8,11 @@
 # --build-arg NB_USER=jovyan,  if ubuntu:focal base image is used 
 # to be compatible with jupyter notebook base image
 
+# Docker's 17.05 release, allows: set FROM via ARG
+#                     --build-arg IMAGE_NAME="ubuntu:focal" \
+
 docker build . -f Dockerfile_ppp_openmc -t  qingfengxia/ppp_openmc_mpi   \
+                    --build-arg IMAGE_NAME="ubuntu:focal" \
                     --build-arg include_preprocessor="true" \
                     --build-arg include_jupyter="false" \
                     --build-arg ENABLE_MPI="true" \

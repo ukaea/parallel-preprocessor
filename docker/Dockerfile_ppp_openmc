@@ -20,12 +20,15 @@
 # USAGE:  see README.md for build with different ARG  `--build-arg ENABLE_MPI=true`
 ################################################
 
+# need docker 17.05 to support FROM from ARG
+ARG BASE_IMAGE=jupyter/minimal-notebook
 
-# jupyter/minimal-notebook is based on ubuntu-focal, so FROM ubuntu:focal should be working
+# jupyter/minimal-notebook is based on ubuntu:focal, so FROM ubuntu:focal is also working
 # if you do not want jupyter-notebook, you can base on ubuntu:focal
-FROM ubuntu:focal
+FROM $BASE_IMAGE
 
-# those ARG must be set after `FROM image`
+## those ARG must be set after `FROM image`
+
 # set it false when build image, can exclude FreeCAD, parallel-preprocessor etc
 ARG include_preprocessor="true"
 ARG include_jupyter="true"

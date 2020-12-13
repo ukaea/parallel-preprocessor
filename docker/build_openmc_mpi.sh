@@ -11,6 +11,7 @@
 docker build . -f Dockerfile_ppp_openmc -t  qingfengxia/openmc_mpi   \
                     --build-arg include_preprocessor="false" \
                     --build-arg include_jupyter="false" \
+                    --build-arg IMAGE_NAME="ubuntu:focal" \
                     --build-arg ENABLE_MPI="true" \
                     --build-arg BUILD_MPI="true" \
                     --build-arg MPI_VER=3.0 \
