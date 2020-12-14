@@ -19,11 +19,14 @@ For more information, please see the
 
 ## Feature overview
 
-This software provides multi-threaded geometry **collision detection and imprinting** via a command line interface. It has faster and more controllable performance on **large geometry assemblies (with 10k+ parts)** than is possible with most existing CAD tools.
+This software provides multi-threaded geometry **collision detection and imprinting** via a command line interface and more advanced json configuration interface. It has faster and more controllable performance on **large geometry assemblies (with 10k+ parts)** than is possible with most existing CAD tools.
 
 The following screenshot shows the software making good use of multiple CPUs, with high CPU usage across 64 threads on a 32-core CPU.  (Source: Dr Andrew Davis)
 
 ![CPU usage of parallel-preprocessor using 64 threads on a 32-core CPU](./wiki/assets/ppp_multithreading_cpu_usage.png)
+
+
+More details on benchmarking on parallel geometry imprinting can be found in [wiki/Benchmarking.md](wiki/Benchmarking.md).
 
 ## Getting started
 
@@ -57,7 +60,11 @@ This project has been designed to be cross-platform, and currently a number of L
 
 + Versions can be built from the source code for other Linux platforms (using CMake and CPack).  Centos8 should work without much effort (with OpenCascade compiled from source). The build tools in the Centos7 software stack are too old, so Docker/Singularity should be used for Centos7 support.
 
-Conda packages may be available in the future. See [wiki/Packaging.md](wiki/Packaging.md).
++ Centos8 **Docker image** is ready for quick started without installation
+`docker pull qingfengxia/ppp-centos`
+This is a small image (size 1.6 GB) based on centos8, with only occt (v7.4)  and PPP compiled from source.
+
++ Conda packages may be available in the future. See [wiki/Packaging.md](wiki/Packaging.md).
 
 ## Installation guide
 

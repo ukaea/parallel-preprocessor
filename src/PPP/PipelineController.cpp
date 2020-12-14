@@ -9,12 +9,10 @@
 
 #include <csignal>
 
-#define PPP_USE_THREADING 1
-#if PPP_USE_THREADING
-#include "./ThreadPoolExecutor.h"
-#else
+//#define PPP_USE_THREADING 1
 #include "./Executor.h"
-#endif
+#include "./ThreadPoolExecutor.h"
+
 
 #if PPP_USE_BOOST_PROCESS
 #include "CommandLineProcessor.h"
@@ -293,16 +291,20 @@ namespace PPP
         sigaction(SIGINT, &sigIntHandler, NULL); // more signal handler can be added for diff signal
 #endif
 
-#if PPP_USE_THREADING
         size_t nCores = myConfig["parallelism"]["threadsOnNode"];
-        /// NOTE: tbb::task_group does not support std::make_shared<>() on clang
-        auto threadPool = std::shared_ptr<ThreadPoolType>(new ThreadPoolType());
+        bool serialMode = nCores == 1UL;
 
-        if (data->itemCount() < nCores)
+        /// NOTE: tbb::task_group does not support std::make_shared<>() on clang
+        std::shared_ptr<ThreadPoolType> threadPool;
+        if (not serialMode)
         {
-            VLOG_F(LOGLEVEL_DEBUG, "item count is smaller than thread count!, is this a test data?");
+            threadPool = std::shared_ptr<ThreadPoolType>(new ThreadPoolType());
+            if (data->itemCount() < nCores)
+            {
+                VLOG_F(LOGLEVEL_DEBUG, "item count is smaller than thread count!, is this a test data?");
+            }
         }
-#endif
+
 
         for (std::size_t i = 0; i < myProcessors.size(); i++)
         {
@@ -323,11 +325,13 @@ namespace PPP
                 myProcessors[i]->setInputInformation(myProcessors[i - 1]->getOutputInformation());
             }
             myProcessors[i]->setOperator(myOperator);
-#if PPP_USE_THREADING
-            auto aExecutor = std::make_shared<ThreadPoolExecutor>(myProcessors[i], nCores, threadPool);
-#else
-            auto aExecutor = std::make_shared<SequentialExecutor>(myProcessors[i]);
-#endif
+
+            std::shared_ptr<Executor> aExecutor;
+            if (serialMode)
+                aExecutor = std::make_shared<SequentialExecutor>(myProcessors[i]);
+            else
+                aExecutor = std::make_shared<ThreadPoolExecutor>(myProcessors[i], nCores, threadPool);
+
             aExecutor->process(); // must be declared as pointer, otherwise no polymorphism!
             std::chrono::duration<double, std::milli> duration = std::chrono::steady_clock::now() - start;
             VLOG_F(LOGLEVEL_PROGRESS, " ====== processor #%lu  %s completed in %lf seconds =====", i, pname.c_str(),

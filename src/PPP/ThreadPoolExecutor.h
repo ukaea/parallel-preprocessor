@@ -85,9 +85,8 @@ namespace PPP
             }
             else
             {
-                // auto f = std::mem_fn(&(decltype(myProcessor)::processItem));
-                // runParallel<decltype(f)>(NItems, f);
                 runParallelInBlock(NItems);
+                /// NOTE: asyn mode could be more efficient, if processItem() time is not constant
             }
 
             myProcessor->prepareOutput();
@@ -165,7 +164,6 @@ namespace PPP
                     {
                         if (this->myReporter)
                             this->myReporter(i);
-                        // f(i);
                         this->myProcessor->processItem(i);
                     }
                 });

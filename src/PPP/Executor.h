@@ -65,12 +65,21 @@ namespace PPP
             {
                 LOG_F(ERROR, "no items are loaded for processing, check reading setup");
             }
-            /// NOTE: parallel_for here if possible
-            for (size_t i = 0; i < NItems; i++)
+
+            auto ip = myProcessor->attribute<IndexPattern>("indexPattern");
+            auto dim = myProcessor->attribute<size_t>("indexDimension");
+            if (myProcessor->isCoupledOperation())
             {
-                if (myReporter)
-                    myReporter(i); // todo: replaced  by operator proxy
-                myProcessor->processItem(i);
+                LOG_F(ERROR, "coupled operation is not implemented for sequential executor");
+            }
+            else
+            {
+                for (size_t i = 0; i < NItems; i++)
+                {
+                    if (myReporter)
+                        myReporter(i); // todo: replaced  by operator proxy
+                    myProcessor->processItem(i);
+                }
             }
 
             myProcessor->prepareOutput();
