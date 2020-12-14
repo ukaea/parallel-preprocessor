@@ -27,17 +27,17 @@ source code <../src/Geom/GeometryImprinter.cpp>
 
 #### Collision detection by bounding box
 
-Compared with collision detection by pave-filling, boundbox calculation is cheaper.  Boundbox is used to build a sparse matrix $M_{ij}$, to indicate potential contact for a given pair of $solid_i$ and $solid_j$
+Compared with collision detection by pave-filling, boundbox calculation is cheaper.  Boundbox is used to build a sparse matrix \f$ M_{ij} \f$, to indicate potential contact for a given pair of $solid_i$ and $solid_j$
 
 #### Lock-free parallel imprint
 
-source code <../src/App/AsyncronousDispatcher.h>
+source code <../src/App/AsynchronousDispatcher.h>
 
-Given the adjacency sparse matrix  $M_{ij}$,   if thread 1 is operating on the `pair (i, j)`, then thread 2 must opeating on another `pair (k, l)`, where 
+Given the adjacency sparse matrix  \f$ M_{ij} \f$,   if thread 1 is operating on the `pair (i, j)`, then thread 2 must operating on another `pair (k, l)`, where 
 
-$M_{i,j} = M_{k,l}= true$ means part i and j are potential in contact, and part l and k are potential in contact
+\f$ M_{i,j} = M_{k,l}= true \f$ means part i and j are potential in contact, and part `l` and `k` are potential in contact.
 
-$M_{i,k} = M_{i,l}= M_{j,k} = M_{j,l}=false$  means the `pair (i,j)` are both non-adjacent to the `pair (k, l)`
+ \f$ M_{i,k} = M_{i,l}= M_{j,k} = M_{j,l}=false \f$  means the `pair (i,j)` are both non-adjacent to the `pair (k, l)`
 
 #### Merge 
 
@@ -47,9 +47,9 @@ Merge is currently in a single thread, not yet parallelized.
 
 The scaling of geometry boolean operations.  for equal cubes stack together, there are maximum 6 other cubes in contact.  The total boolean operations (for 2 solid in contact as one operation) grows linearly with total solid number, but in practice. Potential contact are filtered by **boundbox** interference detection. 
 
-[refer to PaveFiller of OCCT]()
+[refer to PaveFiller of OCCT](https://old.opencascade.com/doc/occt-7.5.0/overview/html/occt_user_guides__modeling_algos.html#occt_modalg_5)
 
-For a realistic assembly, especially for an apparatus with shell for decorating or protection propurse, most of smaller parts enclosed by the shell, will not be excluded from expensive collision check operation. To make thing worse, only one thread on operation on this shell part, means non parallel acceleration. It is found single thread is working on last 3~5% job.
+For a realistic assembly, especially for an apparatus with shell for decorating or protection purpose, most of smaller parts enclosed by the shell, will not be excluded from expensive collision check operation. To make thing worse, only one thread on operation on this shell part, means non parallel acceleration. It is found single thread is working on last 3~5% job.
 
 ### Limitation of existing imprint tools
 
@@ -86,6 +86,7 @@ MastU.step:  prototype of MAST upgrade fusion reactor, early stage prototype wit
 This picture of MASTU is available on intranet <https://users.mastu.ukaea.uk>
 
 ![mustU detailed model](assets/ppp_mastu_detailed_geometry.jpg)
+
 Image source: [BBC: UK fusion experiment used in hunt for clean energy
 ](https://www.bbc.co.uk/news/science-environment-54741375)
 
@@ -101,7 +102,7 @@ Source code of FreeCAD shows, it does not use boundbox to exclude the parts far 
 
 One commercial CAD tool using commercial CAD kernels.  it is possible to merge 1000 solids in GUI mode, but needs it several round of operation as at most 250 solids are selected to do boolean fragment, and there is no clear hint that all merge has been completed.  
 
-Single thread is used, although boundbox may involved to exclude some uncessary bool operation.
+Single thread is used, although boundbox may involved to exclude some unnecessary bool operation.
 
 #### Imprint with PPP with 1~6 CPU cores
 
