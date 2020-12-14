@@ -11,7 +11,12 @@ third-party/*
 bin/*
 lib/*
 
+# doc site generated 
+index.html
 site/*
+# symbolic link to build/public
+doxygen/*
+
 backup/*
 stage/*
 misc/*
@@ -22,11 +27,12 @@ incomplete_code/*
 *.so
 *.pyc
 
-
+docker/.ssh/*
 Web/*
 # documentation, `wiki` is tracked
 notes/*
 doc/*
+
 
 
 #result files
@@ -52,7 +58,7 @@ python/*/*.mm
 python/*/*.brep
 
 # cache files
-python/__pycache__/*
+*/__pycache__/*
 python/.cache/*
 
 python/config_in.json

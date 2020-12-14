@@ -20,7 +20,6 @@ add_custom_target(coverage
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -c -i -d . -b ${PROJECT_SOURCE_DIR} -o ${PROJECT_NAME}.base
 
     # Run executables
-    #COMMAND ${CMAKE_SOURCE_DIR}/build/bin/Covid19EERAModel ${COV_TEST_FLAGS} -s original  -m inference
     COMMAND bash ${PROJECT_SOURCE_DIR}/scripts/run_all_tests.sh
 
     # Capturing lcov counters and generating report
