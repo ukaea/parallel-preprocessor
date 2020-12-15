@@ -81,11 +81,11 @@ MastU.step:  prototype of MAST upgrade fusion reactor, early stage prototype wit
 
 
 
-![mustU simplified model](assets/ppp_mastu_simplified_geometry.png)
+![mustU simplified model](https://github.com/ukaea/parallel-preprocessor/blob/main/wiki/assets/ppp_mastu_simplified_geometry.png?raw=true)
 
 This picture of MASTU is available on intranet <https://users.mastu.ukaea.uk>
 
-![mustU detailed model](assets/ppp_mastu_detailed_geometry.jpg)
+![mustU detailed model](https://github.com/ukaea/parallel-preprocessor/blob/main/wiki/assets/ppp_mastu_detailed_geometry.jpg?raw=true)
 
 Image source: [BBC: UK fusion experiment used in hunt for clean energy
 ](https://www.bbc.co.uk/news/science-environment-54741375)
@@ -142,12 +142,6 @@ Notes:
 #### Analysis
 
 iter-clite: is an good example of deeply-coupled geometry (parts sitting closely to each other with bound box overlapping) there are several parts has bound box overlapping with all the rest, so half of the processing time only 1 or 2 CPU cores are busy)
-
-### Evaluation using public available geometry
-
-Free available example assembly FreeCAD model
-
-https://forum.freecadweb.org/viewtopic.php?f=24&t=38602&start=10
 
 
 
