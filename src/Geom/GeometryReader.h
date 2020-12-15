@@ -274,7 +274,8 @@ namespace Geom
             typedef uint64_t UniqueIdType;
             json metadata;
             std::unordered_map<uint64_t, json> gpMap;
-            if (this->myConfig.contains("metadataFileName"))
+            if (this->myConfig.contains("metadataFileName")
+                && !this->myConfig["metadataFileName"].is_null())
             {
                 std::string mfile = this->myConfig["metadataFileName"];
                 if (not fs::exists(mfile))
