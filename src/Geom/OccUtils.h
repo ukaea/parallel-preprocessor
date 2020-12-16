@@ -111,9 +111,14 @@ namespace Geom
         GeomExport TopoDS_Shape fuseShape(const VectorType<TopoDS_Shape> v, bool occInternalParallel = true);
         GeomExport TopoDS_Shape cutShape(const TopoDS_Shape& from, const TopoDS_Shape& substractor);
 
+        /// surface mesh
         GeomExport std::shared_ptr<BRepMesh_IncrementalMesh> meshShape(const TopoDS_Shape& aShape,
                                                                        double resolution = 0.01);
+        /// save to STL mesh format
         GeomExport Standard_Boolean saveMesh(TopoDS_Shape& aShape, const std::string file_name);
+
+        /// scale up or down shape
+        GeomExport TopoDS_Shape scaleShape(const TopoDS_Shape& from, double scale, const gp_Pnt origin = gp_Pnt());
 
     } // namespace OccUtils
 

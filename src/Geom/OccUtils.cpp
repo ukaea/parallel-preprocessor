@@ -821,35 +821,40 @@ namespace Geom
         Standard_Boolean saveMesh(TopoDS_Shape& aShape, const std::string file_name)
         {
 
-#if 0 // OCC_VERSION_HEX >= 0x070400
-      // not find this `RWStl::WriteFile`
             if (file_name.find("stl") != file_name.npos)
             {
-                Handle(Poly_Triangulation) aTriangulation = RWStl::WriteFile(file_name.c_str(), aTriangulation);
-                return true;
-            }
-            // in lower version, each triangle is read as TopoDS_Face which is not efficient
-#else
-            if (file_name.find("stl") != file_name.npos)
-            {
-                std::string fileMode = "ascii"; // only ASCII mode in occt 7.3
+#if OCC_VERSION_HEX >= 0x070300
+                // RWStl::WriteFile(file_name.c_str(), aTriangulation);
+                // low level API used by StlAPI_Writer
+                // in lower version, each triangle is read as TopoDS_Face which is not efficient
                 auto m = meshShape(aShape);
-                auto stl_exporter = StlAPI_Writer();
-                /*
+                auto stl_exporter = StlAPI_Writer(); // high level API
+                // only ASCII mode in occt 7.3
+                /* by default ascii write mode, occ 7.4 support binary STL file write
                 if(fileMode == "ascii")
                     stl_exporter.SetASCIIMode(true);
                 else // binary, just set the ASCII flag to False
                     stl_exporter.SetASCIIMode(false);
                 */
-                stl_exporter.Write(aShape, file_name.c_str());
+                stl_exporter.Write(aShape, file_name.c_str()); // shape must has mesh for each face
                 return true;
-            }
+#else
+                return false;
 #endif
+            }
+
             else
             {
                 LOG_F(ERROR, "output mesh file suffix is not supported: %s", file_name.c_str());
                 return false;
             }
+        }
+
+        TopoDS_Shape scaleShape(const TopoDS_Shape& from, double scale, const gp_Pnt origin)
+        {
+            gp_Trsf ts;
+            ts.SetScale(origin, scale);
+            return BRepBuilderAPI_Transform(from, ts, true);
         }
 
     } // namespace OccUtils

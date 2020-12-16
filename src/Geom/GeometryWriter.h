@@ -105,8 +105,26 @@ namespace Geom
             LOG_F(INFO, "%s", sout.str().c_str());
         }
 
+        // TODO: query inputData() metadata for inputUnit
+        /// return 1 which means no scaling is needed
+        /// not quite useful for
+        double calcOutputScale(const std::string& outputUnit)
+        {
+            const std::string inputUnit = "MM";
+            if (outputUnit == inputUnit)
+                return 1;
+            else if ("MM" == inputUnit && outputUnit == "M")
+                return 0.001;
+            else
+            {
+                LOG_F(ERROR, "scaling for input length unit %s and output unit %s is not supported", inputUnit.c_str(),
+                      outputUnit.c_str());
+                return 1;
+            }
+        }
+
         /// can export floating shapes which can not be compoSolid
-        void exportCompound(const std::string& file_name)
+        void exportCompound(const std::string& file_name, double scale = 1.0)
         {
             summary();
 
@@ -122,6 +140,10 @@ namespace Geom
                 LOG_F(INFO, "result is not merged (duplicated face removed) for result brep file");
                 finalShape = OccUtils::createCompound(*mySolids, myShapeErrors);
             }
+
+            if (scale != 1) // double type has integer value can be compared with integer by ==
+                finalShape = OccUtils::scaleShape(finalShape, scale);
+
             /// NOTE: exportMetaData()  is done in the second GeometryPropertyBuilder processor
             BRepTools::Write(finalShape, file_name.c_str()); //  progress reporter can be the last arg
         }
@@ -131,15 +153,19 @@ namespace Geom
          * */
         bool exportGeometry(const std::string file_name)
         {
+            std::string defaultLengthUnit = "MM";
+            auto outputUnit = parameterValue<std::string>("outputUnit", defaultLengthUnit);
+            double scale = calcOutputScale(outputUnit);
+
             if (Utilities::hasFileExt(file_name, "brp") || Utilities::hasFileExt(file_name, "brep"))
             {
-                exportCompound(file_name);
+                exportCompound(file_name, scale);
                 return true;
             }
             else if (Utilities::hasFileExt(file_name, "stp") || Utilities::hasFileExt(file_name, "step"))
             {
                 // LOG_F(INFO, "export Dataset pointed by member hDoc");
-                Handle(TDocStd_Document) aDoc = createDocument();
+                Handle(TDocStd_Document) aDoc = createDocument(scale);
 
                 /// the user can work with an already prepared WorkSession or create a new one
                 Standard_Boolean scratch = Standard_False;
@@ -150,7 +176,16 @@ namespace Geom
                 // recommended value, others shape mode are available
                 // Interface_Static::SetCVal("write.step.schema", "AP214IS");
                 Interface_Static::SetIVal("write.step.assembly", 1); // global variable
+                // Interface_Static::SetIVal ("write.step.nonmanifold", 1);
                 // "write.precision.val" = 0.0001 is the default value
+
+                if (outputUnit != defaultLengthUnit)
+                {
+                    Interface_Static::SetCVal("xstep.cascade.unit", outputUnit.c_str());
+                    Interface_Static::SetCVal("write.step.unit", outputUnit.c_str());
+                    // all vertex coordinate will not be scaled during writing out, change unit,
+                    // but it causes scaling at reading back
+                }
 
                 STEPCAFControl_Writer writer(WS, scratch);
                 // this writer contains a STEPControl_Writer class, not by inheritance
@@ -158,7 +193,6 @@ namespace Geom
                 if (!writer.Transfer(aDoc, mode))
                 {
                     LOG_F(ERROR, "The Dataset cannot be translated or gives no result");
-                    // abandon ..
                 }
 
                 IFSelect_ReturnStatus stat = writer.Write(file_name.c_str());
@@ -173,7 +207,7 @@ namespace Geom
             return false;
         }
 
-        Handle(TDocStd_Document) createDocument()
+        Handle(TDocStd_Document) createDocument(double scale = 1)
         {
 
             Handle(XCAFApp_Application) hApp = XCAFApp_Application::GetApplication();
@@ -194,7 +228,10 @@ namespace Geom
             for (auto& item : *mySolids)
             {
                 TDF_Label partLabel = shapeTool->NewShape();
-                shapeTool->SetShape(partLabel, item.second);
+                if (scale != 1)
+                    shapeTool->SetShape(partLabel, OccUtils::scaleShape(item.second, scale));
+                else
+                    shapeTool->SetShape(partLabel, item.second);
                 colorTool->SetColor(partLabel, (*myColorMap)[item.first], XCAFDoc_ColorGen);
                 TDataStd_Name::Set(partLabel, TCollection_ExtendedString((*myNameMap)[item.first].c_str(), true));
                 ///  Material not yet supported
