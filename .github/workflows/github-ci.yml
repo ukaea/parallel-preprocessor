@@ -185,7 +185,7 @@ jobs:
         echo "start code analysis in the folder:$(pwd)"
         cppcheck --language=c++ --std=c++17 --enable=all -DROOT_DIR=$PWD -v --xml --xml-version=2 ${{ env.MODULE_FOLDERS }} 2>&1 | tee build/cpp-check.xml
         flawfinder ${{ env.MODULE_FOLDERS }} | tee build/flawfinder.log
-        sim_c++ -aR -o "build/sim_cpp.log" src/*
+        sim_c++ -a -o "build/sim_cpp.log" src/PPP/*.h src/Geom/*.h
       if:  matrix.os == 'ubuntu-20.04' && ( github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' )
 
     - name: Build Doxygen Documentation ( Ubuntu GCC Dev/Master )

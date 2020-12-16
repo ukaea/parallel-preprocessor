@@ -31,7 +31,7 @@ my_project_name = "parallel-preprocessor"
 if os.path.exists("src"):  # CI mode. all pathes should be relative to repo_root/site/
     coverage_report_folder = "../build/{}_coverage/index.html".format(my_project_name)
     doxygen_html_index = "../doxygen/html/index.html"
-else:  # local build test mode
+else:  # local build test mode, run in build folder
     coverage_report_folder = "{}_coverage/index.html".format(my_project_name)
     doxygen_html_index = "doxygen/html/index.html"
 
@@ -173,14 +173,15 @@ class HTMLFileBuilder(object):
         with open(input_file) as f:
             for line in f:
                 try:
-                    entry = re.findall(".+(src/\w+[.h|.cpp].+)", line)[0]
+                    # search for line blocks with regex, but message span several lines
+                    entry = re.findall(r"(.+:\d.+:.+)", line)[0]  # bug: always index error
                     entry = entry.split(": ", 1)
                     try:
                         file_name, address = entry[0].split(":", 1)
                     except ValueError:
                         file_name = entry[0]
                         address = ""
-                    library = re.findall("\[(.+)\]", entry[1])
+                    library = re.findall(r"\[(.+)\]", entry[1])
                     message = (
                         entry[1]
                         if len(library) == 0
@@ -201,7 +202,8 @@ class HTMLFileBuilder(object):
         _lines_str = ""
         with open(input_file) as f:
             for line in f:
-                if re.findall("(^src/\w+[.h|.cpp].+)", line):
+                # search for that has 3 colons, but message span multiple lines
+                if re.findall(r"(.+:\d.+:.+)", line):
                     if _lines_str:
                         _key, _message = _lines_str.split(":  ", 1)
                         _library, _message = _message.split(":\n", 1)
@@ -377,21 +379,16 @@ class HTMLFileBuilder(object):
                 )
             _table_body += entry_str
 
-            with open(
-                "site/{}".format(
-                    self._page_list["CodeTools"]["Flawfinder"]["filename"]
-                ),
-                "w",
-            ) as f:
-                f.write(
-                    _body.format(
-                        body=_table_body,
-                        site_name=self._name,
-                        header=self._header.replace("index", "../index").replace(
-                            "site/", ""
-                        ),
-                    )
+        wf = "site/{}".format(self._page_list["CodeTools"]["Flawfinder"]["filename"])
+        with open(wf, "w") as f:
+            f.write(_body.format(
+                    body=_table_body,
+                    site_name=self._name,
+                    header=self._header.replace("index", "../index").replace(
+                        "site/", ""
+                    ),
                 )
+            )
 
     def build_clang_html(self):
         _body = """
