@@ -56,15 +56,15 @@ def ppp_add_argument(parser):
     )
 
     parser.add_argument(
-        "-o", "--output-file", help="output file name (without folder path)",
+        "-o", "--output-file", help="output file name relative to output-dir or absolute path",
         dest = "outputFile"
     )
 
-    parser.add_argument(
-        "--output-dir",
-        help="output folder path, by default a subfolder in the working dir",
-        dest = "outputDir"
-    )
+    # parser.add_argument(
+    #     "--output-dir",
+    #     help="output folder path, by default a subfolder (input file stem) in the working-dir",
+    #     dest = "outputDir"
+    # )
 
     parser.add_argument(
         "--config",
@@ -112,7 +112,7 @@ def ppp_parse_input(args):
             return "input_data"
 
         elif os.path.exists(args.input):
-            return args.input
+            return os.path.abspath(args.input)  # must be abspath, as current dir may change
         else:
             raise IOError("input file does not exist: ", args.input)
     else:
@@ -161,18 +161,28 @@ def generate_config_file_header(args):
         }
     )
 
-
-def ppp_post_process(args):
-    #
-    inputFile = ppp_parse_input(args)
+def ppp_get_case_name(inputFile):
     inputDir, inputFilename = os.path.split(inputFile)
     case_name = inputFilename[: inputFilename.rfind(".")]
+    return case_name
 
-    outputDir = (  # this naming must be consistent with DataStorage::generateStoragePath(input_name)
-        args.workingDir + os.path.sep + case_name + "_processed"
-    )  # can be detected from output_filename full path
-    if args.outputDir:
-        outputDir = args.outputDir
+def ppp_get_output_dir(args):
+    # if args.outputDir:
+    #     outputDir = os.path.abspath(args.outputDir)
+    # else:
+
+    inputFile = ppp_parse_input(args)
+    case_name = ppp_get_case_name(inputFile)
+    # this naming must be consistent with DataStorage::generateStoragePath(input_name)
+    outputDir = (args.workingDir + os.path.sep + case_name + "_processed")  # can be detected from output_filename full path
+    return outputDir
+
+def ppp_post_process(args):
+    # currently, only make symbolic link to input file into the output dir
+
+    inputFile = ppp_parse_input(args)
+    inputDir, inputFilename = os.path.split(inputFile)
+    outputDir = ppp_get_output_dir(args)
     linkToInputFile = outputDir + os.path.sep + inputFilename
 
     if os.path.exists(outputDir):
@@ -264,8 +274,7 @@ class PipelineController(object):
 
         # after inputFile is given, all other default filenames are generated
         inputFile = ppp_parse_input(args)
-        inputDir, inputFilename = os.path.split(inputFile)
-        case_name = inputFilename[: inputFilename.rfind(".")]
+        case_name = ppp_get_case_name(inputFile)
         ######################## module specific ##########################
         outputFile = case_name + "_processed.txt"  # saved to case output folder
         if args.outputFile:
