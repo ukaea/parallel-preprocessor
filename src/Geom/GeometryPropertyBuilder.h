@@ -76,8 +76,8 @@ namespace Geom
         {
             // max and min volume check!
             double max_volume = 0;
-            double min_volume = 1e100;
-            double max_volume_threshold = 1e16; // todo: get from config
+            double min_volume = 1e100;  //  unit is mm^3
+            double max_volume_threshold = 1e16; // todo: get from config parameter
             for (size_t i = 0; i < myInputData->itemCount(); i++)
             {
                 const auto& p = myGeometryProperties[i];

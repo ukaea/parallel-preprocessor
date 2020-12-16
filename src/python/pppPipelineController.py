@@ -56,7 +56,7 @@ def ppp_add_argument(parser):
     )
 
     parser.add_argument(
-        "-o", "--output-file", help="output file name relative to output-dir or absolute path",
+        "-o", "--output-file", help="output file name relative to working-dir or absolute path",
         dest = "outputFile"
     )
 
