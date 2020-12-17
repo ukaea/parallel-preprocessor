@@ -4,15 +4,22 @@
 
 namespace PPP
 {
+
     /// \ingroup PPP
     /**
      * \brief template + lambda to build a new processor inplace without declare a new processor type.
      *  this class will not be wrapped for Python, only used in C++, see exmaple in ParallelAccessorTest.cpp
      * `myResultData` is the place to save result data
      *
-     * @param ProcessorType a concrete process class it inherits from
+     * @param ProcessorType a concrete process class it inherits from, in order to share data
      * @param ResultItemType  processed result of VectorType<ResultItemType>, default to bool,
      *                    will be saved to `myOutputData` a vector<ResultItemType>
+     *
+     * TODO: add more template parameter to make a constructor() without parameter, not working
+     *       lambda can capture the processor instance pointer or reference `[&p] () {}`
+     *
+     *       This template must derive from a concrete type Processor,
+     *        not from a template parameter type "ProcessorType"
      */
     template <typename ProcessorType = Processor, typename ResultItemType = bool>
     class ProcessorTemplate : public Processor
@@ -21,23 +28,31 @@ namespace PPP
         // TYPESYSTEM_HEADER();
 
     public:
-        typedef std::function<void(ProcessorType&)> FuncType;
+        /// function type for pre and post processors
+        typedef std::function<void()> PreFuncType;
+        /// function type for per item process, return a ResultType
         typedef std::function<ResultItemType(const ItemIndexType)> ItemFuncType;
-        typedef std::function<ResultItemType(const ItemIndexType, const ItemIndexType)> CoupledItemPairFuncType;
+        ///
+        typedef std::function<ResultItemType(const ItemIndexType, const ItemIndexType)> ItemPairFuncType;
 
     private:
         VectorType<ResultItemType> myResultData;
         std::string myResultName;
 
         ItemFuncType myItemProcessor;
-        CoupledItemPairFuncType myCoupledItemProcessor;
-        FuncType myPreprocessor;
-        FuncType myPostprocessor;
+        ItemPairFuncType myCoupledItemProcessor;
+        PreFuncType myPreprocessor;
+        PreFuncType myPostprocessor;
 
     public:
-        ProcessorTemplate(ItemFuncType&& op, const std::string name = "myProcessResult")
+        ProcessorTemplate(ItemFuncType&& op, const std::string name = "myProcessResult",
+                          ItemPairFuncType _CoupledItemPairFunc = nullptr, PreFuncType _PreFunc = nullptr,
+                          PreFuncType _PostFunc = nullptr)
                 : myItemProcessor(std::move(op))
                 , myResultName(name)
+                , myCoupledItemProcessor(_CoupledItemPairFunc)
+                , myPreprocessor(_PreFunc)
+                , myPostprocessor(_PostFunc)
         {
         }
         ~ProcessorTemplate() = default;
@@ -49,11 +64,11 @@ namespace PPP
         }
 
 
-        void setPreprocessor(FuncType&& f)
+        void setPreprocessor(PreFuncType&& f)
         {
             myPreprocessor = std::move(f);
         }
-        void setPostprocessor(FuncType&& f)
+        void setPostprocessor(PreFuncType&& f)
         {
             myPostprocessor = std::move(f);
         }
@@ -65,7 +80,7 @@ namespace PPP
         }
 
         /// data operation is coupled, if setting this functor
-        void setCoupledItemProcessor(CoupledItemPairFuncType&& f)
+        void setCoupledItemProcessor(ItemPairFuncType&& f)
         {
             myCharacteristics["coupled"] = true;
             myCoupledItemProcessor = std::move(f);
@@ -81,13 +96,13 @@ namespace PPP
                 throw std::runtime_error("function pointer to itemProcessor must NOT be nullptr or empty");
             }
 
-            if (myPreprocessor != nullptr)
-                myPreprocessor(*this);
             /// prepare private properties like `VectorType<T>.resize(myInputData->itemCount());`
             /// therefore accessing item will not cause memory reallocation and items copying
             /// However, it is possible inputData are not set by setInputData() in non-pipeline mode
             if (myInputData)
                 myResultData.resize(myInputData->itemCount());
+            if (myPreprocessor != nullptr)
+                myPreprocessor();
         }
 
         /**
@@ -96,13 +111,13 @@ namespace PPP
         virtual void prepareOutput() override final
         {
             if (myPostprocessor != nullptr)
-                myPostprocessor(*this);
+                myPostprocessor();
             myOutputData->emplace(myResultName, std::move(myResultData));
         }
 
         /**
          * \brief process data item in parallel without affecting other data items
-         * @param index: index to get/set iteam by `item(index)/setItem(index, newDataItem)`
+         * @param index: index to get/set item by `item(index)/setItem(index, newDataItem)`
          */
         virtual void processItem(const ItemIndexType index) override final
         {

@@ -99,6 +99,12 @@ The default conda macos conda-build using MacOS SDK 10.09, XCode 11.6, but MacOS
 > /src/PropertyContainer/PropertyContainerTest.cpp:46:22: error: 'any_cast<std::__1::shared_ptr<A> >' is unavailable: introduced in macOS 10.13
 auto data = std::any_cast<std::shared_ptr<myType>>(a);
 
+
+
+libGL is needed to build OCCT and parallel-preprocessor. 
+
+
+
 ### Upload to conda forge (yet done)
 
 Here is guide from conda-forge website:
@@ -115,9 +121,23 @@ https://github.com/qingfengxia/staged-recipes
 
 https://github.com/conda-forge/staged-recipes/pull/12901#issuecomment-709514486
 
+get attention from gitter
+https://gitter.im/conda-forge/conda-forge.github.io
 
 3. later the maintainer (pusher) will have the write control on that repo. 
 
 
 
 
+
+### Conda recipe feedback
+
+> #### **[chrisburr](https://github.com/chrisburr)**  Contributor
+>
+> I guess `occt` is being used as a shared library? If so it should use pin_compatible to make sure an ABI compatible version is used.
+>
+> > Author:
+> >
+> > yes, occt is build by one FreeCAD developer. it should be something like numpy version, must be matched.  shall I use occt == 7.4?  I propabaly needs to follow the update of occt version, somehow, I know occt 7.4 is the only version on conda-forge
+>
+> tbb also has the API compatibility issue
