@@ -9,6 +9,7 @@ include_directories("third-party/SGeom/src/GEOMAlgo")
 set(MyGeom_SOURCES 
     "OccUtils.cpp"
     #"GeometryFixer.cpp"
+    "InscribedShapeBuilder.cpp"
     "CollisionDetector.cpp"
     "Geom.cpp"
     "OpenCascadeAll.cpp"

@@ -53,6 +53,10 @@ namespace Geom
     typedef MapType<ItemHashType, TopoDS_Shape> ItemContainerType;
     typedef std::shared_ptr<ItemContainerType> ItemContainerPType;
 
+    /// conventional C enum starting from zero, can be used as array index
+    typedef GeomAbs_SurfaceType SurfaceType;
+    const size_t SurfacTypeCount = 11; /// total count of SurfaceType enum elements
+
     /**
      * from OCCT to FreeCAD style better enum name
      * integer value: ShapeType == TopAbs_ShapeEnum;  but NOT compatible
