@@ -108,15 +108,16 @@ def ppp_parse_input(args):
             # download to current folder
             import urllib.request
 
-            urllib.request.urlretrieve(args.input, "input_data")
-            return "input_data"
+            urllib.request.urlretrieve(args.input, "downloaded_input_data")
+            args.input = os.path.abspath("downloaded_input_data")
 
         elif os.path.exists(args.input):
-            return os.path.abspath(args.input)  # must be abspath, as current dir may change
+            args.input = os.path.abspath(args.input)
         else:
             raise IOError("input file does not exist: ", args.input)
     else:
         raise Exception("input file must be given as an argument")
+    return args.input  # must be abspath, as current dir may change
 
 
 def ppp_check_argument(args):
@@ -127,9 +128,8 @@ def ppp_check_argument(args):
         else:
             args.thread_count = cpu_count()  # can set args.value just like a dict
     if not args.workingDir:
-        args.workingDir = "./"  # debug and config file will be put here,
+        args.workingDir = os.path.abspath("./")  # debug and config file will be put here,
         # before copy to outputDir at the end of processing in C++ Context::finalize()
-    # print(args.thread_count)
 
 
 ####################################################################

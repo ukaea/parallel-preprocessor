@@ -130,6 +130,7 @@ outputFile = case_name + "_processed.brep"  # saved to case output folder
 if args.outputFile:
     outputFile = args.outputFile
     print("args.outputFile = ", args.outputFile)
+outputFile = os.path.abspath(outputFile)
 
 # output metadata filename
 outputMetadataFile = outputFile[: outputFile.rfind(".")] + "_metadata.json"
@@ -143,7 +144,7 @@ if args.metadata:
     else:
         raise IOError("input metadata file does not exist: ", args.metadata)
 else:
-    if inputFile.find(".brep") > 0 or inputFile.find(".brp"):
+    if inputFile.endswith(".brep")  or inputFile.endswith(".brp"):
         inputMetadataFile = inputFile[: inputFile.rfind(".")] + "_metadata.json"
         if os.path.exists(inputMetadataFile):
             hasInputMetadataFile = True
@@ -195,7 +196,7 @@ readers = [  # it is possible to have multiple Reader instances in this list
     {
         "className": "Geom::GeometryReader",
         "dataFileName": inputFile,
-        "metadataFileName": None if not hasInputMetadataFile else inputMetadataFile,
+        "metadataFileName": None if not hasInputMetadataFile else os.path.abspath(inputMetadataFile),
         "doc": "only step, iges, FCStd, brep+json metadata are supported",
     }
 ]
