@@ -20,8 +20,6 @@ Optional arguments for all pipelines:
                         output file name (without folder path)
   --working-dir WORKING_DIR
                         working folder path, by default the current working folder
-  --output-dir OUTPUT_DIR
-                        output folder path, by default, a subfolder in workingDir
   --config              only generate config.json without run the pipeline
 
   -nt THREAD_COUNT, --thread-count THREAD_COUNT

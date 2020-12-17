@@ -89,6 +89,22 @@ def geom_add_argument(parser):
         action="store_true",
         help="ignore failed (in BOP check, collision detect, etc) solids",
     )
+
+    # it is not arbitrary scaling, but can change output units (m, cm, mm) of STEP file format
+    parser.add_argument(
+        "-ou", "--output-unit",
+        dest="output_unit",
+        type=str,
+        help="output geometry unit, by default, `MM` for CAD, change unit will cause scaling when read back",
+    )
+
+    # it is not arbitrary scaling, but can change output units (m, cm, mm) of STEP file format
+    parser.add_argument(
+        "--input-unit",
+        dest="input_unit",
+        type=str,
+        help="input geometry unit, by default, only needed for brep file without meta data for length ",
+    )
     return parser
 
 
@@ -144,6 +160,16 @@ ignoreFailed = False
 if args.ignore_failed != None and args.ignore_failed:
     ignoreFailed = True
 
+outputUnit = "MM"  # argument can be capital or uncapital letter
+if args.output_unit:
+    if args.output_unit.upper() in ("MM", "CM", "M", "INCH"):  # STEP supported units
+        outputUnit = args.output_unit.upper()
+
+# in CAD, the default lengths unit is MM (millimeter)
+inputUnit = "MM"
+if args.input_unit:
+    if args.input_unit.upper() in ("MM", "CM", "M", "INCH"):  # STEP supported units
+        inputUnit = args.input_unit.upper()
 
 if debugging > 0:
     print("action on the geometry is ", args.action)
@@ -183,7 +209,12 @@ writers = [
             "value": mergeResultShapes,
             "doc": "control whether imprinted solids will be merged (remove duplicate faces) before write-out",
         },
-        "doc": "if no directory part in `outputFile`, saved into the case `outputDir`",
+        "outputUnit": {
+            "type": "string",
+            "value": outputUnit,
+            "doc": "control output geometry length unit, for CAD, default mm",
+        },
+        "doc": "if no directory part in `outputFile`, saved into the case `outputDir` folder",
     }
 ]
 
