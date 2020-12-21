@@ -57,6 +57,7 @@ geomPipeline.py check ../data/test_geometry/test_geometry.stp --thread-count 1 -
 if [ ! $? -eq 0 ] ; then   echo "Error during geometry test in single thread mode" ;  exit 1 ; fi
 
 # test_*.py has not been installed by package, so must be copied into this place
+# todo: pytest to auto discover tests
 cp ../../src/python/*.py ./
 if [ $? -eq 0 ]
 then
@@ -66,6 +67,10 @@ then
   #test_fixing.py
   if [ $? -eq 0 ]; then
     test_collision.py
+  fi
+
+  if [ $? -eq 0 ]; then
+    test_inscribedShape.py
   fi
   echo "test completed"
 else
