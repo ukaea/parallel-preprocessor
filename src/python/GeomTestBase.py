@@ -12,7 +12,6 @@ import json
 import unittest
 
 ######################################################
-#from geomPipeline import ppp_start_pipeline
 
 from pppStartPipeline import ppp_start_pipeline
 from detectFreeCAD import append_freecad_mod_path
@@ -27,25 +26,18 @@ except ImportError:
 import FreeCAD as App
 import Part
 
-############################################################
-
-default_geometry_filename = (
-    gettempdir()
-    + os.path.sep
-    + "test_geometry.stp"  # tempfile.tempdir is None on Ubuntu?
-)  # todo: fix the tmp folder for windows
 
 ######################### utilities ############################
 
 
-def generate_config(inf, outf, action="imprint", default_config_file_name="config.json"):
+def generate_config(inf, outf, action="imprint", args="", default_config_file_name="config.json"):
     # generate a configuration without running it
 
     this_geomPipeline = os.path.dirname(os.path.abspath(__file__)) + os.path.sep + "geomPipeline.py"
     #print("geomPipeline.py {} {} --config".format(action, inf))
     if not os.path.exists(this_geomPipeline):
         this_geomPipeline = "geomPipeline.py"
-    os.system("{} {} {} --config".format(this_geomPipeline, action, inf))
+    os.system("{} {} {} {} --config".format(this_geomPipeline, action, inf, args))
 
     jf = open(default_config_file_name, "r", encoding="utf-8")
     config_file_content = json.load(jf)
@@ -63,8 +55,9 @@ def generate_config(inf, outf, action="imprint", default_config_file_name="confi
 
 class GeomTestBase(unittest.TestCase):
     """
-    derived class need to implement 2 methods: 
-    build_geometry(freecadDoc) and validate_geometry(partObject)
+    For imprint tests, derived classes only need to implement 2 methods: 
+    `build_geometry(freecadDoc)` and `validate_geometry(partObject)`
+    For other tests, `setup` may need to be rewritten to generate config.json
     """
 
     # there is error to user constructor for unit test, not new style object
@@ -75,7 +68,6 @@ class GeomTestBase(unittest.TestCase):
     # pass
 
     def build_geometry(self, doc):
-        self.skip_test_base = True
         pass
 
     def validate_geometry(self, partObject):
@@ -83,6 +75,9 @@ class GeomTestBase(unittest.TestCase):
 
     def generate_test_filename(self):
         return gettempdir() + os.path.sep + self.__class__.__name__ + ".stp"
+
+    def get_processed_folder(self):
+        return gettempdir() + os.path.sep + self.__class__.__name__ + "_processed"
 
     def build(self):
         outfile = self.generate_test_filename()
@@ -100,22 +95,34 @@ class GeomTestBase(unittest.TestCase):
         App.closeDocument(document_name)
         return outfile
 
-    def _setUp(self):
-        self.geometry_file = self.build()
-        self.output_geometry_file = self.geometry_file.replace(
-            ".stp", "_processed.brep"
-        )
-        config = generate_config(self.geometry_file, self.output_geometry_file)
+    def setup_config(self, action ="imprint", args = "", input_file=None, result_file=None):
+        # setup up input and output files and generate pipeline config.json
+        if input_file:
+            self.geometry_file = input_file
+        else:
+            self.geometry_file = self.build()
+        input_stem = ".".join(self.geometry_file.split(".")[:-1])
+        self.output_geometry_file = input_stem + "_processed.brep"
 
-        ppp_start_pipeline(config)
+        self.config_file = generate_config(self.geometry_file, self.output_geometry_file, action, args=args)
+
+        if result_file:
+            self.result_file = result_file
+
+    def setup(self):
+        self.setup_config()
 
     def validate(self):
-        self._setUp()
         # this method should be override if result is not single DocumentObject
+
+        ppp_start_pipeline(self.config_file)
         assert os.path.exists(self.geometry_file)
         default_document_name = self.__class__.__name__ + "_processed"
         App.newDocument(default_document_name)
-        Part.insert(self.output_geometry_file, default_document_name)
+        if hasattr(self, "result_file"):
+            Part.insert(self.result_file, default_document_name)
+        else:
+            Part.insert(self.output_geometry_file, default_document_name)
         doc = App.getDocument(default_document_name)
         obj = doc.Objects[0]  # get the first and only obj for brep
         if hasattr(obj, "Shape"):
@@ -124,6 +131,9 @@ class GeomTestBase(unittest.TestCase):
         # tear down
         App.closeDocument(default_document_name)  # will this be done if failed?
 
-    # def test(self):
-    #    if hasattr(self, "skip_test_base") and (not self.skip_test_base):
-    #        self.validate()
+    def test(self):
+        # skip the test of this BaseClass
+        if self.__class__.__name__ != "GeomTestBase":
+            self.build()
+            self.setup()
+            self.validate()
