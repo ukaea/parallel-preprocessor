@@ -346,6 +346,22 @@ namespace Geom
             return ss;
         }
 
+        TopoDS_Compound createCompound(const SparseVector<ItemType> shapes)
+        {
+            TopoDS_Builder cBuilder;
+            TopoDS_Compound merged;
+            cBuilder.MakeCompound(merged);
+            size_t i = 0;
+            for (const auto& p : shapes)
+            {
+                if (p)
+                {
+                    cBuilder.Add(merged, *p);
+                }
+                i++;
+            }
+            return merged;
+        }
 
         TopoDS_Compound createCompound(const ItemContainerType theSolids,
                                        std::shared_ptr<const MapType<ItemHashType, ShapeErrorType>> suppressed)
@@ -605,6 +621,11 @@ namespace Geom
                 v_props.Mass(), {v_props.CentreOfMass().X(), v_props.CentreOfMass().Y(), v_props.CentreOfMass().Z()});
             return gid;
         }
+        Standard_Real distance(const TopoDS_Shape& s, const PointType& p)
+        {
+            auto v = BRepBuilderAPI_MakeVertex(p).Vertex();
+            return distance(s, v);
+        }
 
         Standard_Real distance(const TopoDS_Shape& s1, const TopoDS_Shape& s2)
         {
@@ -850,7 +871,7 @@ namespace Geom
             }
         }
 
-        TopoDS_Shape scaleShape(const TopoDS_Shape& from, double scale, const gp_Pnt origin)
+        TopoDS_Shape scaleShape(const TopoDS_Shape& from, double scale, const PointType& origin)
         {
             gp_Trsf ts;
             ts.SetScale(origin, scale);

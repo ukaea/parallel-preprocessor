@@ -22,6 +22,15 @@ inline void from_json(const nlohmann::json& j, Bnd_Box& b)
     b.Update(v[0], v[1], v[2], v[3], v[4], v[5]);
 }
 
+inline void to_json(nlohmann::json& j, const Bnd_Sphere& b)
+{
+    gp_XYZ c = b.Center();
+    j = nlohmann::json{c.X(), c.Y(), c.Z(), b.Radius()};
+}
+
+/// OpenCASCADE has T::DumpJson(Standard_OStream &  	theOStream, Standard_Integer  	theDepth = -1  )
+/// T::InitFromJson(const Standard_SStream &  theSStream, Standard_Integer & theStreamPos)
+
 /// RGBA float array, conmponent value range [0, 1.0]
 inline void to_json(nlohmann::json& j, const Quantity_Color& p)
 {
@@ -48,11 +57,12 @@ namespace Geom
     typedef Standard_Integer ItemHashType;
     static const ItemHashType ItemHashMax = INT_MAX;
 
-    typedef std::uint64_t UniqueIdType; // also define in PPP/UniqueId.h
+    typedef std::uint64_t UniqueIdType; /// defined in PPP/UniqueId.h
     /// map has order (non contiguous in memory), can increase capacity
     typedef MapType<ItemHashType, TopoDS_Shape> ItemContainerType;
     typedef std::shared_ptr<ItemContainerType> ItemContainerPType;
 
+    typedef gp_Pnt PointType;
     /// conventional C enum starting from zero, can be used as array index
     typedef GeomAbs_SurfaceType SurfaceType;
     const size_t SurfacTypeCount = 11; /// total count of SurfaceType enum elements

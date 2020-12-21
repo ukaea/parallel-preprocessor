@@ -62,6 +62,7 @@ namespace Geom
         GeometryPropertyBuilder::init();
         GeometrySearchBuilder::init();
         BoundBoxBuilder::init();
+        InscribedShapeBuilder::init();
         GeometryShapeChecker::init();
         CollisionDetector::init();
         GeometryImprinter::init();

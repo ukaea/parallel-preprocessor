@@ -15,6 +15,7 @@ ParallelAccessorTest.cpp is a demo (test) of instantiation of ProcessorTemplate 
 
 import sys
 import os.path
+import shutil
 import json
 import copy
 from collections import OrderedDict
@@ -33,6 +34,8 @@ if sys.version_info.major == 2:
 
 ###################################################################
 USAGE = "input data file is the only compulsory argument, get help by -h argument"
+generated_config_file_name = "config.json"
+default_log_filename = "debug_info.log"
 
 debugging = 0  # this verbosity only control this python script,
 # args.verbosity argument control the console verbosity
@@ -155,7 +158,7 @@ def generate_config_file_header(args):
             },
             "logger": {
                 "verbosity": args.verbosity,  # print to console: DEBUG, PROGRESS, INFO, WARNING
-                "logFileName": "debug_info.log",  # only INFO level or above will print to console
+                "logFileName": default_log_filename,  # only INFO level or above will print to console
                 "logLevel": "DEBUG",  # DEBUG, PROGRESS, INFO, WARNING
             },
         }
@@ -174,18 +177,28 @@ def ppp_get_output_dir(args):
     inputFile = ppp_parse_input(args)
     case_name = ppp_get_case_name(inputFile)
     # this naming must be consistent with DataStorage::generateStoragePath(input_name)
-    outputDir = (args.workingDir + os.path.sep + case_name + "_processed")  # can be detected from output_filename full path
-    return outputDir
+    caseDir = (args.workingDir + os.path.sep + case_name + "_processed")  # can be detected from output_filename full path
+    return caseDir
 
 def ppp_post_process(args):
     # currently, only make symbolic link to input file into the output dir
 
     inputFile = ppp_parse_input(args)
     inputDir, inputFilename = os.path.split(inputFile)
-    outputDir = ppp_get_output_dir(args)
-    linkToInputFile = outputDir + os.path.sep + inputFilename
+    caseDir = ppp_get_output_dir(args)
+    linkToInputFile = caseDir + os.path.sep + inputFilename
 
-    if os.path.exists(outputDir):
+    if os.path.exists(generated_config_file_name):
+        shutil.copyfile(generated_config_file_name, caseDir + os.path.sep + generated_config_file_name)
+    else:
+        print("config file does not exists in the current dir", os.curdir)
+    
+    if os.path.exists(default_log_filename):
+        shutil.copyfile(default_log_filename, caseDir + os.path.sep + default_log_filename)
+    else:
+        print("log file does not exists in the current dir", os.curdir)
+
+    if os.path.exists(caseDir):
         try:  # failed on windows
             os.symlink(inputFile, linkToInputFile)
         except:
@@ -196,7 +209,6 @@ def generate_config_file(config_file_content, args):
     # parse args first, the write config file
 
     config_file_given = False
-    generated_config_file_name = "config.json"
     # input json file is config, but not geomtry input manifest file
     if args.input.find(".json") > 0:
         with open(args.input, "r") as f:

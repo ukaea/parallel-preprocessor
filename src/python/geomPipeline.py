@@ -85,6 +85,13 @@ def geom_add_argument(parser):
 
     # bool argument for imprint
     parser.add_argument(
+        "--use-inscribed-shape",
+        action="store_true",
+        help="",
+    )
+
+    # bool argument for imprint
+    parser.add_argument(
         "--ignore-failed",
         action="store_true",
         help="ignore failed (in BOP check, collision detect, etc) solids",
@@ -254,6 +261,16 @@ BoundBoxBuilder = {
     "doc": "calc boundbox for collision detection, decompose",
 }
 
+InscribedShapeBuilder = {
+    "className": "Geom::InscribedShapeBuilder",
+    "doc": "calc max void or hollow space of a shape's oriented boundbox can hold",
+    "output": {
+        "type": "filename",
+        "value": "inscribed_shapes.brep",
+        "doc": "optional: result of inscribed shape calculation",
+    },
+}
+
 # shared by all actions
 basic_processors = [GeometryShapeChecker, GeometryPropertyBuilder, BoundBoxBuilder]
 
@@ -400,6 +417,8 @@ elif args.action == Action.fix:
     processors.append(post_GeometryPropertyBuilder)
     config_file_content["writers"] = writers
 elif args.action == Action.imprint:
+    if args.use_inscribed_shape:
+        processors.append(InscribedShapeBuilder)
     processors.append(GeometryImprinter)
     processors += post_processors
     config_file_content["writers"] = writers
