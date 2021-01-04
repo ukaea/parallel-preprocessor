@@ -27,6 +27,17 @@ namespace Geom
      *
      * result will be saved to a sparse vector of InscribedShapeType
      * which is a std::vector<double>, could be Sphere, Cylinder, Box
+     *
+     * Current implementation:  non optimal inscribed sphere can be generated as a demo
+     *
+     * Note:
+     * inscribed shape calc is much harder than bounding shape
+     * since no matter where you start you will get the final/minimium bounding shape.
+     * Meanwhile a inscribed shape highly depends on initial point to search;
+     * it may ended with a local convergent solution but it may be not the global optimal solution.
+     *
+     * Stop for the time being, to see if any published algorithm can be found
+     *
      */
     class InscribedShapeBuilder : public GeometryProcessor
     {
@@ -89,8 +100,15 @@ namespace Geom
             const auto obb = (*myShapeOrientedBoundBoxes)[index];
             if (true) // hasLargeVoid(gp, obb)
             {
-                auto ret = calcInscribedShape(item(index), gp, obb);
-                myInscribedShapes[index] = std::make_shared<InscribedShapeType>(std::move(ret));
+                try
+                {
+                    auto ret = calcInscribedShape(item(index), gp, obb);
+                    myInscribedShapes[index] = std::make_shared<InscribedShapeType>(std::move(ret));
+                }
+                catch (...)
+                {
+                    LOG_F(WARNING, "failed to calculate the inscribed shape for item %lu, just skip", index);
+                }
             }
         }
 
@@ -107,9 +125,9 @@ namespace Geom
         bool hasLargeVoid(const GeometryProperty& gp, const Bnd_OBB& obb)
         {
             const double sphere_ratio = 1.0 / 3.0 / std::sqrt(M_PI * 4);
-            const double th = sphere_ratio * 0.2;
+            const double th = sphere_ratio * 0.2; // todo: make a parameter
             bool b1 = ((gp.volume / gp.area) / std::sqrt(gp.area) < th);
-            const double volume_ratio = 3;
+            const double volume_ratio = 3; // todo: make a parameter
             bool b2 = gp.volume * volume_ratio < volume(obb);
             if (b1 && b2)
                 return true;
@@ -120,13 +138,25 @@ namespace Geom
         InscribedShapeType calcInscribedShape(const ItemType& s, const GeometryProperty& gp, const Bnd_OBB& obb);
 
         /// shape is roughly a sphere, cylinder, box,
+        /// for OffSet and Revolution surface, it is likely
+        /// call only after `hasLargeVoid()`
+        /// use Aspect ratio is decide Cylinder or Sphere
         SurfaceType estimateShapeType(const ItemType& s, const GeometryProperty&, const Bnd_OBB&)
         {
             auto v = calcAreaPerSurfaceType(s);
             // calc the max, get the index
             auto i = std::distance(v.cbegin(), std::max_element(v.cbegin(), v.cend()));
-
-            return SurfaceType(i);
+            // if a shape has SweptSurface, Cylinder can be the best inscribed shape
+            auto t = SurfaceType(i);
+            if (t == GeomAbs_Plane || t == GeomAbs_Sphere)
+                return t;
+            else if (t < GeomAbs_BezierSurface)
+                return GeomAbs_Sphere; // may also Cylinder
+            else
+            {
+                // return GeomAbs_Sphere;
+                throw ProcessorError("Should not get here, as non-elementary surface area is not calculated");
+            }
         }
 
         /// detect if the shape is roughly a planar sheet
@@ -154,7 +184,7 @@ namespace Geom
 
         ItemType inscribedShapeToShape(const InscribedShapeType& shape)
         {
-            std::cout << "variant index = " << shape.index() << std::endl;
+            // std::cout << "variant index = " << shape.index() << std::endl;  // fine
             // if (std::holds_alternative<Bnd_Sphere>(shape))
             //     return toShape(std::get<Bnd_Sphere>(shape));
             // else if (std::holds_alternative<Bnd_OBB>(shape))
@@ -164,7 +194,7 @@ namespace Geom
             else if (std::holds_alternative<Bnd_OBB>(shape))
                 return toShape(std::get<Bnd_OBB>(shape));
             else
-                throw ProcessorError("BoundShape type not supported in std::variant");
+                throw ProcessorError("Inscribed shape type not supported in std::variant");
         }
         // template <typename ShapeT> ItemType toShape(const ShapeT& s);
         ItemType toShape(const Bnd_Sphere& s)

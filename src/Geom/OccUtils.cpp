@@ -153,6 +153,7 @@ namespace Geom
         }
 
         /// only works on compound? return face count
+        /// opencascade has a GUI inspect tool,  ShapeView to explore a brep shape
         std::map<std::string, int> exploreShape(const TopoDS_Shape& aShape)
         {
             using namespace std;
@@ -878,5 +879,72 @@ namespace Geom
             return BRepBuilderAPI_Transform(from, ts, true);
         }
 
+        //=======================================================================
+        // Function : IsLinear
+        // purpose : Returns TRUE if theC is line-like.
+        // Source: not exposed function in OpenCASCADE BRepBndLib_1.cxx
+        //=======================================================================
+        Standard_Boolean IsLinear(const Adaptor3d_Curve& theC)
+        {
+            const GeomAbs_CurveType aCT = theC.GetType();
+            if (aCT == GeomAbs_OffsetCurve)
+            {
+                return IsLinear(GeomAdaptor_Curve(theC.OffsetCurve()->BasisCurve()));
+            }
+
+            if ((aCT == GeomAbs_BSplineCurve) || (aCT == GeomAbs_BezierCurve))
+            {
+                // Indeed, curves with C0-continuity and degree==1, may be
+                // represented with set of points. It will be possible made
+                // in the future.
+
+                return ((theC.Degree() == 1) && (theC.Continuity() != GeomAbs_C0));
+            }
+
+            if (aCT == GeomAbs_Line)
+            {
+                return Standard_True;
+            }
+
+            return Standard_False;
+        }
+
+        //=======================================================================
+        // Function : IsPlanar
+        // purpose : Returns TRUE if theS is plane-like.
+        // Source: not exposed function in OpenCASCADE BRepBndLib_1.cxx
+        //=======================================================================
+        Standard_Boolean IsPlanar(const Adaptor3d_Surface& theS)
+        {
+            const GeomAbs_SurfaceType aST = theS.GetType();
+            if (aST == GeomAbs_OffsetSurface)
+            {
+                return IsPlanar(theS.BasisSurface()->Surface());
+            }
+
+            if (aST == GeomAbs_SurfaceOfExtrusion)
+            {
+                return IsLinear(theS.BasisCurve()->Curve());
+            }
+
+            if ((aST == GeomAbs_BSplineSurface) || (aST == GeomAbs_BezierSurface))
+            {
+                if ((theS.UDegree() != 1) || (theS.VDegree() != 1))
+                    return Standard_False;
+
+                // Indeed, surfaces with C0-continuity and degree==1, may be
+                // represented with set of points. It will be possible made
+                // in the future.
+
+                return ((theS.UContinuity() != GeomAbs_C0) && (theS.VContinuity() != GeomAbs_C0));
+            }
+
+            if (aST == GeomAbs_Plane)
+            {
+                return Standard_True;
+            }
+
+            return Standard_False;
+        }
     } // namespace OccUtils
 } // namespace Geom

@@ -123,6 +123,9 @@ namespace Geom
         /// scale up or down shape
         GeomExport TopoDS_Shape scaleShape(const TopoDS_Shape& from, double scale, const PointType& origin = gp_Pnt());
 
+        GeomExport bool IsLinear(const Adaptor3d_Curve& theC);
+        GeomExport bool IsPlanar(const Adaptor3d_Surface& theS);
+
     } // namespace OccUtils
 
 } // namespace Geom

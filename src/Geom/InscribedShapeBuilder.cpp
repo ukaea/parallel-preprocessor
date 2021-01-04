@@ -2,6 +2,7 @@
 #include "OccUtils.h"
 
 #include "BRepBuilderAPI_MakeVertex.hxx"
+#include <GeomLProp_SLProps.hxx>
 
 
 namespace Geom
@@ -23,6 +24,30 @@ namespace Geom
         return false;
     }
 
+    /// work only for composolid or solid, after imprinting, excluding all shared faces
+    std::vector<TopoDS_Face> getFreeFaces(const ItemType& s)
+    {
+        TopTools_MapOfShape aFwdFMap;
+        TopTools_MapOfShape aRvsFMap;
+        std::vector<TopoDS_Face> faces; // item must be the pointer to TopoDS_Shape or derived
+
+        TopExp_Explorer ex(s, TopAbs_FACE);
+        // faces.reserve(ex.Depth());
+        TopLoc_Location aLocDummy;
+        for (; ex.More(); ex.Next())
+        {
+            const TopoDS_Face& F = TopoDS::Face(ex.Current());
+            // TopAbs_INTERNAL  can be a face embedded in a solid
+            if (F.Orientation() == TopAbs_INTERNAL or F.Orientation() == TopAbs_EXTERNAL)
+                continue;
+            const Handle(Geom_Surface)& S = BRep_Tool::Surface(F, aLocDummy);
+            if (S.IsNull())
+                continue; // is that common?
+            if (not isSharedFace(F, aFwdFMap, aRvsFMap))
+                faces.push_back(F);
+        }
+        return faces;
+    }
 
     /// generate coordinate index, then save all, otherwise, local not global max
     /// const std::vector<bool> voids, or 3D array
@@ -68,8 +93,9 @@ namespace Geom
         PointType c{(cm.X() + cb.X()) * 0.5, (cm.Y() + cb.Y()) * 0.5, (cm.Z() + cb.Z()) * 0.5};
         if (OccUtils::distance(s, c) > Precision::Confusion())
             return c;
-        /// still can not find a void space inside the shape, then generete grid of OBB, then
-        throw ProcessorError("not implement for grid void space search");
+        /// still can not find a void space inside the shape, then generete grid of OBB and search
+        /// throw ProcessorError("not implement for grid void space search");
+        return c;
     }
 
 
@@ -104,11 +130,13 @@ namespace Geom
     }
     */
 
-    ///
+    /// may ignore if surface is not elementary types
     std::vector<double> InscribedShapeBuilder::calcAreaPerSurfaceType(const ItemType& s)
     {
         auto v = std::vector<double>(SurfacTypeCount, 0.0);
+        const bool elementarySurfaceOnly = true;
         // for each surface,  calc area, added to v[stype], no interior, skipShared
+#if 1
         TopTools_MapOfShape aFwdFMap;
         TopTools_MapOfShape aRvsFMap;
         TopLoc_Location aLocDummy;
@@ -119,7 +147,12 @@ namespace Geom
 
             if (isSharedFace(F, aFwdFMap, aRvsFMap))
                 continue;
-
+#else
+        TopLoc_Location aLocDummy;
+        auto freeFaces = getFreeFaces(s);
+        for (const auto& F : freeFaces)
+        {
+#endif
             const Handle(Geom_Surface)& S = BRep_Tool::Surface(F, aLocDummy);
             if (S.IsNull())
                 continue; // is that common?
@@ -128,31 +161,91 @@ namespace Geom
             GeomAbs_SurfaceType sType = AS.GetType();
             if (sType == GeomAbs_OffsetSurface)
             {
-                // TODO: is that possible to get elementary surface type of OffsetSurface
-                v[int(sType)] += OccUtils::area(F);
+                const auto bs = AS.BasisSurface();
+                sType = bs->GetType();
             }
+
+            if (sType < GeomAbs_BezierSurface || sType == GeomAbs_SurfaceOfRevolution)
+                v[int(sType)] += OccUtils::area(F);
             else
             {
-                v[int(sType)] += OccUtils::area(F);
+                if (!elementarySurfaceOnly)
+                    v[int(sType)] += OccUtils::area(F);
             }
         }
         return v;
     }
 
+    /// distance, contact point and normal
+    struct ContactInfo
+    {
+        double distance;
+        PointType point;
+        gp_Dir normal;
+        Standard_Integer hash;
+    };
 
-    /// how to grow the shape? DOF
+    // return zero distance if there is contact and interference
+    std::vector<ContactInfo> calcContact(const ItemType& s, const PointType& p)
+    {
+        TopLoc_Location aLocDummy;
+        auto freeFaces = getFreeFaces(s);
+        std::vector<ContactInfo> infos;
+        for (const auto& F : freeFaces)
+        {
+            auto V = BRepBuilderAPI_MakeVertex(p).Vertex();
+            auto dss = BRepExtrema_DistShapeShape(); // GeomAPI_ExtremaSurfaceSurface
+            dss.LoadS1(F);
+            dss.LoadS2(V);
+            dss.Perform();
+            auto contact = dss.PointOnShape1(1);
+            auto distance = dss.Value();
+            Standard_Integer hash = HashCode(F, INT_MAX);
+#if 0
+            double u, v;
+            dss.ParOnFaceS1(1, u, v); // Exception here, why?
+
+            const Handle(Geom_Surface)& S = BRep_Tool::Surface(F, aLocDummy);
+            if (S.IsNull())
+                continue; // this has been filtered out by getFreeFaces()
+            GeomAdaptor_Surface AS(S);
+
+            const double precision = 1e-3;
+            GeomLProp_SLProps props(AS.Surface(), u, v, 1 /* max 1 derivation */, precision);
+            auto normal = props.Normal();
+#else
+            gp_Dir normal;
+#endif
+            infos.emplace_back(ContactInfo{distance, contact, normal, hash});
+        }
+        return infos;
+    }
+
+    /// TODO: not completed, how to grow the shape?
     InscribedShapeType calcInscribedSphere(const ItemType& s, const GeometryProperty& gp, const Bnd_OBB& obb)
     {
         auto c = calcInitPoint(s, gp, obb);
-        Standard_Real initLength = 1;                                   // Precision::Confusion()
+        auto infos = calcContact(s, c);
+        std::vector<double> dist;
+        for (const auto& info : infos)
+        {
+            dist.push_back(info.distance);
+        }
+        auto min = *std::min_element(dist.begin(), dist.end());
+        Standard_Real initLength = Precision::Confusion();
+        if (min > 0)
+            initLength = min;
+        // todo: based on infos, it may be possible to quickly get local max inscribed sphere
         Bnd_Sphere ss(gp_XYZ(c.X(), c.Y(), c.Z()), initLength, 10, 10); // what does the U, V mean here?
         return ss;
     }
 
+    /// TODO: not completed, maybe based on inscribed_sphere
     InscribedShapeType calcInscribedOBB(const ItemType& s, const GeometryProperty& gp, const Bnd_OBB& obb)
     {
         Bnd_OBB b(obb);
         Standard_Real initLength = 1; // Precision::Confusion()
+
         b.SetXComponent(obb.XDirection(), initLength);
         b.SetYComponent(obb.YDirection(), initLength);
         b.SetZComponent(obb.ZDirection(), initLength);
@@ -176,21 +269,23 @@ namespace Geom
     InscribedShapeType InscribedShapeBuilder::calcInscribedShape(const ItemType& s, const GeometryProperty& gp,
                                                                  const Bnd_OBB& obb)
     {
-        InscribedShapeType ret;
         auto a = estimateShapeType(s, gp, obb);
+        auto ins = calcInscribedSphere(s, gp, obb);
+        return ins;
+        /*
         if (a == GeomAbs_Plane)
         {
             return calcInscribedOBB(s, gp, obb);
         }
         else if (a == GeomAbs_Sphere)
         {
-            return calcInscribedSphere(s, gp, obb);
+            return ins;
         }
         else
         {
             return calcInscribedCylinder(s, gp, obb);
         }
-        return ret;
+        */
     }
 
 } // namespace Geom
