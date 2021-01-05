@@ -68,9 +68,6 @@ class EnclosureTest(GeomTestBase):
         assert shape.ShapeType == "CompSolid" or shape.ShapeType == "Compound"
         # assert len(shape.Faces) == 20  # 4 cubes shares 4 faces, total 20 faces
 
-    def test(self):
-        self.validate()
-
 
 class WeakInterferenceTest(GeomTestBase):
     # def __init__(self, test_name="weak_interference"):
@@ -97,9 +94,6 @@ class WeakInterferenceTest(GeomTestBase):
         assert len(shape.Faces) == 30  # 4 cubes shares 4 faces, total 20 faces + 10
         # todo: face count needs to be further investigated
 
-    def test(self):
-        self.validate()
-
 
 class StrongInterferenceTest(GeomTestBase):
     def build_geometry(self, doc):
@@ -122,9 +116,6 @@ class StrongInterferenceTest(GeomTestBase):
         else:
             assert len(shape.Solids) == 5
             assert len(shape.Faces) == 26  # output geometry == input
-
-    def test(self):
-        self.validate()
 
 
 if __name__ == "__main__":

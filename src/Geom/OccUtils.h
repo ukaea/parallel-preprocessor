@@ -57,7 +57,7 @@ namespace Geom
         GeomExport Standard_Boolean isCoincidentDomain(const TopoDS_Shape& shape, const TopoDS_Shape& shape2);
 
         /// two-step unifying: first unify edges, seconly unify faces,
-        /// deprecated: use glueFaces() instead
+        /// DEPRECATED: use glueFaces() instead
         GeomExport TopoDS_Shape unifyFaces(const TopoDS_Shape& _shape);
 
         /// the input shapes to be glued should be a compound
@@ -66,6 +66,7 @@ namespace Geom
         GeomExport TopoDS_Shape glueFaces(const TopoDS_Shape& _shape, const Standard_Real tolerance = 0.0);
 
 
+        GeomExport TopoDS_Compound createCompound(const SparseVector<ItemType> shapes);
         GeomExport TopoDS_Compound
         createCompound(const ItemContainerType theSolids,
                        std::shared_ptr<const MapType<ItemHashType, ShapeErrorType>> suppressed = nullptr);
@@ -93,6 +94,8 @@ namespace Geom
         GeomExport Standard_Real volume(const TopoDS_Shape& s);
         GeomExport Standard_Real tolerance(const TopoDS_Shape& s);
         GeomExport Standard_Real distance(const TopoDS_Shape& s1, const TopoDS_Shape& s2);
+        GeomExport Standard_Real distance(const TopoDS_Shape& s, const PointType& p);
+
         GeomExport UniqueIdType uniqueId(const GeometryProperty& p);
         GeomExport UniqueIdType uniqueId(const TopoDS_Shape& s);
 
@@ -111,9 +114,17 @@ namespace Geom
         GeomExport TopoDS_Shape fuseShape(const VectorType<TopoDS_Shape> v, bool occInternalParallel = true);
         GeomExport TopoDS_Shape cutShape(const TopoDS_Shape& from, const TopoDS_Shape& substractor);
 
+        /// surface mesh
         GeomExport std::shared_ptr<BRepMesh_IncrementalMesh> meshShape(const TopoDS_Shape& aShape,
                                                                        double resolution = 0.01);
+        /// save to STL mesh format
         GeomExport Standard_Boolean saveMesh(TopoDS_Shape& aShape, const std::string file_name);
+
+        /// scale up or down shape
+        GeomExport TopoDS_Shape scaleShape(const TopoDS_Shape& from, double scale, const PointType& origin = gp_Pnt());
+
+        GeomExport bool IsLinear(const Adaptor3d_Curve& theC);
+        GeomExport bool IsPlanar(const Adaptor3d_Surface& theS);
 
     } // namespace OccUtils
 

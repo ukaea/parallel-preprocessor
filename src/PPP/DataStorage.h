@@ -50,9 +50,9 @@ namespace PPP
             LOG_F(INFO, "all result data will be saved to folder: %s", myStoragePath.c_str());
         }
 
-        std::string generateStoragePath(std::string input_name)
+        std::string generateStoragePath(std::string case_name)
         {
-            return input_name + "_processed";
+            return case_name + "_processed";
         }
 
         virtual std::string storagePath()
@@ -71,7 +71,7 @@ namespace PPP
             fs::path _path{filename};
             if (_path.is_absolute())
             {
-                LOG_F(WARNING, "path `%s` is absolute, return it as it is", filename.c_str());
+                // LOG_F(WARNING, "path `%s` is absolute, return it as it is", filename.c_str());
                 return filename;
             }
             auto target = fs::path(myStoragePath) / filename;

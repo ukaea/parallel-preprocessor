@@ -153,6 +153,7 @@ namespace Geom
         }
 
         /// only works on compound? return face count
+        /// opencascade has a GUI inspect tool,  ShapeView to explore a brep shape
         std::map<std::string, int> exploreShape(const TopoDS_Shape& aShape)
         {
             using namespace std;
@@ -346,6 +347,22 @@ namespace Geom
             return ss;
         }
 
+        TopoDS_Compound createCompound(const SparseVector<ItemType> shapes)
+        {
+            TopoDS_Builder cBuilder;
+            TopoDS_Compound merged;
+            cBuilder.MakeCompound(merged);
+            size_t i = 0;
+            for (const auto& p : shapes)
+            {
+                if (p)
+                {
+                    cBuilder.Add(merged, *p);
+                }
+                i++;
+            }
+            return merged;
+        }
 
         TopoDS_Compound createCompound(const ItemContainerType theSolids,
                                        std::shared_ptr<const MapType<ItemHashType, ShapeErrorType>> suppressed)
@@ -605,6 +622,11 @@ namespace Geom
                 v_props.Mass(), {v_props.CentreOfMass().X(), v_props.CentreOfMass().Y(), v_props.CentreOfMass().Z()});
             return gid;
         }
+        Standard_Real distance(const TopoDS_Shape& s, const PointType& p)
+        {
+            auto v = BRepBuilderAPI_MakeVertex(p).Vertex();
+            return distance(s, v);
+        }
 
         Standard_Real distance(const TopoDS_Shape& s1, const TopoDS_Shape& s2)
         {
@@ -821,30 +843,28 @@ namespace Geom
         Standard_Boolean saveMesh(TopoDS_Shape& aShape, const std::string file_name)
         {
 
-#if 0 // OCC_VERSION_HEX >= 0x070400
-      // not find this `RWStl::WriteFile`
             if (file_name.find("stl") != file_name.npos)
             {
-                Handle(Poly_Triangulation) aTriangulation = RWStl::WriteFile(file_name.c_str(), aTriangulation);
-                return true;
-            }
-            // in lower version, each triangle is read as TopoDS_Face which is not efficient
-#else
-            if (file_name.find("stl") != file_name.npos)
-            {
-                std::string fileMode = "ascii"; // only ASCII mode in occt 7.3
+#if OCC_VERSION_HEX >= 0x070300
+                // RWStl::WriteFile(file_name.c_str(), aTriangulation);
+                // low level API used by StlAPI_Writer
+                // in lower version, each triangle is read as TopoDS_Face which is not efficient
                 auto m = meshShape(aShape);
-                auto stl_exporter = StlAPI_Writer();
-                /*
+                auto stl_exporter = StlAPI_Writer(); // high level API
+                // only ASCII mode in occt 7.3
+                /* by default ascii write mode, occ 7.4 support binary STL file write
                 if(fileMode == "ascii")
                     stl_exporter.SetASCIIMode(true);
                 else // binary, just set the ASCII flag to False
                     stl_exporter.SetASCIIMode(false);
                 */
-                stl_exporter.Write(aShape, file_name.c_str());
+                stl_exporter.Write(aShape, file_name.c_str()); // shape must has mesh for each face
                 return true;
-            }
+#else
+                return false;
 #endif
+            }
+
             else
             {
                 LOG_F(ERROR, "output mesh file suffix is not supported: %s", file_name.c_str());
@@ -852,5 +872,79 @@ namespace Geom
             }
         }
 
+        TopoDS_Shape scaleShape(const TopoDS_Shape& from, double scale, const PointType& origin)
+        {
+            gp_Trsf ts;
+            ts.SetScale(origin, scale);
+            return BRepBuilderAPI_Transform(from, ts, true);
+        }
+
+        //=======================================================================
+        // Function : IsLinear
+        // purpose : Returns TRUE if theC is line-like.
+        // Source: not exposed function in OpenCASCADE BRepBndLib_1.cxx
+        //=======================================================================
+        Standard_Boolean IsLinear(const Adaptor3d_Curve& theC)
+        {
+            const GeomAbs_CurveType aCT = theC.GetType();
+            if (aCT == GeomAbs_OffsetCurve)
+            {
+                return IsLinear(GeomAdaptor_Curve(theC.OffsetCurve()->BasisCurve()));
+            }
+
+            if ((aCT == GeomAbs_BSplineCurve) || (aCT == GeomAbs_BezierCurve))
+            {
+                // Indeed, curves with C0-continuity and degree==1, may be
+                // represented with set of points. It will be possible made
+                // in the future.
+
+                return ((theC.Degree() == 1) && (theC.Continuity() != GeomAbs_C0));
+            }
+
+            if (aCT == GeomAbs_Line)
+            {
+                return Standard_True;
+            }
+
+            return Standard_False;
+        }
+
+        //=======================================================================
+        // Function : IsPlanar
+        // purpose : Returns TRUE if theS is plane-like.
+        // Source: not exposed function in OpenCASCADE BRepBndLib_1.cxx
+        //=======================================================================
+        Standard_Boolean IsPlanar(const Adaptor3d_Surface& theS)
+        {
+            const GeomAbs_SurfaceType aST = theS.GetType();
+            if (aST == GeomAbs_OffsetSurface)
+            {
+                return IsPlanar(theS.BasisSurface()->Surface());
+            }
+
+            if (aST == GeomAbs_SurfaceOfExtrusion)
+            {
+                return IsLinear(theS.BasisCurve()->Curve());
+            }
+
+            if ((aST == GeomAbs_BSplineSurface) || (aST == GeomAbs_BezierSurface))
+            {
+                if ((theS.UDegree() != 1) || (theS.VDegree() != 1))
+                    return Standard_False;
+
+                // Indeed, surfaces with C0-continuity and degree==1, may be
+                // represented with set of points. It will be possible made
+                // in the future.
+
+                return ((theS.UContinuity() != GeomAbs_C0) && (theS.VContinuity() != GeomAbs_C0));
+            }
+
+            if (aST == GeomAbs_Plane)
+            {
+                return Standard_True;
+            }
+
+            return Standard_False;
+        }
     } // namespace OccUtils
 } // namespace Geom

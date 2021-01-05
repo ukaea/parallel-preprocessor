@@ -75,9 +75,6 @@ class StackedBoxesTest(GeomTestBase):
         assert len(shape.Faces) == nonshared_faces
         # 2 cubes shares 1 face, total 11 faces
 
-    def test(self):
-        self.validate()
-
 
 class AlignedBoxesTest(GeomTestBase):
     def build_geometry(self, doc):
@@ -92,9 +89,6 @@ class AlignedBoxesTest(GeomTestBase):
         )
         N = len(shape.Solids)
         assert len(shape.Faces) == N * 6 - (N - 1)
-
-    def test(self):
-        self.validate()
 
 
 class StackedCurvedTest(GeomTestBase):
@@ -146,8 +140,6 @@ class StackedCurvedTest(GeomTestBase):
         # 4 boxes has faces = (N-1) * 6 - 4, cylinder has 4 or 5 on side, plus 2
         assert len(shape.Faces) == (N - 1) * 6 - 4 + 6
 
-    def test(self):
-        self.validate()
 
 
 # ===============================================================

@@ -15,6 +15,7 @@ ParallelAccessorTest.cpp is a demo (test) of instantiation of ProcessorTemplate 
 
 import sys
 import os.path
+import shutil
 import json
 import copy
 from collections import OrderedDict
@@ -33,6 +34,8 @@ if sys.version_info.major == 2:
 
 ###################################################################
 USAGE = "input data file is the only compulsory argument, get help by -h argument"
+generated_config_file_name = "config.json"
+default_log_filename = "debug_info.log"
 
 debugging = 0  # this verbosity only control this python script,
 # args.verbosity argument control the console verbosity
@@ -56,15 +59,15 @@ def ppp_add_argument(parser):
     )
 
     parser.add_argument(
-        "-o", "--output-file", help="output file name (without folder path)",
+        "-o", "--output-file", help="output file name relative to working-dir or absolute path",
         dest = "outputFile"
     )
 
-    parser.add_argument(
-        "--output-dir",
-        help="output folder path, by default a subfolder in the working dir",
-        dest = "outputDir"
-    )
+    # parser.add_argument(
+    #     "--output-dir",
+    #     help="output folder path, by default a subfolder (input file stem) in the working-dir",
+    #     dest = "outputDir"
+    # )
 
     parser.add_argument(
         "--config",
@@ -108,15 +111,16 @@ def ppp_parse_input(args):
             # download to current folder
             import urllib.request
 
-            urllib.request.urlretrieve(args.input, "input_data")
-            return "input_data"
+            urllib.request.urlretrieve(args.input, "downloaded_input_data")
+            args.input = os.path.abspath("downloaded_input_data")
 
         elif os.path.exists(args.input):
-            return args.input
+            args.input = os.path.abspath(args.input)
         else:
             raise IOError("input file does not exist: ", args.input)
     else:
         raise Exception("input file must be given as an argument")
+    return args.input  # must be abspath, as current dir may change
 
 
 def ppp_check_argument(args):
@@ -127,9 +131,8 @@ def ppp_check_argument(args):
         else:
             args.thread_count = cpu_count()  # can set args.value just like a dict
     if not args.workingDir:
-        args.workingDir = "./"  # debug and config file will be put here,
+        args.workingDir = os.path.abspath("./")  # debug and config file will be put here,
         # before copy to outputDir at the end of processing in C++ Context::finalize()
-    # print(args.thread_count)
 
 
 ####################################################################
@@ -155,27 +158,47 @@ def generate_config_file_header(args):
             },
             "logger": {
                 "verbosity": args.verbosity,  # print to console: DEBUG, PROGRESS, INFO, WARNING
-                "logFileName": "debug_info.log",  # only INFO level or above will print to console
+                "logFileName": default_log_filename,  # only INFO level or above will print to console
                 "logLevel": "DEBUG",  # DEBUG, PROGRESS, INFO, WARNING
             },
         }
     )
 
-
-def ppp_post_process(args):
-    #
-    inputFile = ppp_parse_input(args)
+def ppp_get_case_name(inputFile):
     inputDir, inputFilename = os.path.split(inputFile)
     case_name = inputFilename[: inputFilename.rfind(".")]
+    return case_name
 
-    outputDir = (  # this naming must be consistent with DataStorage::generateStoragePath(input_name)
-        args.workingDir + os.path.sep + case_name + "_processed"
-    )  # can be detected from output_filename full path
-    if args.outputDir:
-        outputDir = args.outputDir
-    linkToInputFile = outputDir + os.path.sep + inputFilename
+def ppp_get_output_dir(args):
+    # if args.outputDir:
+    #     outputDir = os.path.abspath(args.outputDir)
+    # else:
 
-    if os.path.exists(outputDir):
+    inputFile = ppp_parse_input(args)
+    case_name = ppp_get_case_name(inputFile)
+    # this naming must be consistent with DataStorage::generateStoragePath(input_name)
+    caseDir = (args.workingDir + os.path.sep + case_name + "_processed")  # can be detected from output_filename full path
+    return caseDir
+
+def ppp_post_process(args):
+    # currently, only make symbolic link to input file into the output dir
+
+    inputFile = ppp_parse_input(args)
+    inputDir, inputFilename = os.path.split(inputFile)
+    caseDir = ppp_get_output_dir(args)
+    linkToInputFile = caseDir + os.path.sep + inputFilename
+
+    if os.path.exists(generated_config_file_name):
+        shutil.copyfile(generated_config_file_name, caseDir + os.path.sep + generated_config_file_name)
+    else:
+        print("config file does not exists in the current dir", os.curdir)
+    
+    if os.path.exists(default_log_filename):
+        shutil.copyfile(default_log_filename, caseDir + os.path.sep + default_log_filename)
+    else:
+        print("log file does not exists in the current dir", os.curdir)
+
+    if os.path.exists(caseDir):
         try:  # failed on windows
             os.symlink(inputFile, linkToInputFile)
         except:
@@ -186,7 +209,6 @@ def generate_config_file(config_file_content, args):
     # parse args first, the write config file
 
     config_file_given = False
-    generated_config_file_name = "config.json"
     # input json file is config, but not geomtry input manifest file
     if args.input.find(".json") > 0:
         with open(args.input, "r") as f:
@@ -264,8 +286,7 @@ class PipelineController(object):
 
         # after inputFile is given, all other default filenames are generated
         inputFile = ppp_parse_input(args)
-        inputDir, inputFilename = os.path.split(inputFile)
-        case_name = inputFilename[: inputFilename.rfind(".")]
+        case_name = ppp_get_case_name(inputFile)
         ######################## module specific ##########################
         outputFile = case_name + "_processed.txt"  # saved to case output folder
         if args.outputFile:

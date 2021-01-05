@@ -85,9 +85,32 @@ def geom_add_argument(parser):
 
     # bool argument for imprint
     parser.add_argument(
+        "--use-inscribed-shape",
+        action="store_true",
+        help="",
+    )
+
+    # bool argument for imprint
+    parser.add_argument(
         "--ignore-failed",
         action="store_true",
         help="ignore failed (in BOP check, collision detect, etc) solids",
+    )
+
+    # it is not arbitrary scaling, but can change output units (m, cm, mm) of STEP file format
+    parser.add_argument(
+        "-ou", "--output-unit",
+        dest="output_unit",
+        type=str,
+        help="output geometry unit, by default, `MM` for CAD, change unit will cause scaling when read back",
+    )
+
+    # it is not arbitrary scaling, but can change output units (m, cm, mm) of STEP file format
+    parser.add_argument(
+        "--input-unit",
+        dest="input_unit",
+        type=str,
+        help="input geometry unit, by default, only needed for brep file without meta data for length ",
     )
     return parser
 
@@ -114,6 +137,7 @@ outputFile = case_name + "_processed.brep"  # saved to case output folder
 if args.outputFile:
     outputFile = args.outputFile
     print("args.outputFile = ", args.outputFile)
+outputFile = os.path.abspath(outputFile)
 
 # output metadata filename
 outputMetadataFile = outputFile[: outputFile.rfind(".")] + "_metadata.json"
@@ -127,7 +151,7 @@ if args.metadata:
     else:
         raise IOError("input metadata file does not exist: ", args.metadata)
 else:
-    if inputFile.find(".brep") > 0 or inputFile.find(".brp"):
+    if inputFile.endswith(".brep")  or inputFile.endswith(".brp"):
         inputMetadataFile = inputFile[: inputFile.rfind(".")] + "_metadata.json"
         if os.path.exists(inputMetadataFile):
             hasInputMetadataFile = True
@@ -144,6 +168,16 @@ ignoreFailed = False
 if args.ignore_failed != None and args.ignore_failed:
     ignoreFailed = True
 
+outputUnit = "MM"  # argument can be capital or uncapital letter
+if args.output_unit:
+    if args.output_unit.upper() in ("MM", "CM", "M", "INCH"):  # STEP supported units
+        outputUnit = args.output_unit.upper()
+
+# in CAD, the default lengths unit is MM (millimeter)
+inputUnit = "MM"
+if args.input_unit:
+    if args.input_unit.upper() in ("MM", "CM", "M", "INCH"):  # STEP supported units
+        inputUnit = args.input_unit.upper()
 
 if debugging > 0:
     print("action on the geometry is ", args.action)
@@ -169,7 +203,7 @@ readers = [  # it is possible to have multiple Reader instances in this list
     {
         "className": "Geom::GeometryReader",
         "dataFileName": inputFile,
-        "metadataFileName": None if not hasInputMetadataFile else inputMetadataFile,
+        "metadataFileName": None if not hasInputMetadataFile else os.path.abspath(inputMetadataFile),
         "doc": "only step, iges, FCStd, brep+json metadata are supported",
     }
 ]
@@ -183,7 +217,12 @@ writers = [
             "value": mergeResultShapes,
             "doc": "control whether imprinted solids will be merged (remove duplicate faces) before write-out",
         },
-        "doc": "if no directory part in `outputFile`, saved into the case `outputDir`",
+        "outputUnit": {
+            "type": "string",
+            "value": outputUnit,
+            "doc": "control output geometry length unit, for CAD, default mm",
+        },
+        "doc": "if no directory part in `outputFile`, saved into the case `outputDir` folder",
     }
 ]
 
@@ -220,6 +259,16 @@ GeometryPropertyBuilder = {
 BoundBoxBuilder = {
     "className": "Geom::BoundBoxBuilder",
     "doc": "calc boundbox for collision detection, decompose",
+}
+
+InscribedShapeBuilder = {
+    "className": "Geom::InscribedShapeBuilder",
+    "doc": "calc max void or hollow space of a shape's oriented boundbox can hold",
+    "output": {
+        "type": "filename",
+        "value": "inscribed_shapes.brep",
+        "doc": "optional: result of inscribed shape calculation",
+    },
 }
 
 # shared by all actions
@@ -368,6 +417,8 @@ elif args.action == Action.fix:
     processors.append(post_GeometryPropertyBuilder)
     config_file_content["writers"] = writers
 elif args.action == Action.imprint:
+    if args.use_inscribed_shape:
+        processors.append(InscribedShapeBuilder)
     processors.append(GeometryImprinter)
     processors += post_processors
     config_file_content["writers"] = writers

@@ -15,6 +15,7 @@
 #include "GeometryPropertyBuilder.h"
 #include "GeometrySearchBuilder.h"
 #include "GeometryShapeChecker.h"
+#include "InscribedShapeBuilder.h"
 
 #include "GeometryReader.h"
 #include "GeometryWriter.h"
@@ -37,6 +38,7 @@ TYPESYSTEM_SOURCE(Geom::GeometryShapeChecker, Geom::GeometryProcessor);
 TYPESYSTEM_SOURCE(Geom::GeometryPropertyBuilder, Geom::GeometryProcessor);
 TYPESYSTEM_SOURCE(Geom::GeometrySearchBuilder, Geom::GeometryProcessor);
 TYPESYSTEM_SOURCE(Geom::BoundBoxBuilder, Geom::GeometryProcessor);
+TYPESYSTEM_SOURCE(Geom::InscribedShapeBuilder, Geom::GeometryProcessor);
 
 TYPESYSTEM_SOURCE(Geom::CollisionDetector, Geom::GeometryProcessor);
 TYPESYSTEM_SOURCE(Geom::GeometryImprinter, Geom::CollisionDetector);
@@ -60,6 +62,7 @@ namespace Geom
         GeometryPropertyBuilder::init();
         GeometrySearchBuilder::init();
         BoundBoxBuilder::init();
+        InscribedShapeBuilder::init();
         GeometryShapeChecker::init();
         CollisionDetector::init();
         GeometryImprinter::init();

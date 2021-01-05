@@ -66,6 +66,12 @@ namespace PPP
     template <class Item> using VectorType = std::vector<Item>;
 
     /**
+     * Sparse vector, based on shared_ptr, initialize value and set size before usage
+     * e.g. `mySpVec<std::vector<double>>`
+     * */
+    template <class Item> using SparseVector = std::vector<std::shared_ptr<Item>>;
+
+    /**
      * MapType choice for parallel preprocessor
      * std::set or std::map, based on binary tree, has time complexity O(logN) for find and insert
      * while unordered_map and unorderred_set, based on hash, can reserve space (crucial).

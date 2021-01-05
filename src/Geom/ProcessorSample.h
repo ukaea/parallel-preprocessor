@@ -32,7 +32,9 @@ namespace Geom
         ~ProcessorSample() = default;
 
         /**
-         * \brief preparing work in serial mode
+         * \brief preparing work in serial mode,
+         * memory allocation must been done in serial mode, there may be lock in allocator
+         * memory allocation is processItem() is forbidden
          */
         virtual void prepareInput() override final
         {
