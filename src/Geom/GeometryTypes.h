@@ -152,7 +152,7 @@ namespace Geom
             return ShapeErrorType::NoError;
     }
 
-    class CollisionInfo
+    struct CollisionInfo
     {
     public:
         ItemIndexType first;
@@ -161,6 +161,14 @@ namespace Geom
         CollisionType type;
 
         CollisionInfo() = default;
+        // C++20 prevents conversion form <brace-enclosed initializer list> to this type
+        CollisionInfo(ItemIndexType _first, ItemIndexType _second, double _value, CollisionType _type)
+                : first(_first)
+                , second(_second)
+                , value(_value)
+                , type(_type)
+        {
+        }
     };
     inline void to_json(json& j, const CollisionInfo& p)
     {

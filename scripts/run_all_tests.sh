@@ -47,6 +47,11 @@ geomPipeline.py ../data/test_geometry/test_geometry.stp -o test_geometry_result.
 geomPipeline.py check ../data/test_geometry/test_geometry_manifest.json --verbosity WARNING
 if [ ! $? -eq 0 ] ; then   echo "Error during geometry test" ;  exit 1 ; fi
 
+# test scaling, output to a diff output folder
+geomPipeline.py imprint ../data/test_geometry/test_geometry.stp -o /tmp/test_geometry_scaled.brep --output-unit M
+geomPipeline.py imprint ../data/test_geometry/test_geometry.stp --working-dir /tmp/ -o test_geometry_scaled.stp --output-unit M
+if [ ! $? -eq 0 ] ; then   echo "Error during geometry output unit (scaling) test " ;  exit 1 ; fi
+
 # test single thread mode, only for non-coupled operations
 geomPipeline.py check ../data/test_geometry/test_geometry.stp --thread-count 1 --verbosity WARNING
 if [ ! $? -eq 0 ] ; then   echo "Error during geometry test in single thread mode" ;  exit 1 ; fi
