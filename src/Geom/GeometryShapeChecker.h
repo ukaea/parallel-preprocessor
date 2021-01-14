@@ -33,22 +33,21 @@ namespace Geom
     using namespace PPP;
     /// \ingroup Geom
     /**
-     * check error and try to fix it within tolerance, otherwise report error
-     * FreeCAD Part workbench, ShapeCheck, BOP check
+     * check shape error and report error
+     * FreeCAD Part workbench, has a GUI feature for ShapeCheck with tree view
      * todo: ShapeHealing toolkit of OCCT has a ShapeAnalysis package
+     * The base `class Processor` now has report infrastructure, save msg into `myItemReports`
      */
     class GeometryShapeChecker : public GeometryProcessor
     {
         TYPESYSTEM_HEADER();
 
     protected:
+        /// configurable parameters
         bool checkingBooleanOperation = false;
-        // need a bool parameter to control:
         bool suppressBOPCheckFailed = false;
 
     private:
-        // VectorType<std::shared_ptr<std::string>> myShapeCheckResults;
-
     public:
         // using GeometryProcessor::GeometryProcessor;
 
@@ -61,29 +60,37 @@ namespace Geom
 
         virtual void processItem(const ItemIndexType i) override final
         {
+            if (itemSuppressed(i))
+                return;
             const TopoDS_Shape& aShape = item(i);
             std::string err = checkShape(aShape);
-            writeItemReport(i, err);
-            if (err.size() == 0 &&
+            auto ssp = std::make_shared<std::stringstream>();
+            if (err.size() > 0)
+                *ssp << err;
+
+            // if basic checkShape has error, then BOPCheck must have fault?
+            if (                          //  err.size() == 0 &&   skip BOP check if preliminary check has failed?
                 checkingBooleanOperation) // Two common not serious errors are skipped in this BOP check
             {
-                bool hasFault = false;
+                bool hasBOPFault = false;
                 try
                 {
-                    hasFault = BOPSingleCheck(aShape); // will not report error message
+                    hasBOPFault = BOPSingleCheck(aShape, *ssp);
                 }
                 catch (const std::exception& e)
                 {
-                    hasFault = true;
+                    hasBOPFault = true;
                     LOG_F(ERROR, "BOP check has exception %s for item %lu ", e.what(), i);
                 }
                 catch (...)
                 {
-                    hasFault = true;
+                    hasBOPFault = true;
                     LOG_F(ERROR, "BOP check has exception for item %lu ", i);
                 }
 
-                if (hasFault)
+                if (ssp->str().size() > 0)
+                    setItemReport(i, ssp);
+                if (hasBOPFault)
                 {
                     auto df = generateDumpName("dump_BOPCheckFailed", {i}) + ".brep";
                     OccUtils::saveShape({item(i)}, df);
@@ -100,15 +107,17 @@ namespace Geom
             }
         }
 
-        /// report, save and display erroneous shape
+        /// `class Processor::report()`, save and display erroneous shape
+        /// if this processor 's config has file path in the "report" parameter
         virtual void prepareOutput() override final
         {
-            GeometryProcessor::prepareOutput(); // report()
+            GeometryProcessor::prepareOutput();
         }
 
     protected:
-        /** basic check, geometry reader may has already done this check
-         * adapted from FreeCAD project:  BOPcheck
+        /** basic check, geometry reader may has already done some of the checks below
+         * adapted from FreeCAD project:
+         * https://github.com/FreeCAD/FreeCAD/blob/master/src/Mod/Part/Gui/TaskCheckGeometry.cpp
          * */
         std::string checkShape(const TopoDS_Shape& _cTopoShape) const
         {
@@ -131,7 +140,7 @@ namespace Geom
                             switch (val)
                             {
                             case BRepCheck_NoError:
-                                // error_msg << ";No error";  // exmty string as a sign of no error
+                                // error_msg << ";No error";  // empty string as a sign of no error
                                 break;
                             case BRepCheck_InvalidPointOnCurve:
                                 error_msg << ";Invalid point on curve";
@@ -250,34 +259,59 @@ namespace Geom
             return error_msg.str();
         }
 
+        /// see impl in BOPAlgo_ArgumentAnalyzer.cpp
+        std::array<const char*, 12> BOPAlgo_StatusNames = {
+            "CheckUnknown",            //
+            "BadType",                 // either input shape IsNull()
+            "SelfIntersect",           // self intersection, BOPAlgo_CheckerSI
+            "TooSmallEdge",            // only for BOPAlgo_SECTION
+            "NonRecoverableFace",      // TestRebuildFace()
+            "IncompatibilityOfVertex", /// TestMergeSubShapes()
+            "IncompatibilityOfEdge",
+            "IncompatibilityOfFace",
+            "OperationAborted",      // when error happens in TestSelfInterferences()
+            "GeomAbs_C0",            // continuity
+            "InvalidCurveOnSurface", //
+            "NotValid"               //
+        };
 
-        /// check single TopoDS_Shape, adapted from FreeCAD and some other online forum
-        // two common, notorious errors should be turn off curveOnSurfaceMode, continuityMode
-        // didn't use BRepAlgoAPI_Check because it calls BRepCheck_Analyzer itself and
-        // it doesn't give us access to it. so I didn't want to run BRepCheck_Analyzer twice to get invalid results.
-        // BOPAlgo_ArgumentAnalyzer can check 2 objects with respect to a boolean op.
-        // this is left for another time.
-        bool BOPSingleCheck(const TopoDS_Shape& shapeIn)
+        const char* getBOPCheckStatusName(const BOPAlgo_CheckStatus& status)
         {
-            bool runSingleThreaded = true; //
-            // bool logErrors = true;
+            size_t index = static_cast<size_t>(status);
+            assert(index >= 0 || index < BOPAlgo_StatusNames.size());
+            return BOPAlgo_StatusNames[index];
+        }
+
+        /** use `BOPAlgo_ArgumentAnalyzer` to check 2 shapes with respect to a boolean operation.
+            two common errors are `curveOnSurfaceMode`, `continuityMode`
+            it is not clear which one cause BoP failure: `selfInterference`, `curveOnSurfaceMode`
+            Note: do NOT use BRepAlgoAPI_Check ( BRepCheck_Analyzer )
+        */
+        bool BOPSingleCheck(const TopoDS_Shape& shapeIn, std::stringstream& ss)
+        {
+            bool runSingleThreaded = true; // parallel is done on solid shape level for PPP, not on subshape level
+
             bool argumentTypeMode = true;
             bool selfInterMode = true; // self interference, for single solid should be no such error
-            bool smallEdgeMode = true;
+            bool smallEdgeMode = true; // only needed for de-feature?
+
+            bool continuityMode = false; // BOPAlgo_GeomAbs_C0, it should not cause BOP failure?
+            bool tangentMode = false;    // not implemented in OpenCASCADE
+
             bool rebuildFaceMode = true;
-            bool continuityMode = false; // BOPAlgo_GeomAbs_C0
-            bool tangentMode = true;     // not implemented in OpenCASCADE
-            bool mergeVertexMode = true;
+            bool mergeVertexMode = true; // leader to `BOPAlgo_IncompatibilityOfEdge`
             bool mergeEdgeMode = true;
             bool curveOnSurfaceMode = false; // BOPAlgo_InvalidCurveOnSurface: tolerance compatability check
 
-            // I don't why we need to make a copy, but it doesn't work without it.
-            // BRepAlgoAPI_Check also makes a copy of the shape.
+            // FreeCAD develper's note: I don't why we need to make a copy, but it doesn't work without it.
+            /// maybe, mergeVertexMode() will modify the shape to check
             TopoDS_Shape BOPCopy = BRepBuilderAPI_Copy(shapeIn).Shape();
             BOPAlgo_ArgumentAnalyzer BOPCheck;
 
-            //   BOPCheck.StopOnFirstFaulty() = true; //this doesn't run any faster but gives us less results.
+            // BOPCheck.StopOnFirstFaulty() = true; //this doesn't run any faster but gives us less results.
+            // BOPCheck.SetFuzzyValue();
             BOPCheck.SetShape1(BOPCopy);
+            // BOPCheck.SetOperation();  // by default, set to BOPAlgo_UNKNOWN
             // all settings are false by default. so only turn on what we want.
             BOPCheck.ArgumentTypeMode() = argumentTypeMode;
             BOPCheck.SelfInterMode() = selfInterMode;
@@ -287,19 +321,31 @@ namespace Geom
             BOPCheck.ContinuityMode() = continuityMode;
 #endif
 #if OCC_VERSION_HEX >= 0x060900
-            BOPCheck.SetParallelMode(!runSingleThreaded); // this doesn't help for speed right now(occt 6.9.1).
-            BOPCheck.SetRunParallel(!runSingleThreaded);  // performance boost, use all available cores
+            BOPCheck.SetParallelMode(!runSingleThreaded);
+            BOPCheck.SetRunParallel(!runSingleThreaded);
+
             BOPCheck.TangentMode() = tangentMode;         // these 4 new tests add about 5% processing time.
-            BOPCheck.MergeVertexMode() = mergeVertexMode;
+            BOPCheck.MergeVertexMode() = mergeVertexMode; // will it modify the shape to check?
             BOPCheck.MergeEdgeMode() = mergeEdgeMode;
             BOPCheck.CurveOnSurfaceMode() = curveOnSurfaceMode;
 #endif
 
-            BOPCheck.Perform();
-            if (!BOPCheck.HasFaulty())
-                return false;
-            return true;
+            BOPCheck.Perform(); // this perform() has internal try-catch block
+            if (BOPCheck.HasFaulty())
+            {
+                const BOPAlgo_ListOfCheckResult& BOPResults = BOPCheck.GetCheckResult();
+                BOPAlgo_ListIteratorOfListOfCheckResult BOPResultsIt(BOPResults);
+                for (; BOPResultsIt.More(); BOPResultsIt.Next())
+                {
+                    const BOPAlgo_CheckResult& current = BOPResultsIt.Value();
+                    if (current.GetCheckStatus() != BOPAlgo_CheckUnknown)
+                        ss << ";" << getBOPCheckStatusName(current.GetCheckStatus());
+                }
+                return true; // has failure
+            }
+            return false; // no fault
         }
+
     }; // end of class
 
 } // namespace Geom
