@@ -505,9 +505,14 @@ namespace PPP
                 }
                 else
                 {
-                    // by appending `&`, then the command is nonblocking /detached from the main process
-                    Utilities::runCommand("python3 " + py_monitor_path.string() + " " + log_filename + " " + title +
-                                          " &");
+#ifdef WIN32
+                    // start /B  will start an app/cmd in backgroud, without /B option, a new console windows will show
+                    std::string cmd = "start /B python " + py_monitor_path.string() + " " + log_filename + " " + title;
+#else
+                    // On Posix OS by appending `&`, then the command is nonblocking /detached from the main process
+                    std::string cmd = "python3 " + py_monitor_path.string() + " " + log_filename + " " + title + " &";
+#endif
+                    Utilities::runCommand(cmd);
                 }
             }
             catch (...)
