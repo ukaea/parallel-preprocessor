@@ -75,22 +75,20 @@ namespace Geom
                 bool hasBOPFault = false;
                 try
                 {
-                    hasBOPFault = BOPSingleCheck(aShape, *ssp);
+                    hasBOPFault = BOPSingleCheck(i, *ssp); // why most of shape return true even no error msg???
                 }
                 catch (const std::exception& e)
                 {
                     hasBOPFault = true;
-                    LOG_F(ERROR, "BOP check has exception %s for item %lu ", e.what(), i);
+                    LOG_F(ERROR, "BOP check has std::exception %s for item %lu ", e.what(), i);
                 }
                 catch (...)
                 {
                     hasBOPFault = true;
-                    LOG_F(ERROR, "BOP check has exception for item %lu ", i);
+                    LOG_F(ERROR, "BOP check has other exception for item %lu ", i);
                 }
 
-                if (ssp->str().size() > 0)
-                    setItemReport(i, ssp);
-                if (hasBOPFault)
+                if (hasBOPFault && ssp->str().size() > 0)
                 {
                     auto df = generateDumpName("dump_BOPCheckFailed", {i}) + ".brep";
                     OccUtils::saveShape({item(i)}, df);
@@ -101,9 +99,11 @@ namespace Geom
                     }
                     else
                     {
-                        LOG_F(ERROR, "BOP check found fault for item %lu, ignore", i);
+                        LOG_F(ERROR, "BOP check found fault for item %lu, ignore this error", i);
                     }
                 }
+                if (ssp->str().size() > 0)
+                    setItemReport(i, ssp);
             }
         }
 
@@ -118,6 +118,8 @@ namespace Geom
         /** basic check, geometry reader may has already done some of the checks below
          * adapted from FreeCAD project:
          * https://github.com/FreeCAD/FreeCAD/blob/master/src/Mod/Part/Gui/TaskCheckGeometry.cpp
+         * passing BRepCheck_Analyzer is a must for boolean operation
+         * https://dev.opencascade.org/doc/overview/html/specification__boolean_operations.html#specification__boolean_10_1
          * */
         std::string checkShape(const TopoDS_Shape& _cTopoShape) const
         {
@@ -287,8 +289,9 @@ namespace Geom
             it is not clear which one cause BoP failure: `selfInterference`, `curveOnSurfaceMode`
             Note: do NOT use BRepAlgoAPI_Check ( BRepCheck_Analyzer )
         */
-        bool BOPSingleCheck(const TopoDS_Shape& shapeIn, std::stringstream& ss)
+        bool BOPSingleCheck(const ItemIndexType i, std::stringstream& ss)
         {
+            const TopoDS_Shape& aShape = item(i);
             bool runSingleThreaded = true; // parallel is done on solid shape level for PPP, not on subshape level
 
             bool argumentTypeMode = true;
@@ -305,7 +308,7 @@ namespace Geom
 
             // FreeCAD develper's note: I don't why we need to make a copy, but it doesn't work without it.
             /// maybe, mergeVertexMode() will modify the shape to check
-            TopoDS_Shape BOPCopy = BRepBuilderAPI_Copy(shapeIn).Shape();
+            TopoDS_Shape BOPCopy = BRepBuilderAPI_Copy(aShape).Shape();
             BOPAlgo_ArgumentAnalyzer BOPCheck;
 
             // BOPCheck.StopOnFirstFaulty() = true; //this doesn't run any faster but gives us less results.
@@ -335,15 +338,31 @@ namespace Geom
             {
                 const BOPAlgo_ListOfCheckResult& BOPResults = BOPCheck.GetCheckResult();
                 BOPAlgo_ListIteratorOfListOfCheckResult BOPResultsIt(BOPResults);
-                for (; BOPResultsIt.More(); BOPResultsIt.Next())
+                for (size_t j = 0; BOPResultsIt.More(); BOPResultsIt.Next(), j++)
                 {
                     const BOPAlgo_CheckResult& current = BOPResultsIt.Value();
                     if (current.GetCheckStatus() != BOPAlgo_CheckUnknown)
+                    {
                         ss << ";" << getBOPCheckStatusName(current.GetCheckStatus());
+                        dumpSubshape(i, j, current);
+                    }
                 }
                 return true; // has failure
             }
             return false; // no fault
+        }
+
+        void dumpSubshape(const ItemIndexType i, const ItemIndexType subId, const BOPAlgo_CheckResult& result) const
+        {
+            const auto& faultyShapes1 = result.GetFaultyShapes1();
+            TopTools_ListIteratorOfListOfShape faultyShapes1It(faultyShapes1);
+
+            for (size_t k = 0; faultyShapes1It.More(); faultyShapes1It.Next(), k++)
+            {
+                auto df = generateDumpName("dump_subshape_BOPCheckFailed", {i, subId, k}) + ".brep";
+                const auto& subshape = faultyShapes1It.Value();
+                OccUtils::saveShape(subshape, df);
+            }
         }
 
     }; // end of class
