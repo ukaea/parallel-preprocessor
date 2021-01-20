@@ -222,7 +222,7 @@ writers = [
 GeometryShapeChecker = {  # usually GeometryRead has done check after reading
     "className": "Geom::GeometryShapeChecker",
     "doc": "some config entry in processor is mappable to PPP::Processor::Attribute class",
-    "output": {  # this corresponding to Parameter class, this map to App::Parameter<> class
+    "report": {  # this corresponding to Parameter class, this map to App::Parameter<> class
         "type": "filename",  # renamed to `path`  type, or support both types
         "value": "shape_check_result.json",
         "doc": "save errors message as json file",

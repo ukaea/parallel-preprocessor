@@ -8,8 +8,10 @@ import glob
 import scipy.io
 
 """
-USAGE: this_script.py  path_to_processed_result_folder
+
 """
+
+USAGE = "this_script.py  path_to_processed_result_folder"
 
 if len(sys.argv) > 1:
     case_folder = sys.argv[1]
@@ -17,10 +19,10 @@ if len(sys.argv) > 1:
         print("input argument: result folder does not exist!", case_folder)
         sys.exit(-1)
 else:
-    print("no input argument for the result folder, use the default")
+    print("no input argument as the result folder, use the default")
     case_folder = "../build/ppptest/test/"
     case_folder = "/home/qxia/OneDrive/UKAEA_work/iter_clite_analysis/"
-    case_folder = "/home/qxia/Documents/StepMultiphysics/parallel-preprocessor/result/mastu_processed/"
+    case_folder = "/mnt/windata/MyData/StepMultiphysics/ppp_validation_geomtry/mastu_processed/"
 
 # in that case folder, ppp will generate those 2 files by GeometryPropertyBuilder
 matched_files = glob.glob(case_folder + os.path.sep + "*metadata.json")
@@ -30,7 +32,7 @@ if matched_files:
 
 
 matrix_filename = case_folder + os.path.sep + "myFilteredMatrix.mm"
-# "myCouplingMatrix.mm" is the final result exluding  NoCollision type
+# "myCouplingMatrix.mm" is the final result excluding  NoCollision type
 collisionInfo_filename = case_folder + os.path.sep + "myCollisionInfos.json"
 clearance_threshold = 1
 
@@ -38,12 +40,27 @@ clearance_threshold = 1
 # fixing weak_interference has some log entry
 log_filename = case_folder + os.path.sep + "debug_info.log"
 
+shape_check_filename =  case_folder + os.path.sep + "shape_check_result.json"
+dumped_subshapes = glob.glob(case_folder + os.path.sep + "dump_subshape_BOPCheckFailed*.*")
+dumped_shapes = glob.glob(case_folder + os.path.sep + "dump_BOPCheckFailed*.*")
 
 def load_data(file_name):
     with open(file_name) as json_file:
         data = json.load(json_file)
         return data
 
+
+def shape_check_stat(filename):
+    if not os.path.exists(filename):
+        print(filename, "not exist!")
+        return
+    cinfo = load_data(filename)
+    N = 0
+    for i, info in cinfo.items():
+        errlist = info.split(";")
+        print(f"Item #{i} has error: ", errlist)
+        N += 1
+    print(f" {N} shapes has failed in BOP check")
 
 def metadata_stat(file_name):
     if metadata_filename:
@@ -113,7 +130,7 @@ def print_stat(mystat, N):
         print(key, ": number", mystat[key], ", ratio", mystat[key] / total_op)
 
 
-def mm_stat(matrix_filename):
+def matrix_stat(matrix_filename):
     # collisionInfo.json is sufficient to analysis
     if os.path.exists(matrix_filename):
         mat = scipy.io.mmread(matrix_filename)
@@ -140,6 +157,8 @@ def log_stat(log_filename):
 ###############################################
 if __name__ == "__main__":
     metadata_stat(metadata_filename)
+    shape_check_stat(shape_check_filename)
     collision_stat(collisionInfo_filename)
     log_stat(log_filename)
-    mm_stat(matrix_filename)
+    matrix_stat(matrix_filename)
+

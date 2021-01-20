@@ -130,8 +130,11 @@ namespace PPP
             myItemReports.resize(myInputData->itemCount());
         };
 
-        /// default imp: do nothing
-        virtual void prepareOutput(){};
+        /// default imp: call report()
+        virtual void prepareOutput()
+        {
+            report();
+        };
 
 
         /**  use it only if parallel process is not supported, such as reader and writer
@@ -174,25 +177,26 @@ namespace PPP
 
         /**
          * report after successfully processsing all items, according to verbosity level
-         * write/append into output Information, may also reportor to operator
-         * myItemReports
+         * write/append into output Information, may also report to operator interface
          */
         virtual void report()
         {
+            if (!hasParameter("report"))
+                return;
             Information report;
-            const std::size_t NShapes = myItemReports.size();
-            size_t errorCount = 0;
-            for (std::size_t i = 0; i < NShapes; i++)
+            const std::size_t NItems = myItemReports.size();
+            size_t reportItemCount = 0;
+            for (std::size_t i = 0; i < NItems; i++)
             {
                 if (hasItemReport(i))
                 {
                     const std::string& s = itemReport(i).str();
                     // report[itemName(i)] = std::string(s);
                     report[std::to_string(i)] = std::string(s);
-                    errorCount++;
+                    reportItemCount++;
                 }
             }
-            if (errorCount)
+            if (reportItemCount)
             {
                 auto outFile = dataStoragePath(parameter<std::string>("report"));
                 std::ofstream o(outFile);
@@ -206,7 +210,12 @@ namespace PPP
         {
             myItemReports[i] = std::make_shared<std::stringstream>(std::move(msg));
         }
-        void writeItemReport(const ItemIndexType i, const std::string msg)
+        void setItemReport(const ItemIndexType i, std::shared_ptr<std::stringstream> ssp)
+        {
+            myItemReports[i] = ssp;
+        }
+        /// itemReport(i) must NOT be nullptr (must be set before use this function)
+        void appendItemReport(const ItemIndexType i, const std::string msg)
         {
             itemReport(i) << msg;
         }
@@ -496,9 +505,14 @@ namespace PPP
                 }
                 else
                 {
-                    // by appending `&`, then the command is nonblocking /detached from the main process
-                    Utilities::runCommand("python3 " + py_monitor_path.string() + " " + log_filename + " " + title +
-                                          " &");
+#ifdef WIN32
+                    // start /B  will start an app/cmd in backgroud, without /B option, a new console windows will show
+                    std::string cmd = "start /B python " + py_monitor_path.string() + " " + log_filename + " " + title;
+#else
+                    // On Posix OS by appending `&`, then the command is nonblocking /detached from the main process
+                    std::string cmd = "python3 " + py_monitor_path.string() + " " + log_filename + " " + title + " &";
+#endif
+                    Utilities::runCommand(cmd);
                 }
             }
             catch (...)

@@ -128,14 +128,16 @@ class ProgressMonitor(QMainWindow):
         self.elapsed_time_label.setText(
             "elapsed time: " + str(self.elapsed_time) + " seconds"
         )
-        self.progress_bar.setValue(self.progress)
+        self.progress_bar.setValue(int(self.progress))
 
     def parse(self, new_lines):
         p = self.progress
         for l in reversed(new_lines):
-            result = re.search(self.percentage_pattern, l)
+            result = re.search(self.percentage_pattern, l)  # return a match object, or None
             if result:
-                match_float = result.group(1)  # not a list
+                #print("matched regex string: ", result.group(0), " for the line: ", l)  # debug
+                #print(self.percentage_pattern, result)
+                match_float = result.group(1)  # group(0) is the entire match
                 if len(match_float) > 1:
                     p = float(match_float)
                     # print(l, p)
@@ -188,7 +190,7 @@ def generate_log_continuously(log_file):
             except IOError:
                 print("failed to lock file")
         p = (i + 1) * 10.0
-        logf.write(f"complated {p} percent\n")  # do not forget newline
+        logf.write(f"completed {p} percent\n")  # do not forget newline
         logf.flush()  # do not forget this, otherwise file is empty
         if using_lock:
             try:
@@ -203,7 +205,7 @@ def generate_log_continuously(log_file):
 
 if __name__ == "__main__":
     windows_title = "progress"
-    percentage_pattern = r" ([0-9,.]+) percent"
+    percentage_pattern = r"\s([0-9,.]+) percent"
     if len(sys.argv) < 2:
         print(USAGE)
         # sys.exit(1)
@@ -219,8 +221,10 @@ if __name__ == "__main__":
         log_file = sys.argv[1]
         if len(sys.argv) > 2:
             windows_title = sys.argv[2]
-        if len(sys.argv) > 3:
-            percentage_pattern = sys.argv[3]
+        if len(sys.argv) > 3:  # the third arg may be just "&"
+            if sys.argv[3].find("percent") >0:
+                percentage_pattern = sys.argv[3]
+        print("DEBUG: using the regex pattern to parse percentage: ", percentage_pattern)
 
     app = QApplication(sys.argv)
     GUI = ProgressMonitor(log_file, windows_title, percentage_pattern)
