@@ -266,13 +266,6 @@
 #include <BRepLib_FindSurface.hxx>
 #include <BRepLib_FuseEdges.hxx>
 
-// occt 7.4 has dropped such header `BrepMesh.hxx`
-#if OCC_VERSION_HEX >= 0x070400
-#include <IMeshTools_Parameters.hxx>
-
-#else
-//#include <BRepMesh.hxx>
-#endif
 
 #include <BRepMesh_Edge.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -474,10 +467,16 @@
 
 // STL amd tf2.0 import
 #if OCC_VERSION_HEX >= 0x070400
+#include <IMeshTools_Parameters.hxx>
 #include <RWGltf_CafReader.hxx>           // fill XDE document
 #include <RWGltf_TriangulationReader.hxx> // return Poly_Triangulation
 #include <RWStl.hxx>
+#else
+//#include <BRepMesh.hxx>
+// occt 7.4 has dropped such header `BrepMesh.hxx` and add <XBRepMesh.hxx>
 #endif
+
+
 
 #include <StlAPI_Reader.hxx>
 #include <StlAPI_Writer.hxx>
@@ -536,19 +535,14 @@
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_Volume.hxx>
 
-#if OCC_VERSION_HEX >= 0x060500
-#include <TDataXtd_Shape.hxx> // XED format
-#else
-#include <TDataStd_Shape.hxx>
-#endif
+#include <TDataXtd_Shape.hxx> // XED format,  occt 6.5
 
 #include <TDF_ChildIterator.hxx>
 #include <TDF_Data.hxx>
 #include <TDF_Label.hxx>
 #include <TDF_LabelSequence.hxx>
 
-#include <CDF_Session.hxx>
-
+//#include <CDF_Session.hxx>  // removed in occt 7.5
 
 
 // Aspect package

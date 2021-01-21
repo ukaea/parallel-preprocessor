@@ -1,5 +1,7 @@
 # command to build: docker build  --rm -f Dockerfile_centos  -t qingfengxia/ppp-centos .  --no-cache
 # docker push qingfengxia/ppp-centos:latest
+# to interactively run the image in the current folder
+# alias start_ppp_docker='docker run -it --rm -v $(pwd):/workdir  --workdir /workdir qingfengxia/ppp-centos bash'
 # Use multi-stage builds: https://docs.docker.com/develop/develop-images/multistage-build/
 # rebuild on top of local image (instead of base OS layer) for quick modification, run without `--rm`
 # docker build  -f Dockerfile_centos  -t qingfengxia/ppp-centos .
@@ -28,7 +30,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # you must update before any yum install or add a repo
 # dnf group install "Development Tools" -y
 RUN   yum install epel-release -y && yum update -y && dnf groupinstall "Development Tools" -y \
-       && yum install wget  cmake  git python3 python3-devel -y
+       && yum install wget nano cmake  git python3 python3-devel -y
 
 
 RUN yum install tbb tbb-devel freetype freetype-devel fontconfig-devel freeimage freeimage-devel -y
@@ -44,16 +46,20 @@ RUN if test $(awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed '
        yum install SDL2-devel  glew-devel  glm-devel  -y; \
     fi
 
-# centos8 install fron non-official repo
+# centos8 install from non-official repo
 RUN if test $(awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed 's/\"//' | sed 's/\"$//' ) = "8" ; then \
-        dnf --enablerepo=PowerTools install glew-devel glm-devel SDL2-devel -y; \
+        yum install 'dnf-command(config-manager)'  -y ; \
+        yum config-manager --set-enabled powertools ; \
+        dnf  install glew-devel glm-devel SDL2-devel -y; \
     fi
 
 # install OpenCASCADE from official readonly repo is not working, it needs to upload ssh pubkey
 # https://old.opencascade.com/doc/occt-7.0.0/overview/html/occt_dev_guides__git_guide.html
 # git clone -b V7_4_0p1 gitolite@git.dev.opencascade.org:occt occt
+# http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz
+# http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=628c0211d53c7fe1036a85e7a7b2b067c9c50f7a;sf=tgz  tag 7.5
 
-RUN cd $HOME && wget "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz" -O occt.tar.gz && \
+RUN cd $HOME && wget "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=628c0211d53c7fe1036a85e7a7b2b067c9c50f7a;sf=tgz" -O occt.tar.gz && \
     tar -xzf occt.tar.gz 
     
 RUN cd $HOME && cd occt-* && \
@@ -67,7 +73,11 @@ RUN cd $HOME && cd occt-* && \
 ENV DISPLAY :0
 
 
-RUN cd $HOME && git clone https://github.com/ukaea/parallel-preprocessor.git && \
+# choose between official REPO and dev repo
+#ENV GET_PPP="git clone https://github.com/ukaea/parallel-preprocessor.git"
+ENV GET_PPP="git clone -b dev --single-branch https://github.com/qingfengxia/parallel-preprocessor.git"
+
+RUN cd $HOME && $GET_PPP && \
     cd parallel-preprocessor && git submodule update --init --recursive && \
     mkdir build && cd build && \
     dnf install which -y && \
@@ -77,5 +87,11 @@ RUN cd $HOME && git clone https://github.com/ukaea/parallel-preprocessor.git && 
     cd .. && rm -rf build
 
 #  pppGeomPipeline: error while loading shared libraries: libpppGeom.so: cannot open shared object file: No such file or directory
-# /usr/local/lib is not system LD path, the solution is below
+# because /usr/local/lib is not system LD path, the solution is below
 ENV LD_LIBRARY_PATH=/usr/local/lib
+
+
+# on some platforms, host user does not own the folder created in docker, 
+# see [Avoiding Permission Issues With Docker-Created Files](https://vsupalov.com/docker-shared-permissions/)
+# but Ubuntu 20.04 with a recent docker version (20.10) does not have such problem
+# chown -R $USER:$USER folder   is a tmp solution on the host side
