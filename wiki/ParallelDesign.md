@@ -25,7 +25,11 @@ https://nifi.apache.org/docs/nifi-docs/html/user-guide.html#User_Interface
 Libraries such as `OpenMP Tasking` and `Intel TBB FlowGraph` in handling complex parallel workloads. TensorFlow has the concept of graph simplication. 
 
 
+> OpenCV 4.x introduces very different programming model `G-API`, where you define pipeline of operations to be performed first, and then apply this pipeline to some actual data. In other words, whenever you call OpenCV G-API function, execution is deferred (lazily-evaluated), and deferred operation result is being returned instead of actual computation result. This concept might sound very similar to [C++ 20 Range V3](https://github.com/ericniebler/range-v3).  Source: https://blog.conan.io/2018/12/19/New-OpenCV-release-4-0.html
+
+
 ## Parallel Executor
+
 Currently, only CPU device is supported, although GPU acceleration will be considered in the future.  It is expected the Processor should has a characteristics of  ` enum DevicePreference {CPU, GPU}`
 
 + multiple threading (shared memory)

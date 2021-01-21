@@ -85,9 +85,9 @@ def geom_add_argument(parser):
 
     # bool argument for imprint
     parser.add_argument(
-        "--ignore-failed",
+        "--suppress-failed",
         action="store_true",
-        help="ignore failed (in BOP check, collision detect, etc) solids",
+        help="suppress shape check failed (in BOP check, collision detect, etc) solids",
     )
 
     # it is not arbitrary scaling, but can change output units (m, cm, mm) of STEP file format
@@ -157,9 +157,12 @@ mergeResultShapes = True  # by default, imprinting result should be merged/glued
 if args.no_merge != None:
     mergeResultShapes = not args.no_merge  # it maybe list type
 
-ignoreFailed = False
-if args.ignore_failed != None and args.ignore_failed:
-    ignoreFailed = True
+# should turn on if verbosity is debug_level
+skippingBOPCheck = False
+savingBOPCheckFailedSubshape = False
+suppressingBOPCheckFailed = False
+if args.suppress_failed != None and args.suppress_failed:
+    suppressingBOPCheckFailed = True
 
 outputUnit = "MM"  # argument can be capital or uncapital letter
 if args.output_unit:
@@ -229,12 +232,17 @@ GeometryShapeChecker = {  # usually GeometryRead has done check after reading
     },
     "checkingBooleanOperation": {
         "type": "bool",
-        "value": not ignoreFailed,
-        "doc": "check whether this shape is sound to perform boolean operation, by default off",
+        "value": not skippingBOPCheck,
+        "doc": "check whether this shape is sound to perform boolean operation",
+    },
+    "savingBOPCheckFailedSubshape": {
+        "type": "bool",
+        "value": savingBOPCheckFailedSubshape,
+        "doc": "dump  subshape of problemetic shape for further debug and fix",
     },
     "suppressBOPCheckFailed": {
         "type": "bool",
-        "value": not ignoreFailed,
+        "value": suppressingBOPCheckFailed,
         "doc": "whether disable/ suppress this item if BOP check failed, by default off",
     },
 }
@@ -317,7 +325,7 @@ CollisionDetector = {
     },
     "ignoreUnknownCollisionType": {
         "type": "bool",
-        "value": ignoreFailed,
+        "value": suppressingBOPCheckFailed,
         "range": [True, False],
         "doc": "ignore solids with BOP check error and carry on downstream processing",
     },
@@ -335,6 +343,8 @@ GeometryImprinter["doc"] = "imprint (shared face merging) for face contact"
 
 # post modification check before writing, should skip the suppressed items
 post_GeometryShapeChecker = copy.copy(GeometryShapeChecker)
+# after fixing shapeChecker may skip BOPcheck
+post_GeometryShapeChecker["checkingBooleanOperation"]["value"] = False 
 post_GeometryPropertyBuilder = copy.copy(GeometryPropertyBuilder)
 post_GeometryPropertyBuilder["output"]["value"] = outputMetadataFile
 # for fixing and imprinting

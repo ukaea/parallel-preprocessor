@@ -36,7 +36,7 @@ Optional arguments for the geometry pipeline:
   --tolerance TOLERANCE
                         tolerance for imprinting, unit MilliMeter
   --no-merge            do not merge the imprinted shapes, for two-step workflow
-  --ignore-failed       ignore failed (in BOP check, collision detect, etc) solids
+  --suppress-failed       ignore failed (in BOP check, collision detect, etc) solids
 ```
 
 Always run `geomPipeline.py -h` to get the latest arguments.  

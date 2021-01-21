@@ -46,6 +46,7 @@ namespace Geom
         /// configurable parameters
         bool checkingBooleanOperation = false;
         bool suppressBOPCheckFailed = false;
+        bool savingSubshape = false;
 
     private:
     public:
@@ -55,6 +56,7 @@ namespace Geom
         {
             checkingBooleanOperation = parameterValue<bool>("checkingBooleanOperation", false);
             suppressBOPCheckFailed = parameterValue<bool>("suppressBOPCheckFailed", false);
+            savingSubshape = parameterValue<bool>("savingBOPCheckFailedSubshape", false);
             GeometryProcessor::prepareInput();
         }
 
@@ -334,7 +336,7 @@ namespace Geom
 #endif
 
             BOPCheck.Perform(); // this perform() has internal try-catch block
-            if (BOPCheck.HasFaulty())
+            if (BOPCheck.HasFaulty() and savingSubshape)
             {
                 const BOPAlgo_ListOfCheckResult& BOPResults = BOPCheck.GetCheckResult();
                 BOPAlgo_ListIteratorOfListOfCheckResult BOPResultsIt(BOPResults);
