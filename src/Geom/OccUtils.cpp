@@ -593,7 +593,7 @@ namespace Geom
         /// see the LENGTH_SCALE defined in UniqueId.h
         UniqueIdType uniqueId(const GeometryProperty& p)
         {
-            return Utilities::geometryUniqueId(p.volume, p.centerOfMass);
+            return UniqueId::geometryUniqueId(p.volume, p.centerOfMass);
         }
 
         UniqueIdType uniqueId(const TopoDS_Shape& s)
@@ -601,7 +601,7 @@ namespace Geom
             GProp_GProps v_props;
             BRepGProp::VolumeProperties(s, v_props);
 
-            Utilities::UniqueIdType gid = Utilities::geometryUniqueId(
+            UniqueIdType gid = UniqueId::geometryUniqueId(
                 v_props.Mass(), {v_props.CentreOfMass().X(), v_props.CentreOfMass().Y(), v_props.CentreOfMass().Z()});
             return gid;
         }

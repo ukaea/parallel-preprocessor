@@ -25,7 +25,7 @@ auto calcUniqueId(const TopoDS_Shape& s)
     GProp_GProps v_props;
     BRepGProp::VolumeProperties(s, v_props);
 
-    auto gid = PPP::Utilities::geometryUniqueId(
+    auto gid = PPP::UniqueId::geometryUniqueId(
         v_props.Mass(), {v_props.CentreOfMass().X(), v_props.CentreOfMass().Y(), v_props.CentreOfMass().Z()});
     return gid;
 }
@@ -34,8 +34,8 @@ auto calcUniqueId(const TopoDS_Shape& s)
 void validateUniqueId(const std::string filename, const std::string jsonFile)
 {
     // read json file and build a id->property map
-    std::unordered_map<uint64_t, json> gpMap;
-    std::set<uint64_t> idSet;
+    std::unordered_map<PPP::UniqueIdType, json> gpMap;
+    std::set<PPP::UniqueIdType> idSet;
 
     std::ifstream inf(jsonFile);
     if (inf.fail())
