@@ -30,7 +30,7 @@ There are some third-party libraries already integrated into the source code tre
 
 ###  Ubuntu 18.04 and 20.04, Debian 10
 
-The dependency is similar as Ubuntu 18.04, except OpenCASCADE is not installed from FreeCAD PPA, but Ubuntu official repository (version 7.3.3). 
+The dependency is similar as Ubuntu and Debian. Ubuntu 18.04 must install OpenCASCADE from FreeCAD PPA, but Ubuntu 20.04 has occt in official repository (version 7.3.3). Since March 2021, FreeCAD 0.19 PPA has occt 7.5 available. It is recommended to user FreeCAD 0.19 and occt 7.5.
 
 ```bash
 # this repo contains submodule:
@@ -42,12 +42,13 @@ git submodule update --init --recursive
 # install compulsory dependencies
 sudo apt-get install git cmake doxygen ccache g++
 
-# add freecad-stable or freecad-daily ppa (for ubuntu 18.04)
+
 source /etc/lsb-release  # help to detect ubuntu version, 
 # $(lsb_release -c -s)
 if [ "$DISTRIB_CODENAME" == "bionic" ]; then
-add-apt-repository ppa:freecad-maintainers/freecad-daily  &&  apt-get update
-apt-get install -y freecad-daily-python3 
+# add freecad-stable or freecad-daily ppa (for ubuntu 18.04)
+add-apt-repository ppa:freecad-maintainers/freecad-stable  &&  apt-get update
+apt-get install -y freecad
 fi
 
 if [ "$DISTRIB_CODENAME" == "focal" ]; then
@@ -127,16 +128,21 @@ To get the latest source code from [OCCT official website](https://www.opencasca
 `git clone -b V7_4_0p1 gitolite@git.dev.opencascade.org:occt occt`
 <https://old.opencascade.com/doc/occt-7.4.0/overview/html/occt_dev_guides__git_guide.html>
 
-To get the release source code, this can be downloaded by wget from a link 
-`wget "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz" `
-"V7_4_0p1" is the tag version name, more version tags can be found on `http://git.dev.opencascade.org/gitweb/?p=occt.git`
+To get the release source code, this can be downloaded by wget from OCCT official repo, manually using webbrowser.
+browse to https://git.dev.opencascade.org/gitweb/?p=occt.git   in the tags list, click the the latest release version
+and download from the newly open page, "tar.gz" or "zip".
+
+Alternative, wget or git clone from OCCT's github mirror : https://github.com/Open-Cascade-SAS/OCCT/
 
 
 ```bash
+# wget from opencascade.org may not work any more, use github instead
+#wget "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz" -O occt.tar.gz
+#tar -xzf occt.tar.gz
+wget -O occt.zip  https://github.com/Open-Cascade-SAS/OCCT/archive/refs/tags/V7_5_0.zip
+mkdir occt && unzip -qq occt.zip -d occt
 
-wget "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz" -O occt.tar.gz
-tar -xzf occt.tar.gz
-cd occt-*
+cd occt
 mkdir build
 cd build
 cmake .. -DUSE_TBB=ON -DBUILD_MODULE_Draw=OFF
