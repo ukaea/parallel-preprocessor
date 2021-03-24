@@ -1,5 +1,7 @@
 # command to build: docker build  --rm -f Dockerfile_centos  -t qingfengxia/ppp-centos .  --no-cache
 # docker push qingfengxia/ppp-centos:latest
+# to interactively run the image in the current folder
+# alias start_ppp_docker='docker run -it --rm -v $(pwd):/workdir  --workdir /workdir qingfengxia/ppp-centos bash'
 # Use multi-stage builds: https://docs.docker.com/develop/develop-images/multistage-build/
 # rebuild on top of local image (instead of base OS layer) for quick modification, run without `--rm`
 # docker build  -f Dockerfile_centos  -t qingfengxia/ppp-centos .
@@ -13,6 +15,7 @@ LABEL name="ppp-centos" \
     description="parallel with OpenCASCADE"
 
 #USER root
+ARG OCCT_WGET=false
 
 # avoid interactive timezone selection, ENV setting will affect child image
 # ENV TZ=Europe/London
@@ -28,13 +31,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 # you must update before any yum install or add a repo
 # dnf group install "Development Tools" -y
 RUN   yum install epel-release -y && yum update -y && dnf groupinstall "Development Tools" -y \
-       && yum install wget  cmake  git python3 python3-devel -y
+       && yum install wget nano cmake unzip git python3 python3-devel -y
 
+# for OpenCASCADE, X and openGL is needed for BUILD_MODULE_Visualization, and also TKService
+# libXmu-devel libX11-devel libXi-devel 
+RUN yum install tbb tbb-devel freetype freetype-devel fontconfig-devel freeimage freeimage-devel libXmu-devel libX11-devel libXi-devel  -y
 
-RUN yum install tbb tbb-devel freetype freetype-devel fontconfig-devel freeimage freeimage-devel -y
-
-# for OpenCASCADE, openGL is needed for BUILD_MODULE_Visualization, and TKService
-RUN yum install libXmu-devel libX11-devel libXi-devel  -y
 
 # install those below if Draw module is enabled for building OpenCASCADE
 # yum install tk tcl tk-devel tcl-devel -y
@@ -44,19 +46,38 @@ RUN if test $(awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed '
        yum install SDL2-devel  glew-devel  glm-devel  -y; \
     fi
 
-# centos8 install fron non-official repo
+# centos8 install from non-official repo
 RUN if test $(awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed 's/\"//' | sed 's/\"$//' ) = "8" ; then \
-        dnf --enablerepo=PowerTools install glew-devel glm-devel SDL2-devel -y; \
+        yum install 'dnf-command(config-manager)'  -y ; \
+        yum config-manager --set-enabled powertools ; \
+        dnf  install glew-devel glm-devel SDL2-devel -y; \
     fi
 
-# install OpenCASCADE from official readonly repo is not working, it needs to upload ssh pubkey
-# https://old.opencascade.com/doc/occt-7.0.0/overview/html/occt_dev_guides__git_guide.html
-# git clone -b V7_4_0p1 gitolite@git.dev.opencascade.org:occt occt
 
-RUN cd $HOME && wget "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz" -O occt.tar.gz && \
-    tar -xzf occt.tar.gz 
-    
-RUN cd $HOME && cd occt-* && \
+# git clone OpenCASCADE from official readonly repo is not working, it needs to sign CLA and upload ssh pubkey
+# git clone -b V7_4_0p1 gitolite@git.dev.opencascade.org:occt occt
+# 
+# recently wget does not work, even through download from webbrowser is still working
+# manually browse to https://git.dev.opencascade.org/gitweb/?p=occt.git          in the tags list, click the the latest release
+# download from the newly open page, "tar.gz" or "zip"
+# http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=V7_4_0p1;sf=tgz
+# https://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=94c00556ea33f3895196b30c45b1fa901ad4c377;sf=tgz  tag 7.5
+#
+# alternative, github has mirror : https://github.com/Open-Cascade-SAS/OCCT/tree/V7_5_0  to git clone or wget the zip file
+# each RUN started in the same folder, /
+
+RUN if test "$OCCT_WGET" = "true" ; then \
+        cd $HOME && wget --user-agent="Mozilla" -O occt.tar.gz \
+        "http://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=628c0211d53c7fe1036a85e7a7b2b067c9c50f7a;sf=tgz"  && \
+        tar -xzf occt.tar.gz ; \
+        cd occt* ; \
+    else \
+        echo "download occt zipped source code from github mirror" ; \
+        cd $HOME && wget -O occt.zip  https://github.com/Open-Cascade-SAS/OCCT/archive/refs/tags/V7_5_0.zip ; \
+        unzip -qq occt.zip ; \
+        cd OCCT* ; \
+    fi ; \
+    echo  "build occt in folder: $PWD" ; \
     mkdir build && cd build && \
     cmake ..  -DUSE_TBB=ON -DBUILD_MODULE_Draw=OFF -DBUILD_MODULE_Visualization=OFF && \
     make -j$(nproc) && \
@@ -67,7 +88,11 @@ RUN cd $HOME && cd occt-* && \
 ENV DISPLAY :0
 
 
-RUN cd $HOME && git clone https://github.com/ukaea/parallel-preprocessor.git && \
+# choose between official REPO and dev repo
+#ENV GET_PPP="git clone https://github.com/ukaea/parallel-preprocessor.git"
+ENV GET_PPP="git clone -b dev --single-branch https://github.com/qingfengxia/parallel-preprocessor.git"
+
+RUN cd $HOME && $GET_PPP && \
     cd parallel-preprocessor && git submodule update --init --recursive && \
     mkdir build && cd build && \
     dnf install which -y && \
@@ -77,5 +102,11 @@ RUN cd $HOME && git clone https://github.com/ukaea/parallel-preprocessor.git && 
     cd .. && rm -rf build
 
 #  pppGeomPipeline: error while loading shared libraries: libpppGeom.so: cannot open shared object file: No such file or directory
-# /usr/local/lib is not system LD path, the solution is below
+# because /usr/local/lib is not system LD path, the solution is below
 ENV LD_LIBRARY_PATH=/usr/local/lib
+
+
+# on some platforms, host user does not own the folder created in docker, 
+# see [Avoiding Permission Issues With Docker-Created Files](https://vsupalov.com/docker-shared-permissions/)
+# but Ubuntu 20.04 with a recent docker version (20.10) does not have such problem
+# chown -R $USER:$USER folder   is a tmp solution on the host side

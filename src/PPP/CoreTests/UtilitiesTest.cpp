@@ -60,14 +60,14 @@ TEST_CASE("UniqueIdTest", "UniqueId")
     std::cout << static_cast<float>(hf2) << " ->" << std::hex << *reinterpret_cast<std::uint16_t*>(&hf2) << std::endl;
     for (auto d : data1)
     {
-        std::cout << std::hex << Utilities::double2uint16(d);
+        std::cout << std::hex << UniqueId::double2uint16(d);
     }
     std::cout << std::endl;
     for (auto d : data2)
-        std::cout << std::hex << Utilities::double2uint16(d);
+        std::cout << std::hex << UniqueId::double2uint16(d);
     std::cout << std::endl;
     // std::cout << std::hex << Utilities::uniqueId(data1) << std::endl;
-    REQUIRE(Utilities::uniqueId(data1) == Utilities::uniqueId(data2));
+    REQUIRE(UniqueId::uniqueId(data1) == UniqueId::uniqueId(data2));
 }
 
 TEST_CASE("EnumJsonTest", "EnumFromJson")
