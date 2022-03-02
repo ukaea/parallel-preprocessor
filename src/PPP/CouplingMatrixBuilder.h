@@ -10,7 +10,7 @@ namespace PPP
      * \brief  detect item pair coupling in the target expensive processor and build a coupling matrix
      *
      * the coupling matrix is more general than Geometry's adjacency matrix.
-     * this processor can be used to detect/fileter potential coupling and skip item pair definitely not in
+     * this processor can be used to detect/filter potential coupling and skip item pair definitely not in
      * coupling. parallel accessor need this information to coordinate coupling operation in parallel
      *
      */
@@ -19,7 +19,7 @@ namespace PPP
         TYPESYSTEM_HEADER();
 
     private:
-        /// declare your new data proeprties here
+        /// declare your new data properties here
         SparseMatrix<bool> myCouplingMatrix;
 
         std::shared_ptr<Processor> myTargetProcessor;
@@ -64,7 +64,7 @@ namespace PPP
          */
         virtual void prepareOutput() override final
         {
-            // todo: if called in pipeline explicitly, replace the filename the defiend in Config
+            // todo: if called in pipeline explicitly, replace the filename the defined in Config
             // myCouplingMatrix.writeMatrixMarketFile("couplingMatrix.mm");
             myOutputData->emplace("myCouplingMatrix", std::move(myCouplingMatrix));
         }

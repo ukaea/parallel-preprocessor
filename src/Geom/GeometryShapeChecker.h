@@ -306,7 +306,7 @@ namespace Geom
             bool rebuildFaceMode = true;
             bool mergeVertexMode = true; // leader to `BOPAlgo_IncompatibilityOfEdge`
             bool mergeEdgeMode = true;
-            bool curveOnSurfaceMode = false; // BOPAlgo_InvalidCurveOnSurface: tolerance compatability check
+            bool curveOnSurfaceMode = false; // BOPAlgo_InvalidCurveOnSurface: tolerance compatibility check
 
             // FreeCAD develper's note: I don't why we need to make a copy, but it doesn't work without it.
             /// maybe, mergeVertexMode() will modify the shape to check

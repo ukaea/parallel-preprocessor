@@ -20,7 +20,7 @@ see the [github workflows CI file](../.github/workflows/github-ci.yml) for detai
 
 ### Online documentation hosting
 
-Only the upstream repo should host the documenation. Go to the upstream's setting page:
+Only the upstream repo should host the documentation. Go to the upstream's setting page:
 https://github.com/ukaea/parallel-preprocessor/settings
 
 Scroll down to the "Github Pages", by select the correct branch hosting the documents, then github pages will be enabled after **save**.

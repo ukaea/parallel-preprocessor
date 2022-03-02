@@ -40,7 +40,7 @@
 
 - Qt style naming, function name begins with lower case letter, diff from OCCT, VTK
 - private or protected class member is named as myVariable it is OCCT style
-- clang-format for auto formating, default LLVM
+- clang-format for auto formatting, default LLVM
 - spell check: command line can be made into git hook or vscode task
 - code guideline/standard: https://github.com/qingfengxia/awesome-cpp#coding-style
 

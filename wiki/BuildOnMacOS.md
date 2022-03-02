@@ -13,7 +13,7 @@ Homebrow is the missing package manager for MacOS, and it make software installa
 
 ### Install Dependencies ( Mac OS X )
 
-Install some developer tools for QA and documenatation generation
+Install some developer tools for QA and documentation generation
 `brew update && brew install  cppcheck lcov poppler htmldoc graphviz doxygen`
 
 Install third-party libraries that Parallel-Preprocessor relies on:

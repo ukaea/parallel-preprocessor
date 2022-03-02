@@ -37,7 +37,7 @@ namespace Geom
         {
             myCharacteristics["modified"] = false; // will not modify item() by this processor
             myCharacteristics["indexPattern"] = IndexPattern::Linear;
-            myCharacteristics["indexDimension"] = 1U; // indepent item processing, processing pair(i,j) for dim=2
+            myCharacteristics["indexDimension"] = 1U; // independent item processing, processing pair(i,j) for dim=2
             myCharacteristics["requiredProperties"] = {"mySolids", "myShapeType"}; // matching reader
         }
         virtual ~GeometryProcessor() = default;

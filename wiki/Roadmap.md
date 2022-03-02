@@ -55,10 +55,10 @@ Currently package does not include test data in the `data/` folder, because it i
 ### Geometry preprocessing operations:
 Note: each task is worth of a journal paper, so it will not be available soon.
    - parallel enclosure, section operations (assuming geometry is valid, boolean operation will not fail)
-   - geometry fixing (geometry data may not valid to perform boolean operaton)
+   - geometry fixing (geometry data may not valid to perform boolean operation)
 
    - parallel geometry merging (currently imprint has been parallelized, but merging on single thread)
-   - water-fill: for a given assembly, construct a shape for teh volume that water can fill
+   - water-fill: for a given assembly, construct a shape for the volume that water can fill
 
 ## Planned features in the long term
 

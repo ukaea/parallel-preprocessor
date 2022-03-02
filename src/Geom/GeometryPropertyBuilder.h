@@ -12,7 +12,7 @@ namespace Geom
 
     /// \ingroup Geom
     /**
-     * generate geometrical properties for meta data writting, for downstream processors
+     * generate geometrical properties for meta data writing, for downstream processors
      */
     class GeometryPropertyBuilder : public GeometryProcessor
     {
@@ -27,7 +27,7 @@ namespace Geom
     public:
         GeometryPropertyBuilder()
         {
-            // The parent's default ctor be called automatically (implicitely)
+            // The parent's default ctor be called automatically (implicitly)
             myCharacteristics["producedProperties"] = {"myGeometryProperties", "myGeometryUniqueIds"};
             // std::cout << myCharacteristics;
         }

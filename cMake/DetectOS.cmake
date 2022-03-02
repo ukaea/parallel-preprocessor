@@ -55,7 +55,7 @@ if (UNIX)  # UNIX-like POSIX
         )
 
         # CMake execute_process() does not support pipe, so must use a shell
-        # not sure if all distro has the number version id,  "| sed 's/[.]0/./' " will remove zero afer dot
+        # not sure if all distro has the number version id,  "| sed 's/[.]0/./' " will remove zero after dot
         set(GET_OS_VERSION_CMD "bash -c \"awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed 's/\"//' | sed 's/\"$//' ")
         execute_process(COMMAND  bash "-c"  "awk '/VERSION_ID=/' /etc/*-release | sed 's/VERSION_ID=//' | sed 's/\"//' | sed 's/\"$//'  "
           OUTPUT_VARIABLE CMAKE_OS_VERSION
@@ -77,9 +77,9 @@ if (UNIX)  # UNIX-like POSIX
     )
     if (DEBIAN_FOUND)
         set (CMAKE_OS_NAME "Debian" CACHE STRING "Operating system name" FORCE)
-        set (LINUX_PACKAGE_FORMAT "deb" CACHE STRING "linux distro native package formate rpm|deb" FORCE)
+        set (LINUX_PACKAGE_FORMAT "deb" CACHE STRING "linux distro native package format rpm|deb" FORCE)
     else(DEBIAN_FOUND)
-        set (LINUX_PACKAGE_FORMAT "rpm" CACHE STRING "linux distro native package formate rpm|deb" FORCE)
+        set (LINUX_PACKAGE_FORMAT "rpm" CACHE STRING "linux distro native package format rpm|deb" FORCE)
     endif (DEBIAN_FOUND)
 
 

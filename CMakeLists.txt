@@ -81,7 +81,7 @@ if(WIN32)
 endif()
 
 ##############################################################
-# PPP_DEV_MODE=ON is an env var defiend in $HOME/.profile, not .bashrc
+# PPP_DEV_MODE=ON is an env var defined in $HOME/.profile, not .bashrc
 # the developer can turn on more options on local PC
 ##############################################################
 set(PPP_DEV_MODE $ENV{PPP_DEV_MODE})
@@ -114,7 +114,7 @@ if(UNIX)
         set(CMAKE_BUILD_TYPE Debug)
         set(LCOV_EXCLUDES "build/*" "*/third-party/*" "/usr*")
         set (CMAKE_CXX_FLAGS "${COVERAGE_COMPILER_FLAGS} ${CMAKE_CXX_FLAGS}")
-        include("cMake/ppp_coverage_target.cmake")  # this cmake is project depedent, running scripts/run_all_test.sh in the build folder
+        include("cMake/ppp_coverage_target.cmake")  # this cmake is project dependent, running scripts/run_all_test.sh in the build folder
     endif()
 endif()
 
@@ -185,7 +185,7 @@ message("============= test preparation =================== \n"
 ######################## data for test ###########################
 if(WIN32)
     message(" symbolic link may not be supported on windows 10 before 2016 without admin previledge, xcopy instead \n")
-    # mklink is not recongized, so copy instead on Windows
+    # mklink is not recognized, so copy instead on Windows
     execute_process (
         #COMMAND cmd /c "IF  not EXIST \"${PROJECT_BINARY_DIR}\\data\" ( mklink /J  \"${PROJECT_BINARY_DIR}\\data\" \"${PROJECT_SOURCE_DIR}\\data\" )"
         COMMAND cmd /c " xcopy  \"${PROJECT_SOURCE_DIR}\\data\" \"${PROJECT_BINARY_DIR}\\data\" /c /l /v /e /k /y "
@@ -199,7 +199,7 @@ else()
 
 endif()
 
-######################## pyhton files and shell scripts for test ######################
+######################## python files and shell scripts for test ######################
 # # will override each time? yes
 # file(COPY ${PROJECT_SOURCE_DIR}/scripts/run_all_tests.sh 
 #     DESTINATION ${PROJECT_BINARY_DIR}

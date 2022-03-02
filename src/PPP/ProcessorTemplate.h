@@ -8,7 +8,7 @@ namespace PPP
     /// \ingroup PPP
     /**
      * \brief template + lambda to build a new processor inplace without declare a new processor type.
-     *  this class will not be wrapped for Python, only used in C++, see exmaple in ParallelAccessorTest.cpp
+     *  this class will not be wrapped for Python, only used in C++, see example in ParallelAccessorTest.cpp
      * `myResultData` is the place to save result data
      *
      * @param ProcessorType a concrete process class it inherits from, in order to share data

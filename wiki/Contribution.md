@@ -43,9 +43,9 @@ By putting in PR, it is assumed contributor(s) **give the maintainer the legal r
 
 ### License consideration
 
-This parallel-preprocessor project is open source under the  LGPL v2.1 instead of LGPL v3, because all relevant projects, OCCT, salome, FreeCAD, are using LGPL v2.1. Meanwhile, LGPL v3 and LGPL v2.1 is not fully compatible to mixed up in source code level. In order to be co-operative with other relavent projects to build up an open source  CAD-CAE automated workflow, the same license LGPLv2.1 is adopted. 
+This parallel-preprocessor project is open source under the  LGPL v2.1 instead of LGPL v3, because all relevant projects, OCCT, salome, FreeCAD, are using LGPL v2.1. Meanwhile, LGPL v3 and LGPL v2.1 is not fully compatible to mixed up in source code level. In order to be co-operative with other relevant projects to build up an open source  CAD-CAE automated workflow, the same license LGPLv2.1 is adopted. 
 
-In the future, this project may be released in a new open source licese, or even dual license, if relicense may benefit the project sustainability. 
+In the future, this project may be released in a new open source license, or even dual license, if relicense may benefit the project sustainability. 
 
 
 

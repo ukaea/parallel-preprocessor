@@ -120,7 +120,7 @@ namespace PPP
                 // as the coupling-test is a cheap op, multi-threading may not be worth of doing.
                 // if it is really needed, then build the CouplingMatrixBuilder into the pipeline
                 // ThreadPoolExecutor te(b, myWorkerCount, myThreadPool);
-                // te.process();  // this will move/emptry the couplingMatrix()
+                // te.process();  // this will move/empty the couplingMatrix()
 
                 // note: preparaOutput is not called, if called, "myCouplingMatrix" will be inserted into data
                 auto cmat = b->couplingMatrix();
@@ -135,7 +135,7 @@ namespace PPP
         {
             // decide on the processor's IndexPattern
             // for dense matrix, an linear pattern, split into equally spaced row groups
-            // for Triangle, 2D tranverse, AsynchronousDispatcher is the best choice no matter of coupling
+            // for Triangle, 2D traverse, AsynchronousDispatcher is the best choice no matter of coupling
             size_t itemPerThread = size_t(NItems / myWorkerCount);
 
             // in case: itemPerThread  = 0 when Nitems < myWorkerCount

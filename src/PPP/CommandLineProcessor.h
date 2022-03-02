@@ -51,7 +51,7 @@ namespace PPP
      * this approach is not efficient for the cost of launch new process, but flexible and powerful
      * e.g. you can write processor in any language for pipeline working.
      *
-     * File IO is another constraint, so shared memery and pipe(string stream),
+     * File IO is another constraint, so shared memory and pipe(string stream),
      * assuming the external program get input from stream and output to stream like
      * `echo input|myprog > output`
      *

@@ -28,7 +28,7 @@ The build scripts `build.sh` (for Unix-like OS) and `bld.bat` (windows batch fil
 
 To build conda package, first of all, install anaconda python3 and install necessary packages like `conda-build`, and run the command in the `recipe` folder of this repository: `conda build meta.ymal`
 
-The conda build task is conducted a seperate virtual environment automatically, so is the test(run) process.  
+The conda build task is conducted a separate virtual environment automatically, so is the test(run) process.  
 `D:\Software\anaconda3\envs\cf\conda-bld\ppp_1597347412425`
 On windows, cmake isntalled to the `base` conda environment can still detect `occt` package installed in the conda-build tmp conda environment.
 

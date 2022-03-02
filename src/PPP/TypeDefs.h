@@ -44,8 +44,8 @@ namespace PPP
     enum class DevicePreference
     {
         CPU,  ///< item count is small, but processing each item take time and complext to push to GPU
-        GPU,  ///< GPU acceleraton, suitable for large item-count but simple calculation
-        FPGA, ///< good for realtime data processing, by hardware parallization
+        GPU,  ///< GPU acceleration, suitable for large item-count but simple calculation
+        FPGA, ///< good for realtime data processing, by hardware parallelization
     };
 
     NLOHMANN_JSON_SERIALIZE_ENUM(DevicePreference, {
@@ -93,7 +93,7 @@ namespace PPP
         Linear,            ///< each item has the same computation time, sliced into block, not coupled
         FilteredVector,    ///< not each item will be ProcessItem(), executor check "required()"
         PartitionIdVector, ///< item has an partition Id == threadID to bind with a specific thread
-        /// 2 operands operation not coupled operaton
+        /// 2 operands operation not coupled operation
         UpperTriangle, ///< for itemPair,  op(i, j) for i<j, skip diagonal op(i,i)
         LowerTriangle, ///< not in use, as executor use UpperTriangle by default
         DenseMatrix,   ///< 2D traverse, both op(i, j), op(j, i)

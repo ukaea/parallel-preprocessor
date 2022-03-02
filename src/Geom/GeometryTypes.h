@@ -201,7 +201,7 @@ namespace Geom
         j = p.name; // tmp change the output to single string type
     }
 
-    /// must be defiend in the same namespace as Material class
+    /// must be defined in the same namespace as Material class
     inline void from_json(const json& j, Material& p)
     {
         if (j.contains("name"))

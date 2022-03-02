@@ -27,8 +27,8 @@ namespace Geom
                                                   });
     enum class ShapeSimilarity
     {
-        Unknown,   ///!< not calculated/intialized, or has error during similarity matching
-        Identical, ///!< idential shapes
+        Unknown,   ///!< not calculated/initialized, or has error during similarity matching
+        Identical, ///!< identical shapes
         Similar,   ///!< need some criteria to define similarity, volume, topology
         Insimilar, ///!< all the rest, not identical, not similar
     };

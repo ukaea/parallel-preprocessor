@@ -120,7 +120,7 @@ yum install opencascade-draw, opencascade-foundation,  opencascade-modeling,  op
 
 ### For OSs without OCCT packages, compile OpenCASCADE 7.x from source
 
-For centos7 and centos7, the Dockerfile has updated unix shell commmand to install compiler toolchain.
+For centos7 and centos7, the Dockerfile has updated unix shell command to install compiler toolchain.
 
 Download the opencascade source code and compile from source, Compile opencascade if not available in package repository, e.g. centos 7/8,  see the "Dockerfile_centos" file for updated instructions.
 
@@ -220,7 +220,7 @@ or `sudo dpkg -i parallel-preprocessor*` on debian/ubuntu
 
 Without installation, this software can be evaluated by running [geomPipeline.py path_to_geometry_file](./python/geomPipeline.py), after building from source.
 
-Note: change directory to the folder containing geomPipeline.py is not necessary, if user has put full path of `parallel-preprocessor/build/bin/` folder into user path. For example, by editing PATH varialbe in `~/.bashrc` on Ubuntu, it will just work as installed program.
+Note: change directory to the folder containing geomPipeline.py is not necessary, if user has put full path of `parallel-preprocessor/build/bin/` folder into user path. For example, by editing PATH variable in `~/.bashrc` on Ubuntu, it will just work as installed program.
 
 Just append the `bin` folder to user `path` in `~/.bashrc`, that is all.  you should be able to imprint geometry by `geomPipeline.py  input_geometry_path`.   And also append `build/lib` to `LD_LIBRARY_PATH`
 

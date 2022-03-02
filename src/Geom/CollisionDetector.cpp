@@ -673,7 +673,7 @@ namespace Geom
                 // VLOG_F(LOGLEVEL_DEBUG, "Item #%lu `%s` in NOT suppressed, although a floating shape ", i,
                 //       itemName(i).c_str());
             }
-            // todo: report to the operater but does not need response;
+            // todo: report to the operator but does not need response;
         }
         else if (row.size() == 1)
         {

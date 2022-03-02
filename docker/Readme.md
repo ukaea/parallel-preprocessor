@@ -6,7 +6,7 @@ Note: this image is large, about 10 GB
 
 For evaluation of parallel-preprocessor, use the smaller image `ppp-centos` instead.
 
-OpenMC witth MPI is not supported in this docker image, consider using singularity image to support MPI parallelization on HPC platforms.
+OpenMC with MPI is not supported in this docker image, consider using singularity image to support MPI parallelization on HPC platforms.
 
 ### Get docker images
 
@@ -40,7 +40,7 @@ https://jupyter-docker-stacks.readthedocs.io/en/latest/using/common.html
 
 ### 2. X11 forwarding on local Linux host machine  (deprecated as X11 via SSH is more convenient)
 
-to get an interative bash shell, as ubuntu 20.04
+to get an interactive bash shell, as ubuntu 20.04
 
 ```sh
 docker run -it --rm  -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -h $HOSTNAME -v $HOME/.Xauthority:/home/jovyan/.Xauthority -v $PWD/:/workspace/  ppp_openmc  bash
@@ -103,7 +103,7 @@ see gull example in [build_openmc_mpi.sh](build_openmc_mpi.sh)
 
 ### MPI support for HPC cluster
 
-Singularity will bind host HOME into the image, so python package installed into normal user home's `.local` will not visiable.  One solution will be install all python module as root user into systemwide site-packages.
+Singularity will bind host HOME into the image, so python package installed into normal user home's `.local` will not visible.  One solution will be install all python module as root user into systemwide site-packages.
 
 
 MPI version can be selected during image building,  therefore to match with HPC cluster's MPI version.

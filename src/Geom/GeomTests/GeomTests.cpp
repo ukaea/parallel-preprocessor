@@ -328,7 +328,7 @@ TEST_CASE("GeometryImprintTest")
         REQUIRE(countSubShapes(readback, TopAbs_COMPSOLID) == 1);
     }
 
-    /// boxes in 3D stacking configuraton
+    /// boxes in 3D stacking configuration
     SECTION("test_merge_stacked_cubes")
     {
         std::vector<TopoDS_Shape> shapes;

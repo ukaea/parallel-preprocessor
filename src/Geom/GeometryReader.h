@@ -25,7 +25,7 @@ namespace Geom
      * + FreeCAD native format  *.FCStd
      * + parallel preproessor output: *.brep + *_metadata.json(*.metadata.json)
      * + manifest.json textual format: a list of filename-materail json objects
-     *     this json file must ended with "manifest.json", here is an exmaple:
+     *     this json file must ended with "manifest.json", here is an example:
      *    ```json
      *    [{
      *       "material": "one_material",
@@ -217,7 +217,7 @@ namespace Geom
                 if (solidCount) // debugging
                 {
                     const char* ns = p["name"].get<std::string>().c_str();
-                    LOG_F(INFO, "compound shape `%s` has %d compoents loaded ", ns, solidCount);
+                    LOG_F(INFO, "compound shape `%s` has %d components loaded ", ns, solidCount);
                 }
             }
         }
@@ -628,7 +628,7 @@ namespace Geom
                 {
                     std::string pname = "";
                     if (metadata.contains("filename"))
-                        pname = metadata["filename"]; // todo: component id, to give unqiue name
+                        pname = metadata["filename"]; // todo: component id, to give unique name
                     else if (metadata.contains("name"))
                         pname = metadata["name"];
                     else
@@ -752,7 +752,7 @@ namespace Geom
         {
             std::vector<ItemHashType> mySolidIDs;
             MapType<ItemHashType, ShapeErrorType> myShapeErrors;
-            for (auto const& item : mySolids) // what is the squence?
+            for (auto const& item : mySolids) // what is the sequence?
             {
                 mySolidIDs.push_back(item.first); // the sequence
                 myShapeErrors[item.first] = ShapeErrorType::NoError;

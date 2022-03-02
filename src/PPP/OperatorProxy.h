@@ -11,8 +11,8 @@ namespace PPP
     /// \ingroup PPP
     /**  Proxy class for Operator, implements AbstractOperator and behaves like a operator
      *
-     * Processor will interact with only with this ProxyOperator, which forwards to multiple concrete operator
-     * ConsoleOperator is the default operator, it will print json data without actuall caring the content,
+     * Processor will interact only with this ProxyOperator, which forwards to multiple concrete operator
+     * ConsoleOperator is the default operator, it will print json data without actually caring about the content,
      * while each module should implement Graphic and Web Operator to view result and confirm user choice.
      * see wiki on user interface design section
      */

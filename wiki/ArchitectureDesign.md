@@ -27,7 +27,7 @@ All selected components must be cross-platform. In this early development stage,
   - FreeCAD/BREP
 
 + UTF8 encoding is assumed and stored in `std::string`
-  Note: 1. this may work for MasOS and Linux of utf8 locale; 
+  Note: 1. this may work for macos and Linux of utf8 locale; 
         2. `filesystem::path::string()` not `filesystem::path::u8string()`
 
 ### Modular design
@@ -36,13 +36,13 @@ Folder structure corresponds to modular design, inspired by FreeCAD project.
 see [CodeStructure.md](./CodeStructure.md) for description for each header file.
 
 + third-party/Base: type system and BaseClass for c++ (extracted from FreeCAD project)
-+ PropertyContainer: heterogenous container based on `std::any`, may be replaced with FreeCAD's in the future
++ PropertyContainer: heterogeneous container based on `std::any`, may be replaced with FreeCAD's in the future
 + PPP: framework infrastructure for parallel preprocessing, depends only on STL and some header-only third-party libraries.
 + Geom: geometry processing relies on OCCT, including 2D surface meshing (facetizing)
 + Mesh: 3D volume meshing (planned yet coded)
 + third-party: json, catch2, loguru, SGeom, etc
 + test: unit test
-+ python: python wrapping and python script exectuables
++ python: python wrapping and python script executables
 + scripts: utility script
 + data: testing data
 

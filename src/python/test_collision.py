@@ -111,12 +111,12 @@ class StrongInterferenceTest(GeomTestBase):
         doc.recompute()
         return objs
 
-    def validate_geometry(self, shape, supressing=True):
+    def validate_geometry(self, shape, suppressing=True):
         print("len(shape.Faces)", len(shape.Faces))
         print("len(shape.Solids) = ", len(shape.Solids))
         assert shape.ShapeType == "CompSolid" or shape.ShapeType == "Compound"
         # depends on implementation on Cpp side
-        if supressing:
+        if suppressing:
             assert len(shape.Solids) == 4
             assert len(shape.Faces) == 20  # 4 cubes shares 4 faces, total 20 faces
         else:

@@ -36,7 +36,7 @@ namespace PPP
         /// read all lines a text file into the output vector (the second parameter)
         bool AppExport getFileContent(const std::string fileName, std::vector<std::string>& vecOfStrs);
 
-        /// user must make sure data can be implicitely converted into json object
+        /// user must make sure data can be implicitly converted into json object
         template <class T> bool toJson(const T& data, const std::string& filename);
 
         /// todo: uniqueness is not guatanteed, the return type is size_t as std::hash

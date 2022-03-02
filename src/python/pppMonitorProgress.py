@@ -5,8 +5,8 @@
 parse local log file or message via networking url,  plot the progress dialog
 The percentage format is defaulted as  r" ([0-9,.]+) percent", but can be provided as the third argument.
 
-For local file, using QTimer to poll  the log file change, pygtail module from PyPI can be a choise
-For network url liek websocket, using Qt event loop  (not yet implemented)
+For local file, using QTimer to poll  the log file change, pygtail module from PyPI can be a choice
+For network url like websocket, using Qt event loop  (not yet implemented)
 This script has been tested to work with PyQt5 on Windows and PySide2 on Linux
 """
 USAGE = "pppMonitorProgress.py log_file  [window_title]  [percentage_regex_pattern]"

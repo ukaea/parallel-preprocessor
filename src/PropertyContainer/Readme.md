@@ -17,7 +17,7 @@ This property container is not thread-safe, because STL container `std::map` is 
 
 ### json serialization
 
-json for basic types (as already supproted by nlohmann json library) are supported out of box with default json serialization,  more user types might be supported by ADL. User serializer and deserializer can be specified when `setSerializable(key, value, serializer_function)`.
+json for basic types (as already supported by nlohmann json library) are supported out of box with default json serialization,  more user types might be supported by ADL. User serializer and deserializer can be specified when `setSerializable(key, value, serializer_function)`.
 
 Note: this feature is under design, yet fully tested.  Also consider save data into the `DataStorage` class. 
 

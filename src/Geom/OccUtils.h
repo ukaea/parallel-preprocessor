@@ -56,7 +56,7 @@ namespace Geom
         /// based on axis-aligned boundbox matching and surface area equivalence
         GeomExport Standard_Boolean isCoincidentDomain(const TopoDS_Shape& shape, const TopoDS_Shape& shape2);
 
-        /// two-step unifying: first unify edges, seconly unify faces,
+        /// two-step unifying: first unify edges, secondly unify faces,
         /// deprecated: use glueFaces() instead
         GeomExport TopoDS_Shape unifyFaces(const TopoDS_Shape& _shape);
 

@@ -9,7 +9,7 @@ adapted from EERA: https://github.com/ScottishCovidResponse/Covid19_EERAModel/bl
 with hand-crafted: flawfinder, similarity, clang_tidy parsers
 
 All generated html file are located in repo_root/site/, 
-so all other resource path pathes should be relative to repo_root/site/
+so all other resource path paths should be relative to repo_root/site/
 
 Changelog: 
     - coverage_report_folder by default is located in `build` folder
@@ -28,7 +28,7 @@ import re
 import os.path
 
 my_project_name = "parallel-preprocessor"
-if os.path.exists("src"):  # CI mode. all pathes should be relative to repo_root/site/
+if os.path.exists("src"):  # CI mode. all paths should be relative to repo_root/site/
     coverage_report_folder = "../build/{}_coverage/index.html".format(my_project_name)
     doxygen_html_index = "../doxygen/html/index.html"
 else:  # local build test mode, run in build folder
