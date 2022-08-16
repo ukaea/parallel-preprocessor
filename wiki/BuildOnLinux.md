@@ -12,6 +12,17 @@ note: **package name are debian based**, see installation section for RedHat bas
   ubuntu has opencascade with dbgsym, but its version is too outdated. https://launchpad.net/ubuntu/+source/opencascade
 + `python3-dev`   pybind11 is now a submodule
 
+#### git submodule init
+Some github repo will be downloaded when running `git submodule init`
+```sh
+third-party/catch2
+third-party/loguru
+Geom/third-party/SGeom
+```
+
+In case, download submodule from github by git is not possible, you need to manuallly download the zip file and unzip into the expected position.
+For example,  browse to third-party and click the link to catch2, redirected to catch2 github repo, download the source in zip file. unzip as our `src/third-party/catch2`. 
+
 #### Optional dependencies:
 + `boost`: if C++17 compiler is not available, `boost::any` and `boost::filesystem`
 + `freecad` or `freecad-daily`: to view result and test, using the freecad-python3
