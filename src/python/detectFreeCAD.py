@@ -122,22 +122,42 @@ def get_freecad_lib_path():
         return get_lib_dir(fc_name, "libFreeCADApp")
 
 
-def get_lib_path_on_windows(fc_name):
+def get_lib_path_on_windows(fc_name_on_path):
     # windows installer has the options add freecad to PYTHONPATH
     # this can also been done manually afterward, settting env variable PYTHONPATH
     # the code below assuming freecad is on command line search path
 
-    if fc_name:
-        fc_full_path = which(fc_name)
-        lib_path = os.path.dirname(os.path.dirname(fc_full_path)) + os.path.sep + "lib"
-        if os.path.exists(lib_path + os.path.sep + "Part.pyd"):
-            return lib_path
-    else:  # check windows registry key, if installed by installer
-        get_installaton_path_on_windows("FreeCAD")
+    lib_path = ""
+    if fc_name_on_path:
+        fc_full_path = which(fc_name_on_path)
+        if fc_full_path:
+            lib_path = os.path.dirname(os.path.dirname(fc_full_path)) + os.path.sep + "lib"
+    else:  # check windows default installation path and registry key, if installed by installer
+        fc_installation_path = get_installaton_path_on_windows("FreeCAD")
+        if fc_installation_path:
+            lib_path = fc_installation_path + os.path.sep + "lib"
+
+    if os.path.exists(lib_path + os.path.sep + "Part.pyd"):
+        return lib_path
+
+
+def search_default_installaton_path_on_windows(fc_name):
+    # tested for FreeCAD 0.20, Python 3.9
+    pdir = os.path.expandvars("%ProgramFiles%")
+    for d in os.listdir(pdir):
+        if d.startswith("FreeCAD"):
+            fc_dir = pdir + os.path.sep + d
+            fc_path = fc_dir + os.path.sep + "bin" + os.path.sep + "FreeCAD.exe"
+            if os.path.isfile(fc_path):
+                return fc_dir
 
 
 def get_installaton_path_on_windows(fc_name):
-    # tested for FreeCAD 0.18
+    # tested for FreeCAD 0.18 installed from installer, windows 10
+
+    fc_dir = search_default_installaton_path_on_windows(fc_name)
+    if fc_dir:
+        return fc_dir
     import itertools
     from winreg import (
         ConnectRegistry,
@@ -147,7 +167,6 @@ def get_installaton_path_on_windows(fc_name):
         CloseKey,
         KEY_READ,
         EnumKey,
-        WindowsError,
     )
 
     try:
@@ -157,7 +176,7 @@ def get_installaton_path_on_windows(fc_name):
         for i in itertools.count():
             try:
                 subname = EnumKey(akey, i)
-            except WindowsError:
+            except Exception:
                 break
             if subname.lower().find(fc_name.lower()) > 0:
                 subkey = OpenKeyEx(akey, subname, 0, KEY_READ)
