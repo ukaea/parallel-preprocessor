@@ -202,6 +202,8 @@ def append_freecad_mod_path():
     except ImportError:
         # in case PYTHONPATH is not set
         cmod_path = get_freecad_lib_path()  # c module path
+        bin_path = os.path.dirname(cmod_path) + os.path.sep + "bin"
+        sys.path.append(bin_path) # on Windows
         if cmod_path:
             sys.path.append(cmod_path)
             pymod_path = os.path.dirname(cmod_path) + os.path.sep + "Mod"
@@ -230,3 +232,13 @@ def append_freecad_mod_path():
 
 if __name__ == "__main__":
     print("FreeCAD library path detection result: ", get_freecad_lib_path())
+
+    append_freecad_mod_path()
+    try:
+        import FreeCAD
+    except ImportError:
+        print("freecad is not installed or detectable, exit from this script")
+        sys.exit(0)
+
+    import FreeCAD as App
+    print("FreeCAD can be imported sucessfully", App)
