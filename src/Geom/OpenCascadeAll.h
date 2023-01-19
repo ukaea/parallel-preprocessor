@@ -457,7 +457,7 @@
 //
 #include <APIHeaderSection_MakeHeader.hxx>
 
-// IGES format suport
+// IGES format support
 #include <IGESCAFControl_Reader.hxx>
 #include <IGESControl_Controller.hxx>
 #include <IGESControl_Reader.hxx>
@@ -486,7 +486,7 @@
 
 #include <Transfer_FinderProcess.hxx>
 #include <Transfer_TransientProcess.hxx>
-// save to bindary foramt
+// save to bindary format
 #include <BinTools.hxx>
 #include <BinTools_ShapeSet.hxx>
 

@@ -22,7 +22,7 @@ while it is not quite pythonic way.
 
 
 This setup must be run after C++ shared libraries have been compiled by cmake.
-c++ runtime *.so/dll must be installed to somwhere loadable (appending LD_LIBRARY_PATH if installed to non-system path)
+c++ runtime *.so/dll must be installed to somewhere loadable (appending LD_LIBRARY_PATH if installed to non-system path)
 either by conda or platform installer like deb.rpm/make install
 
 ### PyPI upload is yet done
@@ -32,7 +32,7 @@ python3 setup.py bdist_wheel
 rm package.egg-info #  rm folder where the sources.txt(manifest) will not be updated
 python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 # for CI, just copy to asset folder
-# copy the output package from ./dist to somwhere? to be downloaded, should be done by CI script
+# copy the output package from ./dist to somewhere? to be downloaded, should be done by CI script
 ```
 
 see a full list of setup.py arguments
@@ -146,7 +146,7 @@ kwargs = {
     "name": "parallel-preprocessor",
     "version": "0.3.0",  # todo: get the version info from file written by cmake
     #"packages": ["ppp"],  # find source code folder with __init__.py, find_packages()
-    # ext_modules # cpp soruce to build, skip it as cmake will build
+    # ext_modules # cpp source to build, skip it as cmake will build
     # "license": "TBD",
     "author": "qingfeng xia",
     "author_email": "qingfeng xia@UKAEA",

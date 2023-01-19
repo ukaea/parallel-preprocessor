@@ -107,7 +107,7 @@ if(PPP_USE_GEOM)
     add_subdirectory("Geom")
 endif()
 
-######### auto foramt check by cmake or git hook, or IDE ################
+######### auto format check by cmake or git hook, or IDE ################
 #find_package(ClangFormat)
 #if(NOT CLANG_FORMAT_FOUND)
 #    set(CLANG_FORMAT_BIN_NAME clang-format)

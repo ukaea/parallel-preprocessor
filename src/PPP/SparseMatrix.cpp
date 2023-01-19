@@ -23,7 +23,7 @@ namespace PPP
         }
         if (mm_is_complex(matcode) && mm_is_matrix(matcode) && mm_is_sparse(matcode))
         {
-            cout << "Market Market type: " << mm_typecode_to_str(matcode) << ", is not supproted\n";
+            cout << "Market Market type: " << mm_typecode_to_str(matcode) << ", is not supported\n";
         }
 
         /* find out size of sparse matrix .... */

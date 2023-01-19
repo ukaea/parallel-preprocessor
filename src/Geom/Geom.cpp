@@ -96,7 +96,7 @@ namespace Geom
 
         // 2. build the pipeline
 #if PPP_BUILD_TYPE
-        build(); // building pipeline from json configuraton file
+        build(); // building pipeline from json configuration file
 #else
         // this is example of hardcoded pipeline building
         myProcessors.push_back(std::make_shared<GeometryShapeChecker>());

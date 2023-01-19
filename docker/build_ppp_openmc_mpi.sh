@@ -29,7 +29,7 @@ docker build . -f Dockerfile_ppp_openmc -t  qingfengxia/ppp_openmc_mpi   \
 
 ####################### to use this docker image ########################
 # if material not included, map the folder into the container, e.g. 
-#  give full path to materail data folder containing the xml
+#  give full path to material data folder containing the xml
 
 # export MAT_DIR=/mnt/windata/MyData/openmc_data/tendl-2019-hdf5/
 # docker run --rm -it -v $MAT_DIR:/mat_dir qingfengxia/ppp_openmc_mpi   bash

@@ -219,7 +219,7 @@ namespace PPP
             std::string outfile = Context::dataStorage().getFullPath("processed_info.json");
             std::fstream report_info(outfile);
 
-            // processsed data writing, writer is not always needed
+            // processed data writing, writer is not always needed
             bool hasWriter = !myConfig["writers"].empty();
             if (hasWriter)
             {
@@ -255,7 +255,7 @@ namespace PPP
 
         // 2. build the pipeline
 #if PPP_BUILD_TYPE
-        build(); // building pipeline from json configuraton file
+        build(); // building pipeline from json configuration file
 #else
 // this is example of hardcoded pipeline building
 #if PPP_USE_BOOST_PROCESS

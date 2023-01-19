@@ -57,7 +57,7 @@ namespace PPP
 
         /**
          * because half precision's max number is about 65000 (with 32 as EPS)
-         * CAD ususally use mm as length unit, so volume would overflow for half precision if volume is
+         * CAD usually use mm as length unit, so volume would overflow for half precision if volume is
          * scale to deci-meter, or metre, kilometer, depends on geometry size
          * */
 
@@ -150,7 +150,7 @@ namespace PPP
         }
 
         /// used by GeometryPropertyBuilder class in parallel-preprocessor
-        /// assuming native endianess, always calculate Id using the same endianness
+        /// assuming native endianness, always calculate Id using the same endianness
         /// this should generate unique Id for a vector of 4 double values
         /// this is not universal unique Id (UUID) yet, usurally std::byte[16]
         UniqueIdType uniqueId(const std::vector<double> values)

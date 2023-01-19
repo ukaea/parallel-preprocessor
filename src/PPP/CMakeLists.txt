@@ -109,7 +109,7 @@ if(PPP_USE_MPI)
         #add_definitions(-DPPP_BUILD_MPI=1)
         include_directories(${MPI_CXX_INCLUDE_DIRS})
         link_directories(${MPI_CXX_LIBRARY_DIRS})
-        link_libraries(${MPI_CXX_LIBRARIES})  # full pathes for shared libraries
+        link_libraries(${MPI_CXX_LIBRARIES})  # full paths for shared libraries
     endif()
 endif()
 

@@ -45,7 +45,7 @@ if CASROOT env var has been set, this step maybe skip for cmake building
 `git` can be installed from "Git for Windows" installer. 
 
 `boost`, can be installed by conda
-`pybind11` can be installed by conda, alternatively `pybind11` can be downloaded (git clone) from github during cmake build processs
+`pybind11` can be installed by conda, alternatively `pybind11` can be downloaded (git clone) from github during cmake build process
 
 There are 3 ways to install OpenCASACDE.  TBB is a dependent for occt package on conda-forge and bundled with official OpenCASACDE release
 
@@ -81,7 +81,7 @@ Apparently, conda is the better way to compile and run "Parallel Preprocessor".
 
 ### Method 2: Install official OpenCASCADE 7.4
 
-It is compiled with visual studio C++ 2017. Customed installation, install only source code (we need header files) and binary files,  is sufficiennt  about 1GB.
+It is compiled with visual studio C++ 2017. Customed installation, install only source code (we need header files) and binary files,  is sufficient  about 1GB.
 validate the installation by run sample app.  `Inspector.exe`
 
 As suggested in define OpenCASCADE official document, define the env var `CASROOT`, to the folder you can find `env.bat`
@@ -109,7 +109,7 @@ One potential way to compile ppp is to use the header and dll files from FreeCAD
 <https://wiki.freecadweb.org/Compile_on_Windows>
 
 During installation, set the ppp installation path the same as FreeCAD installation path `D:\Software\FreeCAD0.18`,
-all dll goes into `D:\Software\FreeCAD0.18\bin` and all python sripts installed to FreeCAD's python's site-packages. 
+all dll goes into `D:\Software\FreeCAD0.18\bin` and all python scripts installed to FreeCAD's python's site-packages. 
 
 As conda build and packaging is working properly on windows, this option will not be explored
 
@@ -144,11 +144,11 @@ https://docs.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-
 
 pppParallelTests.exe  assertion failed, due to file path problem, solved 
 
-pppAppTests.exe can be debugged now, due to API different on Windows and Linux,  it is sovled by conditional compiling
+pppAppTests.exe can be debugged now, due to API different on Windows and Linux,  it is solved by conditional compiling
 > __forceinline errno_t __cdecl gmtime_s(struct tm *_Tm, const time_t *_Time) { return _gmtime64_s(_Tm, _Time); }
 
 `pppGeomTests.exe`  no output, no error message. 
-`pppGeomTests.exe` does not even enter running mode, in vs code, launch.json, set ` "stopAtEntry": true,`,  if there is still no output in debug console, it may means opencascade dll incompatabile. 
+`pppGeomTests.exe` does not even enter running mode, in vs code, launch.json, set ` "stopAtEntry": true,`,  if there is still no output in debug console, it may means opencascade dll incompatible. 
 if dll is not found, there should be a warning  dialog and give the missing dll name. 
 
 Is that because, visual studio 2019 compiled PPP and visual studio 2017 built OpenCASCADE DLL has some comptable issue?
@@ -169,4 +169,4 @@ even with visual studio 2019 compiler, there is no problem running all unit test
 
 
 #### IF using FreeCAD libpack  (skipped)
-FreeCAD/bin has all DLL neeeed  (if dll version is same, FreeCAD 0.18.4 used OCCT 7.3), but is not a good idea, get into PATH
+FreeCAD/bin has all DLL needed  (if dll version is same, FreeCAD 0.18.4 used OCCT 7.3), but is not a good idea, get into PATH

@@ -70,7 +70,7 @@ def metadata_stat(file_name):
             if p["suppressed"]:
                 nb_suppressed += 1
         nb_record = len(d)
-        print(f"{nb_suppressed} suppresed out of metadata record number {nb_record}")
+        print(f"{nb_suppressed} suppressed out of metadata record number {nb_record}")
 
 
 total_op = 0

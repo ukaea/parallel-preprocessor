@@ -4,7 +4,7 @@ This document records some notes on porting parallel-preprocessor to Windows 10
 
 ### Platform C++ runtime difference
 
-C++ demangle, needs boost if using msvc comppiler
+C++ demangle, needs boost if using msvc compiler
 
 Windows has no complete "signal.h" support. 
 ```c++
@@ -15,7 +15,7 @@ sigemptyset()   // no such on windows? mingw32?
 ### mingw32-w64 v8.1 compiler
 
 mingw has problem with filesystem, and there is no easy solution. and As the official OpenCASCADE has been built with  VC141 (VS2017)
-The binary compatibility of mingw and visual C++ is doubtable in produciton scenarion.  
+The binary compatibility of mingw and visual C++ is doubtable in production scenario.  
 
 https://github.com/mxe/mxe/issues/2220
 the gcc 9 patch seems to fix this issue
@@ -97,7 +97,7 @@ if(WIN32)
 endif()
 ```
 
-with this definition, cmake can geneate pppApp.lib, but it is not in the output lib folder `lib` ,  but in another folder in the build directory `PPP/pppApp.lib`
+with this definition, cmake can generate pppApp.lib, but it is not in the output lib folder `lib` ,  but in another folder in the build directory `PPP/pppApp.lib`
 TODO: let cmake collect those *.lib and put into lib output folder. 
 
 for header only library, that is not necessary? 
@@ -136,11 +136,11 @@ static variable may cause some trouble.
 #### for template class 
 There is no need to specify `__declspec(dllexport)`, since template class impl usually in header file. 
 
-> A template will only be compiled with spedified template parameter. Thus there will be nothing in the dll to link against.
+> A template will only be compiled with specified template parameter. Thus there will be nothing in the dll to link against.
   In order to use a template you always need to include both: declaration and definition. You cannot put the definitions in a .cpp file like ordinary classes/functions. 
   http://www.cplusplus.com/forum/windows/199689/
 
-If moving impl into cpp file, got misisng symbol error, when used by another target/module.
+If moving impl into cpp file, got missing symbol error, when used by another target/module.
 
 https://stackoverflow.com/questions/17519879/visual-studio-dll-export-issue-for-class-and-function-template-instantiations
 

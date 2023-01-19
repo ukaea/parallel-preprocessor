@@ -90,7 +90,7 @@ namespace Geom
             }
             else
             {
-                LOG_F(ERROR, "file exension is not supported for %s", file_name.c_str());
+                LOG_F(ERROR, "file extension is not supported for %s", file_name.c_str());
             }
         }
 
@@ -811,7 +811,7 @@ namespace Geom
             const Standard_Integer aStatus = aMesher->GetStatusFlags();
             if (aStatus)
             {
-                // LOG_F(ERROR, "failed to mesh the shape, retrun the shared_ptr to a false value");
+                // LOG_F(ERROR, "failed to mesh the shape, return the shared_ptr to a false value");
                 aMesher.reset(); // set to nullptr
             }
             return aMesher;

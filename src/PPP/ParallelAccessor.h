@@ -47,10 +47,10 @@ namespace PPP
     /**
      * ParallelAccessor implement a lock free parallel operation (write/modification),
      * on a multi-dimensional data structure, e.g. sparse matrix, when items are coupled together.
-     * Currently, it supports binary operaton within a 2D data structure, e.g. matrix, with mutual exclusion;
+     * Currently, it supports binary operation within a 2D data structure, e.g. matrix, with mutual exclusion;
      * triple operation involving 3 items in coupling is too complicated yet implemented.
      *
-     * This ParallelAccess class implements the synchronous mode, while the dervied class AsynchronousDispatcher
+     * This ParallelAccess class implements the synchronous mode, while the derived class AsynchronousDispatcher
      * implements asynchronous mode which is more efficient.
      * For the synchronous mode, the scheduler wait for all workers complete and schedule new task for all workers,
      * As only the schedular can allocate task (modify  `myRemainedItems`), there is no need for mutex.
@@ -58,7 +58,7 @@ namespace PPP
      * @param Filter: function of type `bool function(i, j)` to validate if item i and j are connected/coupled/adjacent
      * @param itemCount: the problem scale (total item number to processed)
      * @param blockCount: process blockCount operations in one batch for each thread call.
-     * @param accessorCount: number of accessors (thread count in multi-thread executation mode) in parallel
+     * @param accessorCount: number of accessors (thread count in multi-thread execution mode) in parallel
      *
      */
     class ParallelAccessor : Accessor<std::vector<ItemIndexType>>

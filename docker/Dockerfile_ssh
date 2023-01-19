@@ -58,7 +58,7 @@ RUN echo "%sudo    ALL=(ALL:ALL) ALL" >> /etc/sudoers
 ############### host key setup #################
 # https://nickjanetakis.com/blog/docker-tip-56-volume-mounting-ssh-keys-into-a-docker-container
 # copy the ssh key from host, so to fix the host public key when rebuilding the image
-# everytime install openssh-server, ssh key will be generated
+# every time install openssh-server, ssh key will be generated
 
 COPY .ssh /root/.ssh
 RUN  chmod 700 /root/.ssh && \

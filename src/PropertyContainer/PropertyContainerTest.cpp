@@ -116,7 +116,7 @@ TEST_CASE_METHOD(PropertyContainerTest, "add and remove a STL container as a pro
     b->push_back(1);
     auto bb = d.get<B>("B"); // second template parameter is default to `std::shared_ptr<A>`
     // std::cout<< "size of the modified std container is: " << bb->size() <<"\n";
-    // const char* MY_MSG = "modified size of the modified stl container is NOT sync with the property Containter";
+    // const char* MY_MSG = "modified size of the modified stl container is NOT sync with the property Container";
     REQUIRE(bb->size() == length + 1U);
     d.erase("B"); // no effect if no such key
 }

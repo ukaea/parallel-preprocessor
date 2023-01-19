@@ -63,7 +63,7 @@ namespace PPP
 
     /// \ingroup PPP
     /**
-     * dynamic heterogenous container to simulate dynamic property, based on std::any
+     * dynamic heterogeneous container to simulate dynamic property, based on std::any
      *
      * APIs  are compatible with STL associative container with STL iterator, but
      * those APIs protected because Property type is only accessible by derived class
@@ -164,7 +164,7 @@ namespace PPP
         template <typename T, typename = std::enable_if<std::is_const<T>::value>>
         default_pointer_type<T> get(const std::string& key) const
         {
-            std::cout << "DEBUG info: const versoin of get<const AType>() is called!" << std::endl;
+            std::cout << "DEBUG info: const version of get<const AType>() is called!" << std::endl;
             if (contains(key))
             {
                 return any_cast<default_pointer_type<T>>(myProperties.at(key).data);
@@ -179,7 +179,7 @@ namespace PPP
          * */
         template <typename T> T getValue(const std::string& key) const
         {
-            std::cout << "DEBUG info: const versoin of get<const AType>() is called!" << std::endl;
+            std::cout << "DEBUG info: const version of get<const AType>() is called!" << std::endl;
             if (contains(key))
             {
                 auto ptr = any_cast<default_pointer_type<const T>>(myProperties.at(key).data);

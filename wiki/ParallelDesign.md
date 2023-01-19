@@ -22,7 +22,7 @@ https://nifi.apache.org/docs/nifi-docs/html/user-guide.html#User_Interface
 
 `Cpp-Taskflow` library is by far a faster, more expressive, and easier for drop-in integration for the single-way linear task programming.
 
-Libraries such as `OpenMP Tasking` and `Intel TBB FlowGraph` in handling complex parallel workloads. TensorFlow has the concept of graph simplication. 
+Libraries such as `OpenMP Tasking` and `Intel TBB FlowGraph` in handling complex parallel workloads. TensorFlow has the concept of graph simplification. 
 
 
 > OpenCV 4.x introduces very different programming model `G-API`, where you define pipeline of operations to be performed first, and then apply this pipeline to some actual data. In other words, whenever you call OpenCV G-API function, execution is deferred (lazily-evaluated), and deferred operation result is being returned instead of actual computation result. This concept might sound very similar to [C++ 20 Range V3](https://github.com/ericniebler/range-v3).  Source: https://blog.conan.io/2018/12/19/New-OpenCV-release-4-0.html
@@ -39,7 +39,7 @@ Currently, only CPU device is supported, although GPU acceleration will be consi
 + MPI (distributive, NUMA)
   This is useful for distributive meshing, since memory capacity on a single multi-core node may be not sufficient to mesh large assemblies.
 
-+ GPU (heterogenous)
++ GPU (heterogeneous)
   This is the preferred for simple data types such as image processing AI. 
 
 ## Concurrent data access
@@ -55,7 +55,7 @@ The main thread allocate the `std::vector<>` with enough size by `resize(capacit
   `template <class T> using VectorType = std::vector<T>;`
 
 ### Concurrent data structure
-There are high-level concurent data structure with lock/synchronization underneath
+There are high-level concurrent data structure with lock/synchronization underneath
 
 <https://github.com/FEniCS/dolfin/tree/master/dolfin/la>
 

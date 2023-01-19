@@ -28,7 +28,7 @@ namespace PPP
     /**
      * \brief base class for all processors, mappable to vtkAlgorithm,  opKernel of tensorflow
      * see API of vtkAlgorithm: <https://vtk.org/doc/nightly/html/classvtkAlgorithm.html>
-     * Multiple input and multiple ouput, is not supported, GetNumberOfInputPorts()
+     * Multiple input and multiple output, is not supported, GetNumberOfInputPorts()
      * register input parameters, given the doc and default values by the processor developer
      * register generated data properties (downstream processors may depend on)
      * register required properties
@@ -69,7 +69,7 @@ namespace PPP
         {
             return myResult;
         }
-        /// configration (controlling parameters) input
+        /// configuration (controlling parameters) input
         inline void setConfig(const Config& config)
         {
             myConfig = config;
@@ -124,7 +124,7 @@ namespace PPP
         /// @}
 
         /// @{ API for pipe controller
-        /// default imp: reserve memery for item report vector
+        /// default imp: reserve memory for item report vector
         virtual void prepareInput()
         {
             myItemReports.resize(myInputData->itemCount());
@@ -176,7 +176,7 @@ namespace PPP
         /// @{ result group
 
         /**
-         * report after successfully processsing all items, according to verbosity level
+         * report after successfully processing all items, according to verbosity level
          * write/append into output Information, may also report to operator interface
          */
         virtual void report()
@@ -239,7 +239,7 @@ namespace PPP
         }
 
         /**
-         * checkpoint and dump data property, configration, and information
+         * checkpoint and dump data property, configuration, and information
          * useful for debugging when there is an error, or interrupted by Ctrl-C signal
          * this should be done by pipeline's signal handler
          */
@@ -412,7 +412,7 @@ namespace PPP
             {
                 LOG_F(ERROR,
                       "parameter `%s` is not found in config\n"
-                      "try the overloded version with default value instead",
+                      "try the overloaded version with default value instead",
                       name.c_str());
                 throw ProcessorError("parameter is not found in processor configuration");
             }
@@ -431,7 +431,7 @@ namespace PPP
             {
                 LOG_F(ERROR,
                       "parameter `%s` is not found in config\n"
-                      "try the overloded version with default value instead",
+                      "try the overloaded version with default value instead",
                       name.c_str());
                 throw ProcessorError("parameter is not found in processor configuration");
             }
@@ -506,7 +506,7 @@ namespace PPP
                 else
                 {
 #ifdef WIN32
-                    // start /B  will start an app/cmd in backgroud, without /B option, a new console windows will show
+                    // start /B  will start an app/cmd in background, without /B option, a new console windows will show
                     std::string cmd = "start /B python " + py_monitor_path.string() + " " + log_filename + " " + title;
 #else
                     // On Posix OS by appending `&`, then the command is nonblocking /detached from the main process
@@ -522,12 +522,12 @@ namespace PPP
         }
 
     protected:
-        /// intrinsic attribute of the process operation, parallel without affact other item? readonly?
+        /// intrinsic attribute of the process operation, parallel without effecting other item? readonly?
         /// set myCharacteristics in constructor may make ctor is not default
         Config myCharacteristics;
         Config myConfig; /// treated as value type
 
-        /// chained up intput -> output, can be saved to file,each processor appends to myInfo
+        /// chained up input -> output, can be saved to file,each processor appends to myInfo
         std::shared_ptr<Information> myInfo;
         std::shared_ptr<ProcessorResult> myResult;
         VectorType<std::shared_ptr<std::stringstream>> myItemReports;

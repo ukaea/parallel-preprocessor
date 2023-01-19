@@ -124,7 +124,7 @@ def get_freecad_lib_path():
 
 def get_lib_path_on_windows(fc_name_on_path):
     # windows installer has the options add freecad to PYTHONPATH
-    # this can also been done manually afterward, settting env variable PYTHONPATH
+    # this can also been done manually afterward, setting env variable PYTHONPATH
     # the code below assuming freecad is on command line search path
 
     lib_path = ""

@@ -14,13 +14,13 @@ Inside the build folder, run  `make package` to generate *.deb or *.rpm.
 
 The generated packages is a all-in-one package include all (lib, bin, python module, headers).
 
-For exampel, unzip the deb package file, all installed files are organzied in subfolders 'bin/', 'lib/', 'include/'
+For example, unzip the deb package file, all installed files are organized in subfolders 'bin/', 'lib/', 'include/'
 - Binaries,  executables
 - Headers,  by PUBLIC_HEADER DESTINATION include/Geom
 - Library, shared libraries like `libpppGeom.so`
 - Python interface module
 
-If system-wide python3 (installed from official repository) is used, which can be confirmed by `which python3`,  this ded/rpm will have the correct python interface module installed.
+If system-wide python3 (installed from official repository) is used, which can be confirmed by `which python3`,  this deb/rpm will have the correct python interface module installed.
 
 Note: this fold structure does not work on windows
 

@@ -19,7 +19,7 @@ namespace PPP
 {
 
     /// \ingroup PPP
-    /** lock-free parallel sparse matrix data structrue
+    /** lock-free parallel sparse matrix data structure
      * consider: VectorType<std::shared_ptr<std::unordered_map<ItemIndexType, T>>>
      * */
     template <typename T> class SparseMatrix
@@ -191,7 +191,7 @@ namespace PPP
             }
             if (mm_is_complex(matcode) && mm_is_matrix(matcode) && mm_is_sparse(matcode))
             {
-                cout << "Market Market type: " << mm_typecode_to_str(matcode) << ", is not supproted\n";
+                cout << "Market Market type: " << mm_typecode_to_str(matcode) << ", is not supported\n";
             }
 
             /* find out size of sparse matrix .... */

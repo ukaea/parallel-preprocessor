@@ -41,7 +41,7 @@ namespace PPP
             return myWorkerCount;
         }
 
-        /// need wait() complete until processs the next item
+        /// need wait() complete until process the next item
         inline bool synchronous() const
         {
             return isSynchronous;

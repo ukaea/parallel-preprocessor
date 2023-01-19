@@ -24,7 +24,7 @@ namespace PPP
             if (i != std::string::npos)
             {
                 auto extension = filepath.substr(i + 1, filepath.length() - i);
-                // std::cout << "file extention extracted: " << extension << std::endl;
+                // std::cout << "file extension extracted: " << extension << std::endl;
                 if (extension.length() && extension.length() == ext.length())
                 {
                     for (size_t j = 0; j < extension.length(); j++)
@@ -66,10 +66,10 @@ namespace PPP
             return true;
         }
 
-        /// user must make sure data can be implicitely converted into json object
+        /// user must make sure data can be implicitly converted into json object
         template <class T> bool toJson(const T& data, const std::string& filename)
         {
-            json jObj = data; // implicitely converted into json object
+            json jObj = data; // implicitly converted into json object
             std::ofstream of(filename, std::ios::out | std::ios::binary);
             std::vector<std::uint8_t> v_buffer;
             if (hasFileExt(filename, "json"))

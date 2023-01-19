@@ -83,7 +83,7 @@ namespace PPP
 
     /**
       a data class contains data of any type, with control flag,
-      this class is used by PropertyContainer dervied class only
+      this class is used by PropertyContainer derived class only
       todo: serialization is not yet supported, static Property::TypeRegistry, to register the serializer can be a
       choice This class should be `is_standard_layout<> = true`, i.e. POD (compatible with C struct)
     */
@@ -124,7 +124,7 @@ namespace PPP
                 , data(_any)
                 , type("")
                 , flag(PropertyFlag::None){
-                      // todo: try to demangle the readeable type name
+                      // todo: try to demangle the readable type name
                       // std::cout << name << " Property user ctor\n";
                   };
 

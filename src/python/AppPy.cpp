@@ -13,7 +13,7 @@ namespace py = pybind11;
 PYBIND11_MODULE(ppp, m)
 {
     m.doc() = R"pbdoc(
-        Pybind11 wrapper of the parallel preprocesor
+        Pybind11 wrapper of the parallel preprocessor
         -----------------------
         .. currentmodule:: cmake_example
         .. autosummary::

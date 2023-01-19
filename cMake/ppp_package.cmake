@@ -84,7 +84,7 @@ if(NOT PPP_SINGLE_PACKAGE)
     set(CPACK_COMPONENTS_ALL applications libraries headers python data)
     # all components in one package is the default behaviour
     # windows and macos may select component in the GUI installer wizard
-    # otherwise generate multple component packages on Linux
+    # otherwise generate multiple component packages on Linux
     set(CPACK_RPM_COMPONENT_INSTALL ON)
     set(CPACK_DEB_COMPONENT_INSTALL ON)
 

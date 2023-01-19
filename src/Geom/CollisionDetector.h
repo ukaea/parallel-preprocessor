@@ -47,7 +47,7 @@ namespace Geom
     public:
         CollisionDetector()
         {
-            // The parent's default ctor be called automatically (implicitely)
+            // The parent's default ctor be called automatically (implicitly)
             myCharacteristics["coupled"] = true;
             myCharacteristics["indexPattern"] = IndexPattern::FilteredMatrix;
             myCharacteristics["indexDimension"] = 2;

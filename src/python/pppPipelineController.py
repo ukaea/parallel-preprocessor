@@ -6,7 +6,7 @@
 
 """
 This script defines utility functions that can be shared by all pipeline controllers such as GeomPipeline.py.
-By using those functions,  consistent command line argument and config.json header can be achived.
+By using those functions,  consistent command line argument and config.json header can be achieved.
 
 At the end of this script. a demonstration of usage of PPP core module, using CommandLineProcessor.
 ParallelAccessorTest.cpp is a demo (test) of instantiation of ProcessorTemplate class in C++
@@ -197,7 +197,7 @@ def generate_config_file(config_file_content, args):
 
     config_file_given = False
     generated_config_file_name = "config.json"
-    # input json file is config, but not geomtry input manifest file
+    # input json file is config, but not geometry input manifest file
     if args.input.find(".json") > 0:
         with open(args.input, "r") as f:
             _json_file_content = json.loads(f.read())

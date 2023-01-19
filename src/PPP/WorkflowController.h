@@ -7,7 +7,7 @@ namespace PPP
     /// dataflow topology type for workflow
     enum TopologyType
     {
-        Unknown = 0,  ///< default value, unkown, unspecified
+        Unknown = 0,  ///< default value, unknown, unspecified
         Pipeline = 1, ///< single data source, single output pipeline, no fork
         Tree = 2,     ///< single data source, multiple pipelines/forks/outputs
         Graph = 3     ///< Directed acyclic graph, most complicate
