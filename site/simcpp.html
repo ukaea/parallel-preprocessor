@@ -1,0 +1,2988 @@
+
+<!DOCTYPE HTML>
+<html lang="en-GB">
+    
+    <head>
+    <meta charset="UTF-8">
+    <!-- Redirect -->
+    <!--<meta http-equiv="refresh" content="1;url=doxygen/html/../index.html">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    
+    <title>parallel-preprocessor</title>
+
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <!-- Brand -->
+      <a class="navbar-brand" href="../index.html">parallel-preprocessor</a>
+    
+      <!-- Links -->
+      <ul class="navbar-nav">
+        <!-- Dropdown -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+          Documentation
+        </a>
+        <div class="dropdown-menu">
+          					<a class="dropdown-item" href="doxygen-docs.html">Doxygen Code Documentation</a>
+					<a class="dropdown-item" href="developer_documentation.html">Developer Guide</a>
+        </div>
+      </li>
+        <!-- Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+            Code Checks
+          </a>
+          <div class="dropdown-menu">
+            					<a class="dropdown-item" href="cppcheck.html">CPP Check</a>
+					<a class="dropdown-item" href="code-coverage.html">Code Coverage</a>
+					<a class="dropdown-item" href="flawfinder.html">Flawfinder</a>
+					<a class="dropdown-item" href="simcpp.html">Sim C++</a>
+					<a class="dropdown-item" href="clang_tidy.html">Clang Tidy</a>
+          </div>
+        </li>
+      </ul>
+    </nav> 
+        
+</head>
+        
+    <body>
+    <div class="container">
+    <div class="jumbotron">
+        <h1>Sim C++</h1>
+        <p>Sim C++ finds similarities within the code files.</p>
+    </div>
+    <p></p>
+    </div>
+    <div class="container">
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>File 1</th>
+        <th>File 2</th>
+      </tr>
+    </thead>
+    
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 148-201</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 202-255[144]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>break;
+	case BRepCheck_InvalidPointOnCurve:
+	error_msg << ";Invalid point on curve
+	break;
+	case BRepCheck_InvalidPointOnCurveOnS
+	error_msg << ";Invalid point on curve
+	break;
+	case BRepCheck_InvalidPointOnSurface:
+	error_msg << ";Invalid point on surfa
+	break;
+	case BRepCheck_No3DCurve:
+	error_msg << ";No 3D curve";
+	break;
+	case BRepCheck_Multiple3DCurve:
+	error_msg << ";Multiple 3D curve";
+	break;
+	case BRepCheck_Invalid3DCurve:
+	error_msg << ";Invalid 3D curve";
+	break;
+	case BRepCheck_NoCurveOnSurface:
+	error_msg << ";No curve on surface";
+	break;
+	case BRepCheck_InvalidCurveOnSurface:
+	error_msg << ";Invalid curve on surfa
+	break;
+	case BRepCheck_InvalidCurveOnClosedSu
+	error_msg << ";Invalid curve on close
+	break;
+	case BRepCheck_InvalidSameRangeFlag:
+	error_msg << ";Invalid same-range fla
+	break;
+	case BRepCheck_InvalidSameParameterFl
+	error_msg << ";Invalid same-parameter
+	break;
+	case BRepCheck_InvalidDegeneratedFlag
+	error_msg << ";Invalid degenerated fl
+	break;
+	case BRepCheck_FreeEdge:
+	error_msg << ";Free edge";
+	break;
+	case BRepCheck_InvalidMultiConnexity:
+	error_msg << ";Invalid multi-connexit
+	break;
+	case BRepCheck_InvalidRange:
+	error_msg << ";Invalid range";
+	break;
+	case BRepCheck_EmptyWire:
+	error_msg << ";Empty wire";
+	break;
+	case BRepCheck_RedundantEdge:
+	error_msg << ";Redundant edge";
+	break;
+	case BRepCheck_SelfIntersectingWire:
+	error_msg << ";Self-intersecting wire</code></td>
+          <td>	<code>break;
+	case BRepCheck_NoSurface:
+	error_msg << ";No surface";
+	break;
+	case BRepCheck_InvalidWire:
+	error_msg << ";Invalid wires";
+	break;
+	case BRepCheck_RedundantWire:
+	error_msg << ";Redundant wires";
+	break;
+	case BRepCheck_IntersectingWires:
+	error_msg << ";Intersecting wires";
+	break;
+	case BRepCheck_InvalidImbricationOfWi
+	error_msg << ";Invalid imbrication of
+	break;
+	case BRepCheck_InvalidImbricationOfSh
+	error_msg << ";BRepCheck_InvalidImbri
+	break;
+	case BRepCheck_EmptyShell:
+	error_msg << ";Empty shell";
+	break;
+	case BRepCheck_RedundantFace:
+	error_msg << ";Redundant face";
+	break;
+	case BRepCheck_UnorientableShape:
+	error_msg << ";Unorientable shape";
+	break;
+	case BRepCheck_NotClosed:
+	error_msg << ";Not closed";
+	break;
+	case BRepCheck_NotConnected:
+	error_msg << ";Not connected";
+	break;
+	case BRepCheck_SubshapeNotInShape:
+	error_msg << ";Subshape not in shape"
+	break;
+	case BRepCheck_BadOrientation:
+	error_msg << ";Bad orientation";
+	break;
+	case BRepCheck_BadOrientationOfSubsha
+	error_msg << ";Bad orientation of sub
+	break;
+	case BRepCheck_InvalidToleranceValue:
+	error_msg << ";Invalid tolerance valu
+	break;
+	case BRepCheck_EnclosedRegion:
+	error_msg << ";Enclosed region";
+	break;
+	case BRepCheck_InvalidPolygonOnTriang
+	error_msg << ";Invalid polygon on tri
+	break;
+	case BRepCheck_CheckFail:
+	error_msg << ";Check failed";</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 686-689</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 690-693[94]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>for (xp.Init(aShape, TopAbs_FACE, Top
+	this->myOtherShapes[xp.Current().Hash
+	for (xp.Init(aShape, TopAbs_WIRE, Top
+	this->myOtherShapes[xp.Current().Hash</code></td>
+          <td>	<code>for (xp.Init(aShape, TopAbs_EDGE, Top
+	this->myOtherShapes[xp.Current().Hash
+	for (xp.Init(aShape, TopAbs_VERTEX, T
+	this->myOtherShapes[xp.Current().Hash</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 70-82</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 97-110[90]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>Vertex = TopAbs_VERTEX
+	};
+	NLOHMANN_JSON_SERIALIZE_ENUM(ShapeTyp
+	{ShapeType::Shape, "Shape"},
+	{ShapeType::Compound, "Compound"},
+	{ShapeType::CompSolid, "CompSolid"},
+	{ShapeType::Solid, "Solid"},
+	{ShapeType::Shell, "Shell"},
+	{ShapeType::Wire, "Wire"},
+	{ShapeType::Face, "Face"},
+	{ShapeType::Edge, "Edge"},
+	{ShapeType::Vertex, "Vertex"},
+	});
+	</code></td>
+          <td>	<code>TessellationError = 512 ///< failed t
+	};
+	// then CollisionInfo can be implicit
+	NLOHMANN_JSON_SERIALIZE_ENUM(ShapeErr
+	{ShapeErrorType::NoError, "NoError"},
+	{ShapeErrorType::VolumeTooSmall, "Vol
+	{ShapeErrorType::ItemInvisible, "Item
+	{ShapeErrorType::BOPCheckFailed, "BOP
+	{ShapeErrorType::Interference, "Inter
+	{ShapeErrorType::Coincidence, "Coinci
+	{ShapeErrorType::Enclosure, "Enclosur
+	{ShapeErrorType::UnknownError, "Unkno
+	{ShapeErrorType::TessellationError, "
+	});</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 300-315</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 371-387  [81]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>template <typename T> const T attribu
+	{
+	if (myCharacteristics.contains(name))
+	{
+	json& a = myCharacteristics[name];
+	if (a.contains("value"))
+	{
+	return a["value"].get<T>(); // parame
+	}
+	else
+	{
+	return a.get<T>();
+	}
+	}
+	else
+	{
+	</code></td>
+          <td>	<code>template <typename T> const T paramet
+	{
+	// unit conversion may be necessary l
+	if (myConfig.contains(name))
+	{
+	json& a = myConfig[name];
+	if (a.contains("value"))
+	{
+	return a["value"].get<T>(); /// param
+	}
+	else
+	{
+	return a.get<T>(); /// key-value pair
+	}
+	}
+	else
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/AsynchronousDispatcher.h: line 88-102</strong></td>
+        <td style="text-align:center"><strong>src/PPP/ParallelAccessor.h: line 164-178[76]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>auto it = myRemainedItems.cbegin();
+	const auto& iend = myRemainedItems.ce
+	for (ItemIndexType i = 0; i < nProduc
+	{
+	while (it != iend && isLocked(*it))
+	{
+	it++;
+	}
+	if (it != iend)
+	{
+	myQueue.push(*it);
+	lockItem(*it);
+	it++;
+	}
+	}</code></td>
+          <td>	<code>auto it = myRemainedItems.cbegin();
+	const auto& iend = myRemainedItems.ce
+	for (ItemIndexType i = 0; i < myBatch
+	{
+	while (it != iend && isLocked(*it)) /
+	{
+	it++;
+	}
+	if (it != iend)
+	{
+	tmp.push_back(*it);
+	lockItem(*it);
+	it++;
+	}
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/ParallelAccessor.h: line 164-178</strong></td>
+        <td style="text-align:center"><strong>src/PPP/AsynchronousDispatcher.h: line 88-102[76]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>auto it = myRemainedItems.cbegin();
+	const auto& iend = myRemainedItems.ce
+	for (ItemIndexType i = 0; i < myBatch
+	{
+	while (it != iend && isLocked(*it)) /
+	{
+	it++;
+	}
+	if (it != iend)
+	{
+	tmp.push_back(*it);
+	lockItem(*it);
+	it++;
+	}
+	}</code></td>
+          <td>	<code>auto it = myRemainedItems.cbegin();
+	const auto& iend = myRemainedItems.ce
+	for (ItemIndexType i = 0; i < nProduc
+	{
+	while (it != iend && isLocked(*it))
+	{
+	it++;
+	}
+	if (it != iend)
+	{
+	myQueue.push(*it);
+	lockItem(*it);
+	it++;
+	}
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 202-228</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 229-255[72]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>break;
+	case BRepCheck_NoSurface:
+	error_msg << ";No surface";
+	break;
+	case BRepCheck_InvalidWire:
+	error_msg << ";Invalid wires";
+	break;
+	case BRepCheck_RedundantWire:
+	error_msg << ";Redundant wires";
+	break;
+	case BRepCheck_IntersectingWires:
+	error_msg << ";Intersecting wires";
+	break;
+	case BRepCheck_InvalidImbricationOfWi
+	error_msg << ";Invalid imbrication of
+	break;
+	case BRepCheck_InvalidImbricationOfSh
+	error_msg << ";BRepCheck_InvalidImbri
+	break;
+	case BRepCheck_EmptyShell:
+	error_msg << ";Empty shell";
+	break;
+	case BRepCheck_RedundantFace:
+	error_msg << ";Redundant face";
+	break;
+	case BRepCheck_UnorientableShape:
+	error_msg << ";Unorientable shape";</code></td>
+          <td>	<code>break;
+	case BRepCheck_NotClosed:
+	error_msg << ";Not closed";
+	break;
+	case BRepCheck_NotConnected:
+	error_msg << ";Not connected";
+	break;
+	case BRepCheck_SubshapeNotInShape:
+	error_msg << ";Subshape not in shape"
+	break;
+	case BRepCheck_BadOrientation:
+	error_msg << ";Bad orientation";
+	break;
+	case BRepCheck_BadOrientationOfSubsha
+	error_msg << ";Bad orientation of sub
+	break;
+	case BRepCheck_InvalidToleranceValue:
+	error_msg << ";Invalid tolerance valu
+	break;
+	case BRepCheck_EnclosedRegion:
+	error_msg << ";Enclosed region";
+	break;
+	case BRepCheck_InvalidPolygonOnTriang
+	error_msg << ";Invalid polygon on tri
+	break;
+	case BRepCheck_CheckFail:
+	error_msg << ";Check failed";</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/ThreadPoolExecutor.h: line 52-64</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Executor.h: line 59-71     [71]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>virtual void process() override
+	{
+	myProcessor->prepareInput();
+	const size_t NItems = myProcessor->in
+	if (NItems == 0)
+	{
+	LOG_F(ERROR, "item count is zero in d
+	}
+	
+	auto ip = myProcessor->attribute<Inde
+	auto dim = myProcessor->attribute<siz
+	// VLOG_F(LOGLEVEL_DEBUG, "debug info
+	if (ip == IndexPattern::PartitionIdVe</code></td>
+          <td>	<code>virtual void process() override
+	{
+	myProcessor->prepareInput();
+	
+	const size_t NItems = myProcessor->in
+	if (NItems == 0)
+	{
+	LOG_F(ERROR, "no items are loaded for
+	}
+	
+	auto ip = myProcessor->attribute<Inde
+	auto dim = myProcessor->attribute<siz
+	if (myProcessor->isCoupledOperation()</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Executor.h: line 59-71</strong></td>
+        <td style="text-align:center"><strong>src/PPP/ThreadPoolExecutor.h: line 52-64[71]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>virtual void process() override
+	{
+	myProcessor->prepareInput();
+	
+	const size_t NItems = myProcessor->in
+	if (NItems == 0)
+	{
+	LOG_F(ERROR, "no items are loaded for
+	}
+	
+	auto ip = myProcessor->attribute<Inde
+	auto dim = myProcessor->attribute<siz
+	if (myProcessor->isCoupledOperation()</code></td>
+          <td>	<code>virtual void process() override
+	{
+	myProcessor->prepareInput();
+	const size_t NItems = myProcessor->in
+	if (NItems == 0)
+	{
+	LOG_F(ERROR, "item count is zero in d
+	}
+	
+	auto ip = myProcessor->attribute<Inde
+	auto dim = myProcessor->attribute<siz
+	// VLOG_F(LOGLEVEL_DEBUG, "debug info
+	if (ip == IndexPattern::PartitionIdVe</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 117-126</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 126-134[62]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>ShapeErrorType itemError(const ItemIn
+	{
+	if (myShapeErrors->find((*myShapeIDs)
+	return (*myShapeErrors)[(*myShapeIDs)
+	else
+	return ShapeErrorType::NoError;
+	}
+	
+	/// test before use the value of the
+	inline const std::optional<Quantity_C</code></td>
+          <td>	<code>inline const std::optional<Quantity_C
+	{
+	if (myColorMap->find((*myShapeIDs)[in
+	return (*myColorMap)[(*myShapeIDs)[in
+	else
+	return std::nullopt;
+	}
+	///
+	inline const std::optional<Material>
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 321-335</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 337-346  [59]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	
+	/** Dependency management meta data r
+	some processor must run after depende
+	if some missing properties found in p
+	this API cooperate with the `produced
+	todo: register meta information in de
+	*/
+	std::vector<std::string> requiredProp
+	{
+	std::vector<std::string> myDependenci
+	if (myCharacteristics.contains("requi
+	{
+	myDependencies = myCharacteristics["r
+	}</code></td>
+          <td>	<code>}
+	
+	/// a vector of names for properties
+	std::vector<std::string> producedProp
+	{
+	std::vector<std::string> myProducts;
+	if (myCharacteristics.contains("produ
+	{
+	myProducts = myCharacteristics["produ
+	}
+	
+	
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 103-107</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 179-183[58]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>if (Utilities::hasFileExt(file_name,
+	Utilities::hasFileExt(file_name, "igs
+	{
+	this->readXCAFDoc(file_name);
+	this->loadXCAFDoc();</code></td>
+          <td>	<code>if (Utilities::hasFileExt(file_name,
+	Utilities::hasFileExt(file_name, "igs
+	{
+	this->readXCAFDoc(file_name);
+	this->loadXCAFDoc(metadata);</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 94-104</strong></td>
+        <td style="text-align:center"><strong>src/PPP/WorkflowController.h: line 10-20[57]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>Coincidence = 64, ///< identical shap
+	Enclosure = 128, ///< a smaller shape
+	UnknownError = 256, ///< equal to Col
+	TessellationError = 512 ///< failed t
+	};
+	// then CollisionInfo can be implicit
+	NLOHMANN_JSON_SERIALIZE_ENUM(ShapeErr
+	{ShapeErrorType::NoError, "NoError"},
+	{ShapeErrorType::VolumeTooSmall, "Vol
+	{ShapeErrorType::ItemInvisible, "Item
+	{ShapeErrorType::BOPCheckFailed, "BOP</code></td>
+          <td>	<code>Unknown = 0, ///< default value, unkn
+	Pipeline = 1, ///< single data source
+	Tree = 2, ///< single data source, mu
+	Graph = 3 ///< Directed acyclic graph
+	};
+	
+	NLOHMANN_JSON_SERIALIZE_ENUM(Topology
+	{TopologyType::Unknown, "Unknown"},
+	{TopologyType::Pipeline, "Pipeline"},
+	{TopologyType::Tree, "True"},
+	{TopologyType::Graph, "Graph"},</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/WorkflowController.h: line 10-20</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 67-76[57]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>Unknown = 0, ///< default value, unkn
+	Pipeline = 1, ///< single data source
+	Tree = 2, ///< single data source, mu
+	Graph = 3 ///< Directed acyclic graph
+	};
+	
+	NLOHMANN_JSON_SERIALIZE_ENUM(Topology
+	{TopologyType::Unknown, "Unknown"},
+	{TopologyType::Pipeline, "Pipeline"},
+	{TopologyType::Tree, "True"},
+	{TopologyType::Graph, "Graph"},</code></td>
+          <td>	<code>Wire = TopAbs_WIRE,
+	Face = TopAbs_FACE,
+	Edge = TopAbs_EDGE,
+	Vertex = TopAbs_VERTEX
+	};
+	NLOHMANN_JSON_SERIALIZE_ENUM(ShapeTyp
+	{ShapeType::Shape, "Shape"},
+	{ShapeType::Compound, "Compound"},
+	{ShapeType::CompSolid, "CompSolid"},
+	{ShapeType::Solid, "Solid"},
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 126-132</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 134-140[53]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>inline const std::optional<Quantity_C
+	{
+	if (myColorMap->find((*myShapeIDs)[in
+	return (*myColorMap)[(*myShapeIDs)[in
+	else
+	return std::nullopt;
+	}</code></td>
+          <td>	<code>inline const std::optional<Material>
+	{
+	if (myMaterialMap->find((*myShapeIDs)
+	return (*myMaterialMap)[(*myShapeIDs)
+	else
+	return std::nullopt;
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 253-256</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 257-260[52]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>j.at("volume").get_to(p.volume);
+	j.at("area").get_to(p.area);
+	j.at("perimeter").get_to(p.perimeter)
+	j.at("tolerance").get_to(p.tolerance)</code></td>
+          <td>	<code>j.at("solidCount").get_to(p.solidCoun
+	j.at("faceCount").get_to(p.faceCount)
+	j.at("edgeCount").get_to(p.edgeCount)
+	j.at("centerOfMass").get_to(p.centerO</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 737-740</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 740-743[51]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>sout << " ======= input geometry summ
+	sout << " length of solids: " << mySo
+	sout << " length of shells: " << mySh
+	sout << " length of compounds: " << m</code></td>
+          <td>	<code>sout << " length of compounds: " << m
+	sout << " length of name map: " << my
+	sout << " length of color map: " << m
+	sout << " length of material map: " <</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Parameter.h: line 51-52</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 245-247[49]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>return json{{"type", p.type}, {"name"
+	{"range", p.range}, {"unit", p.unit},
+	</code></td>
+          <td>	<code>j = json{{"volume", p.volume}, {"area
+	{"perimeter", p.perimeter}, {"toleran
+	{"solidCount", p.solidCount}, {"faceC</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/SparseMatrix.h: line 80-86</strong></td>
+        <td style="text-align:center"><strong>src/PPP/SparseMatrix.h: line 93-99 [49]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>bool hasElement(const size_t row, con
+	{
+	if (mat.size() >= row)
+	{
+	for (const auto& it : (*mat[row]))
+	{
+	if (col == it.first)</code></td>
+          <td>	<code>T getElement(const size_t row, const
+	{
+	if (mat.size() >= row)
+	{
+	for (const auto& it : (*mat[row]))
+	{
+	if (col == it.first)</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 9-27</strong></td>
+        <td style="text-align:center"><strong>src/PPP/TypeDefs.h: line 37-55     [48]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>using namespace PPP;
+	
+	/**
+	* to specify search input criteria an
+	*
+	* CONSIDER: boundbox tree may be buil
+	* need a relative tolerance like to j
+	* */
+	enum class ShapeSearchType
+	{
+	UniqueId, ///!< geometry ID hashed fr
+	GeometryFile, ///!< read the geometry
+	BoundBox, ///!< axis align bound box,
+	};
+	NLOHMANN_JSON_SERIALIZE_ENUM(ShapeSea
+	{ShapeSearchType::UniqueId, "UniqueId
+	{ShapeSearchType::GeometryFile, "Geom
+	{ShapeSearchType::BoundBox, "BoundBox
+	});</code></td>
+          <td>	<code>using namespace magic_enum;
+	
+	/**
+	* Processing on CPU should be impleme
+	* GPU is not supported yet (tensorflo
+	* currently, only CPU is implemented.
+	* */
+	enum class DevicePreference
+	{
+	CPU, ///< item count is small, but pr
+	GPU, ///< GPU acceleration, suitable
+	FPGA, ///< good for realtime data pro
+	};
+	
+	NLOHMANN_JSON_SERIALIZE_ENUM(DevicePr
+	{DevicePreference::CPU, "CPU"},
+	{DevicePreference::GPU, "GPU"},
+	{DevicePreference::FPGA, "FPGA"},
+	});</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/TypeDefs.h: line 37-55</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 9-27[48]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>using namespace magic_enum;
+	
+	/**
+	* Processing on CPU should be impleme
+	* GPU is not supported yet (tensorflo
+	* currently, only CPU is implemented.
+	* */
+	enum class DevicePreference
+	{
+	CPU, ///< item count is small, but pr
+	GPU, ///< GPU acceleration, suitable
+	FPGA, ///< good for realtime data pro
+	};
+	
+	NLOHMANN_JSON_SERIALIZE_ENUM(DevicePr
+	{DevicePreference::CPU, "CPU"},
+	{DevicePreference::GPU, "GPU"},
+	{DevicePreference::FPGA, "FPGA"},
+	});</code></td>
+          <td>	<code>using namespace PPP;
+	
+	/**
+	* to specify search input criteria an
+	*
+	* CONSIDER: boundbox tree may be buil
+	* need a relative tolerance like to j
+	* */
+	enum class ShapeSearchType
+	{
+	UniqueId, ///!< geometry ID hashed fr
+	GeometryFile, ///!< read the geometry
+	BoundBox, ///!< axis align bound box,
+	};
+	NLOHMANN_JSON_SERIALIZE_ENUM(ShapeSea
+	{ShapeSearchType::UniqueId, "UniqueId
+	{ShapeSearchType::GeometryFile, "Geom
+	{ShapeSearchType::BoundBox, "BoundBox
+	});</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 765-770</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 771-776[48]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myOutputData->emplace("mySolidIDs", s
+	myOutputData->emplace("myShapeErrors"
+	
+	// those three types are not used in
+	myOutputData->emplace("myShells", std
+	myOutputData->emplace("myCompounds",</code></td>
+          <td>	<code>myOutputData->emplace("myOtherShapes"
+	
+	// STEP214 meta data
+	myOutputData->emplace("myColorMap", s
+	myOutputData->emplace("myMaterialMap"
+	myOutputData->emplace<MapType<ItemHas</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 15-22</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 28-34[48]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>j = nlohmann::json{xmin, ymin, zmin,
+	}
+	
+	/// Bnd_Box: Standard_Real xmin, ymin,
+	inline void from_json(const nlohmann::j
+	{
+	std::vector<Standard_Real> v = j;
+	b.Update(v[0], v[1], v[2], v[3], v[4]</code></td>
+          <td>	<code>j = nlohmann::json{p.Red(), p.Green()
+	}
+	/// json array [R, G, B, A]; Quantity_C
+	inline void from_json(const nlohmann::j
+	{
+	std::vector<Standard_Real> v = j;
+	b.SetValues(v[0], v[1], v[2], Quantit
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 109-112</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 117-120[47]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>inline const std::string itemName(con
+	{
+	if (myNameMap->find((*myShapeIDs)[ind
+	return (*myNameMap)[(*myShapeIDs)[ind</code></td>
+          <td>	<code>ShapeErrorType itemError(const ItemIn
+	{
+	if (myShapeErrors->find((*myShapeIDs)
+	return (*myShapeErrors)[(*myShapeIDs)</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 132-139</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Logger.h: line 15-22       [47]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>NLOHMANN_JSON_SERIALIZE_ENUM(Collisio
+	{NoCollision, "NoCollision"},
+	{Clearance, "Clearance"},
+	{FaceContact, "FaceContact"},
+	{EdgeContact, "EdgeContact"},
+	{VertexContact, "VertexContact"},
+	{Interference, "Interference"},
+	{Coincidence, "Coincidence"},</code></td>
+          <td>	<code>NLOHMANN_JSON_SERIALIZE_ENUM(NamedVer
+	{Verbosity_OFF, "OFF"},
+	{Verbosity_FATAL, "FATAL"}, /// progr
+	{Verbosity_ERROR, "ERROR"}, /// red t
+	{Verbosity_WARNING, "WARNING"}, /// y
+	{Verbosity_INFO, "INFO"}, /// default
+	{Verbosity_1, "PROGRESS"}, /// 1 for
+	{Verbosity_2, "DEBUG"}, /// 2 for log</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Logger.h: line 15-22</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 132-139[47]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>NLOHMANN_JSON_SERIALIZE_ENUM(NamedVer
+	{Verbosity_OFF, "OFF"},
+	{Verbosity_FATAL, "FATAL"}, /// progr
+	{Verbosity_ERROR, "ERROR"}, /// red t
+	{Verbosity_WARNING, "WARNING"}, /// y
+	{Verbosity_INFO, "INFO"}, /// default
+	{Verbosity_1, "PROGRESS"}, /// 1 for
+	{Verbosity_2, "DEBUG"}, /// 2 for log</code></td>
+          <td>	<code>NLOHMANN_JSON_SERIALIZE_ENUM(Collisio
+	{NoCollision, "NoCollision"},
+	{Clearance, "Clearance"},
+	{FaceContact, "FaceContact"},
+	{EdgeContact, "EdgeContact"},
+	{VertexContact, "VertexContact"},
+	{Interference, "Interference"},
+	{Coincidence, "Coincidence"},</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 422-433</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 442-452  [47]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>template <typename T> const T paramet
+	{
+	Parameter<T> p;
+	if (myConfig.contains(name))
+	{
+	const json& a = myConfig[name];
+	p = Parameter<T>::fromJson(a);
+	}
+	else
+	{
+	LOG_F(ERROR,
+	"parameter `%s` is not found in confi</code></td>
+          <td>	<code>template <typename T> const T paramet
+	{
+	Parameter<T> p;
+	if (myConfig.contains(name))
+	{
+	const json& a = myConfig[name];
+	p = Parameter<T>::fromJson(a);
+	}
+	else
+	{
+	LOG_F(WARNING, "parameter `%s` is not
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 105-110</strong></td>
+        <td style="text-align:center"><strong>src/PPP/TypeDefs.h: line 109-114   [47]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>{ShapeErrorType::Interference, "Inter
+	{ShapeErrorType::Coincidence, "Coinci
+	{ShapeErrorType::Enclosure, "Enclosur
+	{ShapeErrorType::UnknownError, "Unkno
+	{ShapeErrorType::TessellationError, "
+	});</code></td>
+          <td>	<code>{IndexPattern::LowerTriangle, "LowerT
+	{IndexPattern::DenseMatrix, "DenseMat
+	{IndexPattern::SparseMatrix, "SparseM
+	{IndexPattern::FilteredMatrix, "Filte
+	{IndexPattern::PartitionIdVector, "Pa
+	});</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 690-691</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 692-693[47]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>for (xp.Init(aShape, TopAbs_EDGE, Top
+	this->myOtherShapes[xp.Current().Hash</code></td>
+          <td>	<code>for (xp.Init(aShape, TopAbs_VERTEX, T
+	this->myOtherShapes[xp.Current().Hash</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 445-452</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 477-484  [46]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>if (myConfig.contains(name))
+	{
+	const json& a = myConfig[name];
+	p = Parameter<T>::fromJson(a);
+	}
+	else
+	{
+	LOG_F(WARNING, "parameter `%s` is not</code></td>
+          <td>	<code>if (gConfig.contains(name))
+	{
+	const json& a = gConfig[name];
+	p = Parameter<T>::fromJson(a);
+	}
+	else
+	{
+	LOG_F(ERROR, "parameter %s is not fou</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 48-62</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 105-129[45]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>virtual void prepareOutput() override
+	{
+	// volumeCheck();
+	// dump(dataStoragePath("gproperties_
+	// report, save and display erroneous
+	if (myConfig.contains("output"))
+	{
+	auto file_name = dataStoragePath(para
+	writeMetaData(file_name);
+	}
+	else
+	{
+	LOG_F(WARNING, "user must provided ou
+	}
+	myOutputData->emplace("myGeometryProp
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	</code></td>
+          <td>	<code>virtual void prepareOutput() override
+	{
+	
+	if (myConfig.contains("output"))
+	{
+	auto file_name = dataStoragePath(para
+	writeResult(file_name);
+	}
+	else
+	{
+	LOG_F(WARNING, "user must provided ou
+	}
+	/*
+	if (suppressMatched)
+	{
+	for (size_t r = 0; r < myFilterCount;
+	{
+	const auto& matched = myMatchedResult
+	{
+	// done in writeResult()
+	}
+	}
+	}
+	*/
+	myOutputData->emplace<decltype(myMatc</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 105-129</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 48-62[45]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>virtual void prepareOutput() override
+	{
+	
+	if (myConfig.contains("output"))
+	{
+	auto file_name = dataStoragePath(para
+	writeResult(file_name);
+	}
+	else
+	{
+	LOG_F(WARNING, "user must provided ou
+	}
+	/*
+	if (suppressMatched)
+	{
+	for (size_t r = 0; r < myFilterCount;
+	{
+	const auto& matched = myMatchedResult
+	{
+	// done in writeResult()
+	}
+	}
+	}
+	*/
+	myOutputData->emplace<decltype(myMatc</code></td>
+          <td>	<code>virtual void prepareOutput() override
+	{
+	// volumeCheck();
+	// dump(dataStoragePath("gproperties_
+	// report, save and display erroneous
+	if (myConfig.contains("output"))
+	{
+	auto file_name = dataStoragePath(para
+	writeMetaData(file_name);
+	}
+	else
+	{
+	LOG_F(WARNING, "user must provided ou
+	}
+	myOutputData->emplace("myGeometryProp
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 86-90</strong></td>
+        <td style="text-align:center"><strong>src/Geom/CollisionDetector.h: line 70-75[41]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>GeometryProcessor::prepareInput();
+	if (myInputData->contains("myShapeOri
+	myShapeOrientedBoundBoxes = myInputDa
+	
+	myGeometryProperties = myInputData->g
+	</code></td>
+          <td>	<code>myShapeBoundBoxes = myInputData->get<
+	
+	if (myInputData->contains("myShapeOri
+	myShapeOrientedBoundBoxes = myInputDa
+	
+	myGeometryProperties = myInputData->g</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/CollisionDetector.h: line 70-75</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 86-90[41]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myShapeBoundBoxes = myInputData->get<
+	
+	if (myInputData->contains("myShapeOri
+	myShapeOrientedBoundBoxes = myInputDa
+	
+	myGeometryProperties = myInputData->g</code></td>
+          <td>	<code>GeometryProcessor::prepareInput();
+	if (myInputData->contains("myShapeOri
+	myShapeOrientedBoundBoxes = myInputDa
+	
+	myGeometryProperties = myInputData->g
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Parameter.h: line 30-33</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Parameter.h: line 34-37    [40]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>p.value = j["value"].get<T>();
+	if (j.contains("name"))
+	p.name = j["name"].get<std::string>()
+	if (j.contains("doc"))</code></td>
+          <td>	<code>p.doc = j["doc"].get<std::string>();
+	if (j.contains("unit"))
+	p.unit = j["unit"].get<std::string>()
+	if (j.contains("range"))</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 245-248</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Parameter.h: line 51-52    [40]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>j = json{{"volume", p.volume}, {"area
+	{"perimeter", p.perimeter}, {"toleran
+	{"solidCount", p.solidCount}, {"faceC
+	{"edgeCount", p.edgeCount}, {"centerO</code></td>
+          <td>	<code>return json{{"type", p.type}, {"name"
+	{"range", p.range}, {"unit", p.unit},
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/TypeDefs.h: line 99-109</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 19-26[39]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>DenseMatrix, ///< 2D traverse, both o
+	/// coupled operation
+	SparseMatrix, ///< must provide a ind
+	FilteredMatrix, ///< executor will ca
+	
+	};
+	
+	NLOHMANN_JSON_SERIALIZE_ENUM(IndexPat
+	{IndexPattern::Linear, "Linear"},
+	{IndexPattern::UpperTriangle, "UpperT
+	{IndexPattern::LowerTriangle, "LowerT</code></td>
+          <td>	<code>UniqueId, ///!< geometry ID hashed fr
+	GeometryFile, ///!< read the geometry
+	BoundBox, ///!< axis align bound box,
+	};
+	NLOHMANN_JSON_SERIALIZE_ENUM(ShapeSea
+	{ShapeSearchType::UniqueId, "UniqueId
+	{ShapeSearchType::GeometryFile, "Geom
+	{ShapeSearchType::BoundBox, "BoundBox
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/TypeDefs.h: line 110-114</strong></td>
+        <td style="text-align:center"><strong>src/PPP/WorkflowController.h: line 17-21[38]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>{IndexPattern::DenseMatrix, "DenseMat
+	{IndexPattern::SparseMatrix, "SparseM
+	{IndexPattern::FilteredMatrix, "Filte
+	{IndexPattern::PartitionIdVector, "Pa
+	});</code></td>
+          <td>	<code>{TopologyType::Unknown, "Unknown"},
+	{TopologyType::Pipeline, "Pipeline"},
+	{TopologyType::Tree, "True"},
+	{TopologyType::Graph, "Graph"},
+	});</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 479-483</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 502-507[38]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>if (Utilities::hasFileExt(file_name,
+	{
+	STEPCAFControl_Reader aReader;
+	aReader.SetColorMode(true);
+	aReader.SetNameMode(true);
+	</code></td>
+          <td>	<code>else if (Utilities::hasFileExt(file_n
+	{
+	// IGESControl_Controller::Init();
+	IGESCAFControl_Reader aReader;
+	aReader.SetColorMode(true);
+	aReader.SetNameMode(true);</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 113-119</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 185-191[37]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>else if (Utilities::hasFileExt(file_n
+	{
+	this->readManifestFile(file_name);
+	}
+	else if (Utilities::hasFileExt(file_n
+	{
+	readBrep(file_name);</code></td>
+          <td>	<code>else if (Utilities::hasFileExt(file_n
+	{
+	this->readFreeCADFile(file_name);
+	}
+	else if (Utilities::hasFileExt(file_n
+	{
+	readBrep(file_name, metadata);</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/OccUtils.h: line 54-66</strong></td>
+        <td style="text-align:center"><strong>src/Geom/OccUtils.h: line 94-97    [37]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>GeomExport std::map<std::string, int>
+	
+	/// based on axis-aligned boundbox ma
+	GeomExport Standard_Boolean isCoincid
+	
+	/// two-step unifying: first unify ed
+	/// deprecated: use glueFaces() inste
+	GeomExport TopoDS_Shape unifyFaces(co
+	
+	/// the input shapes to be glued shou
+	/// adapted from Geom module of Salom
+	/// see the function `glueFaces` in G
+	GeomExport TopoDS_Shape glueFaces(con</code></td>
+          <td>	<code>GeomExport Standard_Real tolerance(co
+	GeomExport Standard_Real distance(con
+	GeomExport UniqueIdType uniqueId(cons
+	GeomExport UniqueIdType uniqueId(cons
+	
+	
+	
+	
+	
+	
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 60-70</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 114-124[36]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>enum class ShapeType
+	{
+	Shape = TopAbs_SHAPE,
+	Compound = TopAbs_COMPOUND,
+	CompSolid = TopAbs_COMPSOLID,
+	Solid = TopAbs_SOLID,
+	Shell = TopAbs_SHELL,
+	Wire = TopAbs_WIRE,
+	Face = TopAbs_FACE,
+	Edge = TopAbs_EDGE,
+	Vertex = TopAbs_VERTEX</code></td>
+          <td>	<code>enum CollisionType
+	{
+	NoCollision = 0, ///< not related, XO
+	Clearance = 1, ///< within a gap thre
+	VertexContact = 2, ///< only share ve
+	EdgeContact = 4, ///< share edge, but
+	FaceContact = 8, ///< face contact, t
+	WeakInterference = 16, ///< small int
+	Interference = 32, ///< overlapping,
+	Coincidence = 64, ///< identical shap
+	Enclosure = 128, ///< a smaller shape</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 263-269</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 408-414[36]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	else
+	{
+	const char* ns = p["name"].get<std::s
+	LOG_F(WARNING, "shape `%s` is not sol
+	}
+	}</code></td>
+          <td>	<code>}
+	else
+	{
+	const char* ns = p["name"].get<std::s
+	LOG_F(WARNING, "shape `%s` has been m
+	}
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/ThreadPoolExecutor.h: line 223-229</strong></td>
+        <td style="text-align:center"><strong>src/PPP/ThreadPoolExecutor.h: line 249-257[36]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>for (auto indexer : ids[t]) // if the
+	{
+	if (dim == 2)
+	myProcessor->processItemPair(indexer[
+	else
+	myProcessor->processItem(indexer[0]);
+	}
+	
+	</code></td>
+          <td>	<code>for (auto indexer : ids) // if there
+	{
+	if (dim == 2)
+	myProcessor->processItemPair(indexer[
+	else
+	myProcessor->processItem(indexer[0]);
+	// loglevel 1 means PROGRESS, disable
+	// VLOG_F(PROGRESS, "processing pair
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 103-104</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 111-112[36]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>if (myShapeErrors && myShapeErrors->f
+	return (*myShapeErrors)[(*myShapeIDs)</code></td>
+          <td>	<code>if (myNameMap->find((*myShapeIDs)[ind
+	return (*myNameMap)[(*myShapeIDs)[ind</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 107-113</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 183-189[36]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>this->loadXCAFDoc();
+	}
+	else if (Utilities::hasFileExt(file_n
+	{
+	this->readFreeCADFile(file_name);
+	}
+	else if (Utilities::hasFileExt(file_n</code></td>
+          <td>	<code>this->loadXCAFDoc(metadata);
+	}
+	else if (Utilities::hasFileExt(file_n
+	{
+	this->readFreeCADFile(file_name);
+	}
+	else if (Utilities::hasFileExt(file_n</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 371-379</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 396-404  [35]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>template <typename T> const T paramet
+	{
+	// unit conversion may be necessary l
+	if (myConfig.contains(name))
+	{
+	json& a = myConfig[name];
+	if (a.contains("value"))
+	{
+	return a["value"].get<T>(); /// param</code></td>
+          <td>	<code>const json parameterJson(const std::s
+	{
+	// unit conversion may be necessary l
+	if (myConfig.contains(name))
+	{
+	json& a = myConfig[name];
+	if (a.contains("value"))
+	{
+	return a["value"]; /// parameter form</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 341-344</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 359-363[35]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>const BOPAlgo_ListOfCheckResult& BOPR
+	BOPAlgo_ListIteratorOfListOfCheckResu
+	for (size_t j = 0; BOPResultsIt.More(
+	{
+	</code></td>
+          <td>	<code>const auto& faultyShapes1 = result.Ge
+	TopTools_ListIteratorOfListOfShape fa
+	
+	for (size_t k = 0; faultyShapes1It.Mo
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/CommandLineProcessor.h: line 100-111</strong></td>
+        <td style="text-align:center"><strong>src/Geom/ProcessorSample.h: line 50-60[35]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>virtual void prepareOutput() override
+	{
+	myOutputData->emplace<decltype(myItem
+	}
+	
+	/**
+	* \brief process data item in paralle
+	*
+	* @param index: index to get input da
+	*/
+	virtual void processItem(const ItemIn
+	{</code></td>
+          <td>	<code>virtual void prepareOutput() override
+	{
+	myOutputData->emplace<decltype(myData
+	}
+	
+	/**
+	* \brief process single data item in
+	* @param index: index to get/set by i
+	*/
+	virtual void processItem(const ItemIn
+	{
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 2-28</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 2-55[35]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>#ifndef PPP_GEOMETRY_WRITER_H
+	#define PPP_GEOMETRY_WRITER_H
+	
+	
+	#include "GeometryProcessor.h"
+	#include "OccUtils.h"
+	#include "PPP/Writer.h"
+	
+	
+	namespace Geom
+	{
+	using namespace PPP;
+	
+	/// \ingroup Geom
+	/**
+	* \brief write out processed geometry
+	*/
+	class GeometryWriter : public Writer
+	{
+	TYPESYSTEM_HEADER();
+	
+	private:
+	/// @{
+	
+	Handle(XCAFDoc_ShapeTool) myShapeTool
+	Handle(XCAFDoc_ColorTool) myColorTool
+	Handle(XCAFDoc_MaterialTool) myMateri
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	</code></td>
+          <td>	<code>#ifndef PPP_GEOMETRY_READER_H
+	#define PPP_GEOMETRY_READER_H
+	
+	#include "GeometryData.h"
+	#include "GeometryProcessor.h"
+	#include "PPP/Reader.h"
+	
+	#include "OpenCascadeAll.h"
+	
+	
+	namespace Geom
+	{
+	using namespace PPP;
+	
+	/// \ingroup Geom
+	/**
+	* read geometry file and generate Geo
+	* must be in sequential mode, should
+	* for the input manifest of multiple
+	*
+	* Aupported geometry file formats
+	* + step/stp AP214(with material and
+	* + IGES/igs: OpenCASCADE XCAF reader
+	* + FreeCAD native format *.FCStd
+	* + parallel preproessor output: *.br
+	* + manifest.json textual format: a l
+	* this json file must ended with "man
+	* ```json
+	* [{
+	* "material": "one_material",
+	* "filename": "absolute_path or path_
+	* },
+	* {
+	* "material": "another material",
+	* "filename": "absolute_path or path_
+	* }]
+	* ```
+	* Note: 1. filename key can be any st
+	* but recommend to use just "filename
+	* 2. currently all input geometry for
+	*/
+	class GeometryReader : public Reader
+	{
+	TYPESYSTEM_HEADER();
+	
+	private:
+	// some info/objects should be obtain
+	// const PipelineController* myProces
+	
+	/// @{
+	Handle(XCAFApp_Application) hApp; //
+	Handle(TDocStd_Document) hDoc; // lea
+	
+	Handle(XCAFDoc_ShapeTool) myShapeTool</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 329-334</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 409-414[35]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>else
+	{
+	const char* ns = p["name"].get<std::s
+	LOG_F(WARNING, "shape `%s` has been m
+	}
+	}</code></td>
+          <td>	<code>else
+	{
+	const char* ns = p["name"].get<std::s
+	LOG_F(WARNING, "shape `%s` has been m
+	}
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/ProcessorSample.h: line 50-60</strong></td>
+        <td style="text-align:center"><strong>src/PPP/CommandLineProcessor.h: line 100-111[35]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>virtual void prepareOutput() override
+	{
+	myOutputData->emplace<decltype(myData
+	}
+	
+	/**
+	* \brief process single data item in
+	* @param index: index to get/set by i
+	*/
+	virtual void processItem(const ItemIn
+	{
+	</code></td>
+          <td>	<code>virtual void prepareOutput() override
+	{
+	myOutputData->emplace<decltype(myItem
+	}
+	
+	/**
+	* \brief process data item in paralle
+	*
+	* @param index: index to get input da
+	*/
+	virtual void processItem(const ItemIn
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 2-55</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 2-28[35]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>#ifndef PPP_GEOMETRY_READER_H
+	#define PPP_GEOMETRY_READER_H
+	
+	#include "GeometryData.h"
+	#include "GeometryProcessor.h"
+	#include "PPP/Reader.h"
+	
+	#include "OpenCascadeAll.h"
+	
+	
+	namespace Geom
+	{
+	using namespace PPP;
+	
+	/// \ingroup Geom
+	/**
+	* read geometry file and generate Geo
+	* must be in sequential mode, should
+	* for the input manifest of multiple
+	*
+	* Aupported geometry file formats
+	* + step/stp AP214(with material and
+	* + IGES/igs: OpenCASCADE XCAF reader
+	* + FreeCAD native format *.FCStd
+	* + parallel preproessor output: *.br
+	* + manifest.json textual format: a l
+	* this json file must ended with "man
+	* ```json
+	* [{
+	* "material": "one_material",
+	* "filename": "absolute_path or path_
+	* },
+	* {
+	* "material": "another material",
+	* "filename": "absolute_path or path_
+	* }]
+	* ```
+	* Note: 1. filename key can be any st
+	* but recommend to use just "filename
+	* 2. currently all input geometry for
+	*/
+	class GeometryReader : public Reader
+	{
+	TYPESYSTEM_HEADER();
+	
+	private:
+	// some info/objects should be obtain
+	// const PipelineController* myProces
+	
+	/// @{
+	Handle(XCAFApp_Application) hApp; //
+	Handle(TDocStd_Document) hDoc; // lea
+	
+	Handle(XCAFDoc_ShapeTool) myShapeTool</code></td>
+          <td>	<code>#ifndef PPP_GEOMETRY_WRITER_H
+	#define PPP_GEOMETRY_WRITER_H
+	
+	
+	#include "GeometryProcessor.h"
+	#include "OccUtils.h"
+	#include "PPP/Writer.h"
+	
+	
+	namespace Geom
+	{
+	using namespace PPP;
+	
+	/// \ingroup Geom
+	/**
+	* \brief write out processed geometry
+	*/
+	class GeometryWriter : public Writer
+	{
+	TYPESYSTEM_HEADER();
+	
+	private:
+	/// @{
+	
+	Handle(XCAFDoc_ShapeTool) myShapeTool
+	Handle(XCAFDoc_ColorTool) myColorTool
+	Handle(XCAFDoc_MaterialTool) myMateri
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/ProcessorResult.h: line 16-20</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 172-175[34]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>};
+	
+	inline void to_json(json& j, const Pr
+	{
+	j = json{{"status", p.status}, {"resu</code></td>
+          <td>	<code>};
+	inline void to_json(json& j, const Co
+	{
+	j = json{{"firstIndex", p.first}, {"s
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 238-245</strong></td>
+        <td style="text-align:center"><strong>src/PPP/ProcessorResult.h: line 16-20[34]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>};
+	
+	/// enable automatic data conversion
+	/// https://github.com/nlohmann/json#
+	/// from_json() may not safe, use wit
+	inline void to_json(json& j, const Ge
+	{
+	j = json{{"volume", p.volume}, {"area</code></td>
+          <td>	<code>};
+	
+	inline void to_json(json& j, const Pr
+	{
+	j = json{{"status", p.status}, {"resu
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 484-489</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 507-514[34]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>aReader.SetMatMode(true);
+	// aReader.SetLayerMode(true);
+	if (aReader.ReadFile((Standard_CStrin
+	{
+	throw OSD_Exception("cannot read STEP
+	}
+	
+	</code></td>
+          <td>	<code>aReader.SetNameMode(true);
+	// aReader.SetMatMode(true); // no su
+	
+	// IGESControl_Reader aReader;
+	if (aReader.ReadFile((Standard_CStrin
+	{
+	throw OSD_Exception("cannot read IGES
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 350-352</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 501-503  [33]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>fs::path fc_parser_path = Processor::
+	if (not fs::exists(fc_parser_path))
+	{</code></td>
+          <td>	<code>fs::path py_monitor_path = Processor:
+	if (not fs::exists(py_monitor_path))
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 175-175</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 245-246[33]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>j = json{{"firstIndex", p.first}, {"s
+	</code></td>
+          <td>	<code>j = json{{"volume", p.volume}, {"area
+	{"perimeter", p.perimeter}, {"toleran</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 206-211</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 313-318[33]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>int solidCount = 0;
+	TopExp_Explorer Ex(shape, TopAbs_SOLI
+	while (Ex.More())
+	{
+	const TopoDS_Shape& s = Ex.Current();
+	json pp = p;</code></td>
+          <td>	<code>int solidCount = 0;
+	TopExp_Explorer Ex(shape, TopAbs_SOLI
+	while (Ex.More())
+	{
+	const TopoDS_Shape& s = Ex.Current();
+	UniqueIdType gid = OccUtils::uniqueId</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 501-503</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 350-352[33]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>fs::path py_monitor_path = Processor:
+	if (not fs::exists(py_monitor_path))
+	{</code></td>
+          <td>	<code>fs::path fc_parser_path = Processor::
+	if (not fs::exists(fc_parser_path))
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/CollisionDetector.h: line 39-41</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 60-62[32]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>std::shared_ptr<VectorType<Bnd_Box>>
+	std::shared_ptr<VectorType<GeometryPr
+	std::shared_ptr<VectorType<Bnd_OBB>></code></td>
+          <td>	<code>std::shared_ptr<VectorType<Bnd_Box>>
+	std::shared_ptr<VectorType<GeometryPr
+	std::shared_ptr<VectorType<Bnd_OBB>></code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 229-240</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 241-252[32]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>break;
+	case BRepCheck_NotClosed:
+	error_msg << ";Not closed";
+	break;
+	case BRepCheck_NotConnected:
+	error_msg << ";Not connected";
+	break;
+	case BRepCheck_SubshapeNotInShape:
+	error_msg << ";Subshape not in shape"
+	break;
+	case BRepCheck_BadOrientation:
+	error_msg << ";Bad orientation";</code></td>
+          <td>	<code>break;
+	case BRepCheck_BadOrientationOfSubsha
+	error_msg << ";Bad orientation of sub
+	break;
+	case BRepCheck_InvalidToleranceValue:
+	error_msg << ";Invalid tolerance valu
+	break;
+	case BRepCheck_EnclosedRegion:
+	error_msg << ";Enclosed region";
+	break;
+	case BRepCheck_InvalidPolygonOnTriang
+	error_msg << ";Invalid polygon on tri</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 60-62</strong></td>
+        <td style="text-align:center"><strong>src/Geom/CollisionDetector.h: line 39-41[32]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>std::shared_ptr<VectorType<Bnd_Box>>
+	std::shared_ptr<VectorType<GeometryPr
+	std::shared_ptr<VectorType<Bnd_OBB>></code></td>
+          <td>	<code>std::shared_ptr<VectorType<Bnd_Box>>
+	std::shared_ptr<VectorType<GeometryPr
+	std::shared_ptr<VectorType<Bnd_OBB>></code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/CollisionDetector.h: line 163-165</strong></td>
+        <td style="text-align:center"><strong>src/Geom/CollisionDetector.h: line 172-174[31]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>void dealGeneralFuseException(const s
+	const std::vector<ItemIndexType> item
+	CollisionType solveErrorByDistanceChe</code></td>
+          <td>	<code>const std::vector<TopoDS_Shape> origI
+	const std::vector<Standard_Real> orig
+	size_t countType(const ItemIndexType</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 129-137</strong></td>
+        <td style="text-align:center"><strong>src/Geom/ProcessorSample.h: line 52-60[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myOutputData->emplace<decltype(myMatc
+	}
+	
+	/**
+	* \brief process single data item in
+	* @param index: index to get/set by i
+	*/
+	virtual void processItem(const ItemIn
+	{</code></td>
+          <td>	<code>myOutputData->emplace<decltype(myData
+	}
+	
+	/**
+	* \brief process single data item in
+	* @param index: index to get/set by i
+	*/
+	virtual void processItem(const ItemIn
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 186-190</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 191-195[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>const UniqueIdType uid = myUniqueIds[
+	matched[index] = matchUniqueId(s, uid
+	}
+	else if (myShapeSearchType == ShapeSe
+	{</code></td>
+          <td>	<code>const Bnd_Box& box = myBoundBoxes[r];
+	matched[index] = matchBoundBox(index,
+	}
+	else if (myShapeSearchType == ShapeSe
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/CollisionDetector.h: line 133-136</strong></td>
+        <td style="text-align:center"><strong>src/Geom/CollisionDetector.h: line 136-138[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>static bool hasCollision(const TopoDS
+	/** using fusion volume to detect col
+	static CollisionInfo detectCollision(
+	std::vector<Standard_Real> volumes, d</code></td>
+          <td>	<code>std::vector<Standard_Real> volumes, d
+	static CollisionType detectCollisionT
+	std::vector<Standard_Real> volumes, d
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 164-168</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 116-119[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	else if (Utilities::hasFileExt(file_n
+	{
+	// LOG_F(INFO, "export Dataset pointe
+	Handle(TDocStd_Document) aDoc = creat</code></td>
+          <td>	<code>}
+	else if (Utilities::hasFileExt(file_n
+	{
+	readBrep(file_name);
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 770-774</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 774-776[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myOutputData->emplace("myCompounds",
+	myOutputData->emplace("myOtherShapes"
+	
+	// STEP214 meta data
+	myOutputData->emplace("myColorMap", s</code></td>
+          <td>	<code>myOutputData->emplace("myColorMap", s
+	myOutputData->emplace("myMaterialMap"
+	myOutputData->emplace<MapType<ItemHas
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 108-114</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 123-132[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	
+	/// this dump only geometry propertie
+	void dump(const std::string file_name
+	{
+	std::ofstream o(file_name);
+	o << '[' << std::endl;
+	
+	
+	</code></td>
+          <td>	<code>}
+	
+	/// write meta data in json for solid
+	/// suppressed Item will not have met
+	/// if there is no name information,
+	/// if there is no coloar or material
+	void writeMetaData(const std::string
+	{
+	std::ofstream o(file_name);
+	o << '[' << std::endl;</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 187-190</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 499-503[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>this->readFreeCADFile(file_name);
+	}
+	else if (Utilities::hasFileExt(file_n
+	{
+	</code></td>
+          <td>	<code>ret = aReader.Transfer(hDoc);
+	// pi->EndScope();
+	}
+	else if (Utilities::hasFileExt(file_n
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 160-162</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 189-191[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>if (Utilities::hasFileExt(file_name,
+	{
+	exportCompound(file_name, scale);</code></td>
+          <td>	<code>else if (Utilities::hasFileExt(file_n
+	{
+	readBrep(file_name, metadata);</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 218-220</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 265-267[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>{
+	const char* ns = p["name"].get<std::s
+	LOG_F(INFO, "compound shape `%s` has</code></td>
+          <td>	<code>{
+	const char* ns = p["name"].get<std::s
+	LOG_F(WARNING, "shape `%s` is not sol</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/ProcessorTemplate.h: line 115-124</strong></td>
+        <td style="text-align:center"><strong>src/PPP/CommandLineProcessor.h: line 102-112[30]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myOutputData->emplace(myResultName, s
+	}
+	
+	/**
+	* \brief process data item in paralle
+	* @param index: index to get/set item
+	*/
+	virtual void processItem(const ItemIn
+	{
+	myResultData[index] = myItemProcessor
+	</code></td>
+          <td>	<code>myOutputData->emplace<decltype(myItem
+	}
+	
+	/**
+	* \brief process data item in paralle
+	*
+	* @param index: index to get input da
+	*/
+	virtual void processItem(const ItemIn
+	{
+	myItemInputs[index] = prepareItemInpu</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/OperatorProxy.h: line 69-78</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryOperatorProxy.h: line 24-32[29]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	
+	/// report the content
+	virtual void report(const json& msg)
+	{
+	for (auto& op : myOperators)
+	{
+	// send request to show, then send fi
+	op->report(msg);
+	}</code></td>
+          <td>	<code>}
+	
+	virtual void display(const json& msg)
+	{
+	for (auto& op : myOperators)
+	{
+	// send request to show, then send fi
+	op->display(msg);
+	}
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/OperatorProxy.h: line 59-68</strong></td>
+        <td style="text-align:center"><strong>src/PPP/OperatorProxy.h: line 69-78[29]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	
+	/// display the content
+	virtual void display(const json& msg)
+	{
+	for (auto& op : myOperators)
+	{
+	// send request to show, then send fi
+	op->display(msg);
+	}</code></td>
+          <td>	<code>}
+	
+	/// report the content
+	virtual void report(const json& msg)
+	{
+	for (auto& op : myOperators)
+	{
+	// send request to show, then send fi
+	op->report(msg);
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 318-324</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 330-335[29]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>BOPCheck.SetShape1(BOPCopy);
+	// BOPCheck.SetOperation(); // by def
+	// all settings are false by default.
+	BOPCheck.ArgumentTypeMode() = argumen
+	BOPCheck.SelfInterMode() = selfInterM
+	BOPCheck.SmallEdgeMode() = smallEdgeM
+	BOPCheck.RebuildFaceMode() = rebuildF</code></td>
+          <td>	<code>BOPCheck.SetRunParallel(!runSingleThr
+	
+	BOPCheck.TangentMode() = tangentMode;
+	BOPCheck.MergeVertexMode() = mergeVer
+	BOPCheck.MergeEdgeMode() = mergeEdgeM
+	BOPCheck.CurveOnSurfaceMode() = curve
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryOperatorProxy.h: line 24-32</strong></td>
+        <td style="text-align:center"><strong>src/PPP/OperatorProxy.h: line 59-68[29]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	
+	virtual void display(const json& msg)
+	{
+	for (auto& op : myOperators)
+	{
+	// send request to show, then send fi
+	op->display(msg);
+	}
+	</code></td>
+          <td>	<code>}
+	
+	/// display the content
+	virtual void display(const json& msg)
+	{
+	for (auto& op : myOperators)
+	{
+	// send request to show, then send fi
+	op->display(msg);
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Utilities.h: line 73-75</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Utilities.h: line 84-86    [28]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>};
+	
+	template <class T, class... Args> typ</code></td>
+          <td>	<code>}
+	
+	template <class T, class... Args> typ</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/UniqueId.h: line 114-117</strong></td>
+        <td style="text-align:center"><strong>src/PPP/UniqueId.h: line 118-121   [28]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>for (int i = 0; i < 3; i++)
+	{
+	for (int j = 0; j < 3; j++)
+	{</code></td>
+          <td>	<code>for (int k = 0; k < 3; k++)
+	{
+	for (int l = 0; l < 3; l++)
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/CouplingMatrixBuilder.h: line 25-32</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 32-40[28]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>std::shared_ptr<Processor> myTargetPr
+	
+	public:
+	CouplingMatrixBuilder()
+	{
+	myCharacteristics["coupled"] = false;
+	myCharacteristics["indexPattern"] = I
+	myCharacteristics["producedProperties
+	</code></td>
+          <td>	<code>std::shared_ptr<MapType<ItemHashType,
+	
+	public:
+	/// consider: disable copy but enable
+	GeometryProcessor()
+	{
+	myCharacteristics["modified"] = false
+	myCharacteristics["indexPattern"] = I
+	myCharacteristics["indexDimension"] =</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 32-40</strong></td>
+        <td style="text-align:center"><strong>src/PPP/CouplingMatrixBuilder.h: line 25-32[28]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>std::shared_ptr<MapType<ItemHashType,
+	
+	public:
+	/// consider: disable copy but enable
+	GeometryProcessor()
+	{
+	myCharacteristics["modified"] = false
+	myCharacteristics["indexPattern"] = I
+	myCharacteristics["indexDimension"] =</code></td>
+          <td>	<code>std::shared_ptr<Processor> myTargetPr
+	
+	public:
+	CouplingMatrixBuilder()
+	{
+	myCharacteristics["coupled"] = false;
+	myCharacteristics["indexPattern"] = I
+	myCharacteristics["producedProperties
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 168-175</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 192-201[28]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>, value(_value)
+	, type(_type)
+	{
+	}
+	};
+	inline void to_json(json& j, const Co
+	{
+	j = json{{"firstIndex", p.first}, {"s
+	
+	</code></td>
+          <td>	<code>: name(_name)
+	, density(_density)
+	{
+	}
+	};
+	
+	inline void to_json(json& j, const Ma
+	{
+	// j = json{{"name", p.name}, {"densi
+	j = p.name; // tmp change the output</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 207-210</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 251-254[28]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>if (j.contains("name"))
+	{
+	j.at("name").get_to(p.name);
+	j.at("density").get_to(p.density);</code></td>
+          <td>	<code>inline void from_json(const json& j,
+	{
+	j.at("volume").get_to(p.volume);
+	j.at("area").get_to(p.area);</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryData.h: line 34-38</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryData.h: line 39-43[27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>if (contains("myShapes"))
+	{
+	auto shapes = getConst<ItemContainerT
+	size = shapes->size();
+	}</code></td>
+          <td>	<code>else if (contains("mySolids")) // als
+	{
+	auto shapes = getConst<ItemContainerT
+	size = shapes->size();
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 761-764</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Reader.h: line 35-37       [27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myOutputData->setValue<ShapeType>("my
+	myOutputData->setItemCount(mySolids.s
+	// emplace equal to the two step abov
+	myOutputData->emplace("mySolids", std</code></td>
+          <td>	<code>myOutputData = std::make_shared<DataO
+	myOutputData->setItemCount(myFilePath
+	myOutputData->emplace("myFilePaths",
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/OccUtils.h: line 89-92</strong></td>
+        <td style="text-align:center"><strong>src/Geom/OccUtils.h: line 92-95    [27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>GeomExport bool floatEqual(double a,
+	GeomExport GeometryProperty geometryP
+	GeomExport Standard_Real area(const T
+	GeomExport Standard_Real perimeter(co</code></td>
+          <td>	<code>GeomExport Standard_Real perimeter(co
+	GeomExport Standard_Real volume(const
+	GeomExport Standard_Real tolerance(co
+	GeomExport Standard_Real distance(con</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 104-105</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 95-96[27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>auto df = generateDumpName("dump_smal
+	OccUtils::saveShape({item(i)}, df);</code></td>
+          <td>	<code>auto df = generateDumpName("dump_BOPC
+	OccUtils::saveShape({item(i)}, df);</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryShapeChecker.h: line 95-96</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 104-105[27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>auto df = generateDumpName("dump_BOPC
+	OccUtils::saveShape({item(i)}, df);</code></td>
+          <td>	<code>auto df = generateDumpName("dump_smal
+	OccUtils::saveShape({item(i)}, df);</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Parameter.h: line 34-35</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Parameter.h: line 36-37    [27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>p.doc = j["doc"].get<std::string>();
+	if (j.contains("unit"))</code></td>
+          <td>	<code>p.unit = j["unit"].get<std::string>()
+	if (j.contains("range"))</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 774-775</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 62-63[27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myOutputData->emplace("myColorMap", s
+	myOutputData->emplace("myMaterialMap"</code></td>
+          <td>	<code>myOutputData->emplace("myGeometryProp
+	myOutputData->emplace("myGeometryUniq</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Reader.h: line 35-37</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 761-764[27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myOutputData = std::make_shared<DataO
+	myOutputData->setItemCount(myFilePath
+	myOutputData->emplace("myFilePaths",
+	</code></td>
+          <td>	<code>myOutputData->setValue<ShapeType>("my
+	myOutputData->setItemCount(mySolids.s
+	// emplace equal to the two step abov
+	myOutputData->emplace("mySolids", std</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/OccUtils.h: line 80-84</strong></td>
+        <td style="text-align:center"><strong>src/Geom/OccUtils.h: line 85-89    [27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>GeomExport bool isBndBoxOverlapped(co
+	/** gap can control overlapping, near
+	GeomExport bool isBndBoxOverlapped(co
+	/** detect if two shapes taking up th
+	GeomExport bool isBndBoxCoincident(co</code></td>
+          <td>	<code>Standard_Real reltolerance = 1e-2);
+	GeomExport bool isBndBoxCoincident(co
+	Standard_Real reltolerance = 1e-2);
+	
+	GeomExport bool floatEqual(double a,</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 62-63</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 764-765[27]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myOutputData->emplace("myGeometryProp
+	myOutputData->emplace("myGeometryUniq</code></td>
+          <td>	<code>myOutputData->emplace("mySolids", std
+	myOutputData->emplace("mySolidIDs", s</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/ThreadPoolExecutor.h: line 183-188</strong></td>
+        <td style="text-align:center"><strong>src/PPP/AsynchronousDispatcher.h: line 72-77[26]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>for (unsigned int t = 0; t < myWorker
+	{
+	std::vector<ItemIndexType> ids;
+	for (ItemIndexType i = 0; i < NItems;
+	{
+	if ((*myPartitionIds)[i] == t)</code></td>
+          <td>	<code>const indexers consume(const ItemInde
+	{
+	std::vector<indexer> a;
+	for (ItemIndexType i = 0; i < nProduc
+	{
+	if (myQueue.size() > 0)</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 660-661</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 678-679[26]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>for (xp.Init(aShape, TopAbs_SOLID); x
+	{</code></td>
+          <td>	<code>for (xp.Init(aShape, TopAbs_COMPOUND)
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 103-106</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 743-745[26]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>sout << "count of result solids is "
+	
+	LOG_F(INFO, "%s", sout.str().c_str())
+	}</code></td>
+          <td>	<code>sout << " length of material map: " <
+	LOG_F(INFO, "%s", sout.str().c_str())
+	}
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 55-60</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 26-31[26]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>Handle(XCAFDoc_ShapeTool) myShapeTool
+	Handle(XCAFDoc_ColorTool) myColorTool
+	Handle(XCAFDoc_MaterialTool) myMateri
+	
+	std::vector<TDF_Label> myShapeLabels;
+	std::set<ItemHashType> myRefShapes;</code></td>
+          <td>	<code>Handle(XCAFDoc_ShapeTool) myShapeTool
+	Handle(XCAFDoc_ColorTool) myColorTool
+	Handle(XCAFDoc_MaterialTool) myMateri
+	
+	std::vector<TDF_Label> myShapeLabels;
+	std::set<Standard_Integer> myRefShape</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 501-503</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 164-166[26]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	else if (Utilities::hasFileExt(file_n
+	{</code></td>
+          <td>	<code>}
+	else if (Utilities::hasFileExt(file_n
+	{</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 743-745</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 103-106[26]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>sout << " length of material map: " <
+	LOG_F(INFO, "%s", sout.str().c_str())
+	}
+	</code></td>
+          <td>	<code>sout << "count of result solids is "
+	
+	LOG_F(INFO, "%s", sout.str().c_str())
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/CommandLineProcessor.h: line 87-93</strong></td>
+        <td style="text-align:center"><strong>src/Geom/CollisionDetector.h: line 75-78[26]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>blocking = parameter<bool>("blocking"
+	// input and output preparation
+	
+	/// prepare private properties like `
+	/// therefore accessing item will not
+	myItemInputs.resize(myInputData->item
+	myItemOutputs.resize(myInputData->ite</code></td>
+          <td>	<code>myGeometryProperties = myInputData->g
+	// resize() avoid reallocate memeroy
+	myAdjacencyMatrix.resize(myInputData-
+	myCollisionInfos.resize(myInputData->
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 257-258</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryTypes.h: line 259-260[26]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>j.at("solidCount").get_to(p.solidCoun
+	j.at("faceCount").get_to(p.faceCount)</code></td>
+          <td>	<code>j.at("edgeCount").get_to(p.edgeCount)
+	j.at("centerOfMass").get_to(p.centerO</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/AsynchronousDispatcher.h: line 72-77</strong></td>
+        <td style="text-align:center"><strong>src/PPP/ThreadPoolExecutor.h: line 183-188[26]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>const indexers consume(const ItemInde
+	{
+	std::vector<indexer> a;
+	for (ItemIndexType i = 0; i < nProduc
+	{
+	if (myQueue.size() > 0)</code></td>
+          <td>	<code>for (unsigned int t = 0; t < myWorker
+	{
+	std::vector<ItemIndexType> ids;
+	for (ItemIndexType i = 0; i < NItems;
+	{
+	if ((*myPartitionIds)[i] == t)</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/OccUtils.h: line 66-71</strong></td>
+        <td style="text-align:center"><strong>src/Geom/OccUtils.h: line 71-74    [25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>GeomExport TopoDS_Shape glueFaces(con
+	
+	
+	GeomExport TopoDS_Compound
+	createCompound(const ItemContainerTyp
+	std::shared_ptr<const MapType<ItemHas</code></td>
+          <td>	<code>std::shared_ptr<const MapType<ItemHas
+	GeomExport TopoDS_CompSolid
+	createCompSolid(const ItemContainerTy
+	std::shared_ptr<const MapType<ItemHas
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/CouplingMatrixBuilder.h: line 77-81</strong></td>
+        <td style="text-align:center"><strong>src/PPP/CouplingMatrixBuilder.h: line 87-90[25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>virtual void processItem(const std::s
+	{
+	const std::size_t NItems = myInputDat
+	/// upper triangle for the matrix, al
+	for (std::size_t j = index + 1; j < N</code></td>
+          <td>	<code>virtual void process() override final
+	{
+	const std::size_t NItems = myInputDat
+	for (std::size_t index = 0; index < N
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/SparseMatrix.h: line 163-166</strong></td>
+        <td style="text-align:center"><strong>src/PPP/UniqueId.h: line 159-163   [25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>os << std::setw(4);
+	for (size_t i = 0; i < mat.size(); i+
+	{
+	json jrow = json();
+	</code></td>
+          <td>	<code>assert(values.size() == ID_ITEM_COUNT
+	
+	for (size_t i = 0; i < values.size();
+	{
+	UniqueIdType tmp = double2uint16(valu</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Reader.h: line 23-28</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 74-82[25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>VectorType<std::string> myFilePaths;
+	
+	public:
+	virtual void process() override
+	{
+	std::string file_name = myConfig["dat
+	
+	
+	</code></td>
+          <td>	<code>MapType<ItemHashType, std::string> my
+	// MapType<ItemHashType, ItemHashType
+	// MapType<ItemHashType, bool> mySupp
+	/// @}
+	
+	public:
+	virtual void process() override
+	{
+	std::string file_name = myConfig["dat</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Writer.h: line 24-26</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 59-61[25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>if (!fs::path(file_name).is_absolute(
+	file_name = dataStoragePath(file_name
+	if (file_name.size() && myOutputData-</code></td>
+          <td>	<code>if (not fs::path(file_name).is_absolu
+	file_name = dataStoragePath(file_name
+	if (file_name.size())</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 74-82</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Reader.h: line 23-28       [25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>MapType<ItemHashType, std::string> my
+	// MapType<ItemHashType, ItemHashType
+	// MapType<ItemHashType, bool> mySupp
+	/// @}
+	
+	public:
+	virtual void process() override
+	{
+	std::string file_name = myConfig["dat</code></td>
+          <td>	<code>VectorType<std::string> myFilePaths;
+	
+	public:
+	virtual void process() override
+	{
+	std::string file_name = myConfig["dat
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 680-682</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 693-694[25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>this->myCompounds[xp.Current().HashCo
+	// solids should have been extracted
+	}</code></td>
+          <td>	<code>this->myOtherShapes[xp.Current().Hash
+	}
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryProcessor.h: line 159-161</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 87-90[25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myShapes = myInputData->get<ItemConta
+	myShapeIDs = myInputData->get<VectorT
+	myShapeErrors = myInputData->get<MapT
+	</code></td>
+          <td>	<code>if (myInputData->contains("myShapeOri
+	myShapeOrientedBoundBoxes = myInputDa
+	
+	myGeometryProperties = myInputData->g</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/UniqueId.h: line 159-163</strong></td>
+        <td style="text-align:center"><strong>src/PPP/SparseMatrix.h: line 163-166[25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>assert(values.size() == ID_ITEM_COUNT
+	
+	for (size_t i = 0; i < values.size();
+	{
+	UniqueIdType tmp = double2uint16(valu</code></td>
+          <td>	<code>os << std::setw(4);
+	for (size_t i = 0; i < mat.size(); i+
+	{
+	json jrow = json();
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryWriter.h: line 59-61</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Writer.h: line 24-26       [25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>if (not fs::path(file_name).is_absolu
+	file_name = dataStoragePath(file_name
+	if (file_name.size())</code></td>
+          <td>	<code>if (!fs::path(file_name).is_absolute(
+	file_name = dataStoragePath(file_name
+	if (file_name.size() && myOutputData-</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 673-673</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 678-678[25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>for (xp.Init(aShape, TopAbs_SHELL); x</code></td>
+          <td>	<code>for (xp.Init(aShape, TopAbs_COMPOUND)</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Context.h: line 27-30</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Context.h: line 43-46      [25]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>inline static const std::string worki
+	{
+	return Context::singleton()->myConfig
+	}</code></td>
+          <td>	<code>inline static std::size_t threadCount
+	{
+	return Context::singleton()->myConfig
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 123-132</strong></td>
+        <td style="text-align:center"><strong>src/PPP/SparseMatrix.h: line 153-162[24]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	
+	/// write meta data in json for solid
+	/// suppressed Item will not have met
+	/// if there is no name information,
+	/// if there is no coloar or material
+	void writeMetaData(const std::string
+	{
+	std::ofstream o(file_name);
+	o << '[' << std::endl;</code></td>
+          <td>	<code>}
+	
+	
+	/// write sparse matrix into a json f
+	/// [{"colIndex": value, "colIndex":
+	void toJson(const std::string file_na
+	{
+	/* tested but only for json textual f
+	std::ofstream os(file_name);
+	os << "[\n";</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 674-674</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryReader.h: line 680-680[24]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>this->myShells[xp.Current().HashCode(</code></td>
+          <td>	<code>this->myCompounds[xp.Current().HashCo</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/CouplingMatrixBuilder.h: line 60-69</strong></td>
+        <td style="text-align:center"><strong>src/Geom/BoundBoxBuilder.h: line 41-45[24]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	
+	/**
+	* \brief preparing work in serial mod
+	*/
+	virtual void prepareOutput() override
+	{
+	// todo: if called in pipeline explic
+	// myCouplingMatrix.writeMatrixMarket
+	myOutputData->emplace("myCouplingMatr</code></td>
+          <td>	<code>}
+	
+	virtual void prepareOutput() override
+	{
+	myOutputData->emplace("myShapeBoundBo
+	
+	
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/BoundBoxBuilder.h: line 41-45</strong></td>
+        <td style="text-align:center"><strong>src/PPP/CouplingMatrixBuilder.h: line 60-69[24]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	
+	virtual void prepareOutput() override
+	{
+	myOutputData->emplace("myShapeBoundBo
+	
+	
+	
+	
+	</code></td>
+          <td>	<code>}
+	
+	/**
+	* \brief preparing work in serial mod
+	*/
+	virtual void prepareOutput() override
+	{
+	// todo: if called in pipeline explic
+	// myCouplingMatrix.writeMatrixMarket
+	myOutputData->emplace("myCouplingMatr</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 160-169</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometrySearchBuilder.h: line 192-201[24]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>myFilterCount = myBoundBoxes.size();
+	}
+	else if (myShapeSearchType == ShapeSe
+	{
+	// todo: single filename full path or
+	}
+	else
+	{
+	LOG_F(WARNING, "Geometry search input
+	}</code></td>
+          <td>	<code>matched[index] = matchBoundBox(index,
+	}
+	else if (myShapeSearchType == ShapeSe
+	{
+	// todo
+	}
+	else
+	{
+	LOG_F(WARNING, "Geometry search input
+	}</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/SparseMatrix.h: line 153-162</strong></td>
+        <td style="text-align:center"><strong>src/Geom/GeometryPropertyBuilder.h: line 108-114[24]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>}
+	
+	
+	/// write sparse matrix into a json f
+	/// [{"colIndex": value, "colIndex":
+	void toJson(const std::string file_na
+	{
+	/* tested but only for json textual f
+	std::ofstream os(file_name);
+	os << "[\n";</code></td>
+          <td>	<code>}
+	
+	/// this dump only geometry propertie
+	void dump(const std::string file_name
+	{
+	std::ofstream o(file_name);
+	o << '[' << std::endl;
+	
+	
+	</code></td>
+        </tr>
+        
+        <tr class="table-dark text-dark">
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 85-94</strong></td>
+        <td style="text-align:center"><strong>src/PPP/Processor.h: line 95-104   [24]</strong></td>
+        </tr>
+        <tr>
+          <td>	<code>inline const Config characteristics()
+	{
+	return myCharacteristics;
+	}
+	
+	/// deprecated this in favour of Proc
+	void setInputInformation(std::shared_
+	{
+	myInfo = info;
+	}</code></td>
+          <td>	<code>std::shared_ptr<Information> getOutpu
+	{
+	return myInfo;
+	}
+	
+	/// set by builder
+	void setOperator(std::shared_ptr<Oper
+	{
+	myOperator = v;
+	}</code></td>
+        </tr>
+        
+    </container>
+    </body>
+</html>
+      

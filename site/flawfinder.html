@@ -1,0 +1,210 @@
+
+<!DOCTYPE HTML>
+<html lang="en-GB">
+    
+    <head>
+    <meta charset="UTF-8">
+    <!-- Redirect -->
+    <!--<meta http-equiv="refresh" content="1;url=doxygen/html/../index.html">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    
+    <title>parallel-preprocessor</title>
+
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <!-- Brand -->
+      <a class="navbar-brand" href="../index.html">parallel-preprocessor</a>
+    
+      <!-- Links -->
+      <ul class="navbar-nav">
+        <!-- Dropdown -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+          Documentation
+        </a>
+        <div class="dropdown-menu">
+          					<a class="dropdown-item" href="doxygen-docs.html">Doxygen Code Documentation</a>
+					<a class="dropdown-item" href="developer_documentation.html">Developer Guide</a>
+        </div>
+      </li>
+        <!-- Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+            Code Checks
+          </a>
+          <div class="dropdown-menu">
+            					<a class="dropdown-item" href="cppcheck.html">CPP Check</a>
+					<a class="dropdown-item" href="code-coverage.html">Code Coverage</a>
+					<a class="dropdown-item" href="flawfinder.html">Flawfinder</a>
+					<a class="dropdown-item" href="simcpp.html">Sim C++</a>
+					<a class="dropdown-item" href="clang_tidy.html">Clang Tidy</a>
+          </div>
+        </li>
+      </ul>
+    </nav> 
+        
+</head>
+        
+    <body>
+    <div class="container">
+    <div class="jumbotron">
+        <h1>Flawfinder</h1>
+        <p>Listed below are the check results from Flawfinder.</p>
+    </div>
+    <p></p>
+    </div>
+    <div class="container">
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Line</th>
+        <th>Library</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    
+              <tr class="table-dark text-dark">
+              <td colspan="4" style="text-align:center"><strong>./src/PPP/Utilities.cpp</strong></td>
+              </tr>
+              
+                <tr>
+                    <td>123</td>
+                    <td>[2] (buffer) char</td>
+                    <td>  Statically-sized arrays can be improperly restricted, leading to potential
+  overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use
+  functions that limit length, or ensure that the size is larger than the
+  maximum possible length.
+</td>
+                </tr>
+                
+                <tr>
+                    <td>14</td>
+                    <td>[4] (shell) system</td>
+                    <td>  This causes a new program to execute and is difficult to use safely
+  (CWE-78). try using a library call that implements the same functionality
+  if available.
+</td>
+                </tr>
+                
+              <tr class="table-dark text-dark">
+              <td colspan="4" style="text-align:center"><strong>./src/PropertyContainer/Property.h</strong></td>
+              </tr>
+              
+                <tr>
+                    <td>177</td>
+                    <td>[4] (race) access</td>
+                    <td>  This usually indicates a security flaw. If an attacker can change anything
+  along the path between the call to access() and the file's actual use
+  (e.g., by moving files), the attacker can exploit the race condition
+  (CWE-362/CWE-367!). Set up the correct permissions (e.g., using setuid())
+  and try to open the file directly.
+</td>
+                </tr>
+                
+              <tr class="table-dark text-dark">
+              <td colspan="4" style="text-align:center"><strong>./src/PPP/SparseMatrix.h</strong></td>
+              </tr>
+              
+                <tr>
+                    <td>134</td>
+                    <td>[3] (random) random</td>
+                    <td>  This function is not sufficiently random for security-related functions
+  such as key and nonce creation (CWE-327). Use a more secure technique for
+  acquiring random values.
+</td>
+                </tr>
+                
+                <tr>
+                    <td>182</td>
+                    <td>[2] (misc) fopen</td>
+                    <td>  Check when opening files - can an attacker redirect it (via symlinks),
+  force the opening of special file type (e.g., device files), move things
+  around to create a race condition, control its ancestors, or change its
+  contents? (CWE-362).
+</td>
+                </tr>
+                
+                <tr>
+                    <td>219</td>
+                    <td>[2] (misc) fopen</td>
+                    <td>  Check when opening files - can an attacker redirect it (via symlinks),
+  force the opening of special file type (e.g., device files), move things
+  around to create a race condition, control its ancestors, or change its
+  contents? (CWE-362).
+</td>
+                </tr>
+                
+              <tr class="table-dark text-dark">
+              <td colspan="4" style="text-align:center"><strong>./src/PPP/SparseMatrix.cpp</strong></td>
+              </tr>
+              
+                <tr>
+                    <td>14</td>
+                    <td>[2] (misc) fopen</td>
+                    <td>  Check when opening files - can an attacker redirect it (via symlinks),
+  force the opening of special file type (e.g., device files), move things
+  around to create a race condition, control its ancestors, or change its
+  contents? (CWE-362).
+</td>
+                </tr>
+                
+                <tr>
+                    <td>51</td>
+                    <td>[2] (misc) fopen</td>
+                    <td>  Check when opening files - can an attacker redirect it (via symlinks),
+  force the opening of special file type (e.g., device files), move things
+  around to create a race condition, control its ancestors, or change its
+  contents? (CWE-362).
+</td>
+                </tr>
+                
+              <tr class="table-dark text-dark">
+              <td colspan="4" style="text-align:center"><strong>./src/PPP/UniqueId.h</strong></td>
+              </tr>
+              
+                <tr>
+                    <td>35</td>
+                    <td>[2] (buffer) char</td>
+                    <td>  Statically-sized arrays can be improperly restricted, leading to potential
+  overflows or other issues (CWE-119!/CWE-120). Perform bounds checking, use
+  functions that limit length, or ensure that the size is larger than the
+  maximum possible length.
+</td>
+                </tr>
+                
+              <tr class="table-dark text-dark">
+              <td colspan="4" style="text-align:center"><strong>./src/Geom/GeometryReader.h</strong></td>
+              </tr>
+              
+                <tr>
+                    <td>165</td>
+                    <td>[1] (buffer) read</td>
+                    <td>  Check buffer boundaries if used in a loop including recursive loops
+  (CWE-120, CWE-20).
+</td>
+                </tr>
+                
+                <tr>
+                    <td>83</td>
+                    <td>[1] (buffer) read</td>
+                    <td>  Check buffer boundaries if used in a loop including recursive loops
+  (CWE-120, CWE-20).
+</td>
+                </tr>
+                
+                <tr>
+                    <td>93</td>
+                    <td>[1] (buffer) read</td>
+                    <td>  Check buffer boundaries if used in a loop including recursive loops
+  (CWE-120, CWE-20).
+</td>
+                </tr>
+                
+    </container>
+    </body>
+</html>
+      
