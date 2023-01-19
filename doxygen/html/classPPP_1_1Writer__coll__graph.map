@@ -1,0 +1,4 @@
+<map id="PPP::Writer" name="PPP::Writer">
+<area shape="rect" id="node1" title="base class for all writer in module like Geom" alt="" coords="17,80,111,107"/>
+<area shape="rect" id="node2" href="$classPPP_1_1Processor.html" title="base class for all processors, mappable to vtkAlgorithm, opKernel of tensorflow see API of vtkAlgorit..." alt="" coords="5,5,123,32"/>
+</map>

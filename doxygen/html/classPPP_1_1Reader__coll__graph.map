@@ -1,0 +1,4 @@
+<map id="PPP::Reader" name="PPP::Reader">
+<area shape="rect" id="node1" title="base class for all reader in modules like Geom" alt="" coords="14,80,114,107"/>
+<area shape="rect" id="node2" href="$classPPP_1_1Processor.html" title="base class for all processors, mappable to vtkAlgorithm, opKernel of tensorflow see API of vtkAlgorit..." alt="" coords="5,5,123,32"/>
+</map>

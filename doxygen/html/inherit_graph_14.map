@@ -1,0 +1,18 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classPPP_1_1Processor.html" title="base class for all processors, mappable to vtkAlgorithm, opKernel of tensorflow see API of vtkAlgorit..." alt="" coords="5,263,123,289"/>
+<area shape="rect" id="node2" href="$classGeom_1_1GeometryProcessor.html" title="Base class for all GeometryData processors all virtual functions as default implementation,..." alt="" coords="199,132,397,159"/>
+<area shape="rect" id="node10" href="$classPPP_1_1CommandLineProcessor.html" title="launch external process on ditributive worker nodes" alt="" coords="193,183,403,209"/>
+<area shape="rect" id="node11" href="$classPPP_1_1CouplingMatrixBuilder.html" title="detect item pair coupling in the target expensive processor and build a coupling matrix" alt="" coords="199,233,397,260"/>
+<area shape="rect" id="node12" href="$classPPP_1_1ProcessorTemplate.html" title="template + lambda to build a new processor inplace without declare a new processor type...." alt="" coords="171,285,425,326"/>
+<area shape="rect" id="node13" href="$classPPP_1_1Reader.html" title="base class for all reader in modules like Geom" alt="" coords="248,351,348,377"/>
+<area shape="rect" id="node15" href="$classPPP_1_1Writer.html" title="base class for all writer in module like Geom" alt="" coords="251,401,345,428"/>
+<area shape="rect" id="node3" href="$classGeom_1_1BoundBoxBuilder.html" title=" " alt="" coords="500,5,681,32"/>
+<area shape="rect" id="node4" href="$classGeom_1_1CollisionDetector.html" title=" " alt="" coords="500,56,681,83"/>
+<area shape="rect" id="node6" href="$classGeom_1_1GeometryPropertyBuilder.html" title=" " alt="" coords="473,107,708,133"/>
+<area shape="rect" id="node7" href="$classGeom_1_1GeometrySearchBuilder.html" title="search shapes by given criteria (searchType and searchValues) in config see ShapeSearchType" alt="" coords="479,157,703,184"/>
+<area shape="rect" id="node8" href="$classGeom_1_1GeometryShapeChecker.html" title=" " alt="" coords="477,208,704,235"/>
+<area shape="rect" id="node9" href="$classGeom_1_1ProcessorSample.html" title="a brief description on the process/feature/functions" alt="" coords="500,259,681,285"/>
+<area shape="rect" id="node5" href="$classGeom_1_1GeometryImprinter.html" title=" " alt="" coords="756,56,951,83"/>
+<area shape="rect" id="node14" href="$classGeom_1_1GeometryReader.html" title=" " alt="" coords="501,351,681,377"/>
+<area shape="rect" id="node16" href="$classGeom_1_1GeometryWriter.html" title="write out processed geometry into files" alt="" coords="503,401,678,428"/>
+</map>
